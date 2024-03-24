@@ -1,3 +1,4 @@
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodak/screens/home_screen.dart';
 import 'package:pomodak/screens/inventory_screen.dart';
@@ -5,6 +6,29 @@ import 'package:pomodak/screens/more_screen.dart';
 import 'package:pomodak/screens/shop_screen.dart';
 import 'package:pomodak/screens/user_screen.dart';
 import 'package:pomodak/theme/app_theme.dart';
+
+const List<TabItem> items = [
+  TabItem(
+    icon: Icons.home_outlined,
+    title: 'Home',
+  ),
+  TabItem(
+    icon: Icons.people_outline,
+    title: 'My',
+  ),
+  TabItem(
+    icon: Icons.shopping_cart_outlined,
+    title: 'Shop',
+  ),
+  TabItem(
+    icon: Icons.backpack_outlined,
+    title: 'Inventory',
+  ),
+  TabItem(
+    icon: Icons.settings_outlined,
+    title: 'profile',
+  ),
+];
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late final PageController _pageController;
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = [
     const HomeScreen(),
@@ -40,7 +65,27 @@ class _MyHomePageState extends State<MyHomePage> {
     const MoreScreen(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutQuad,
+    );
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -49,37 +94,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        // Display the active tab's screen
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: _widgetOptions, // Prevent swipe to change page
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'My',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shop),
-            label: 'Shop',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: 'Inventory',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'More',
-          ),
-        ],
-        currentIndex: _selectedIndex,
+      bottomNavigationBar: BottomBarDefault(
+        items: items,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        color: Colors.black38,
+        colorSelected: Theme.of(context).colorScheme.primary,
         onTap: _onItemTapped,
-        unselectedItemColor: Colors.black12,
-        selectedItemColor: Colors.black,
+        indexSelected: _selectedIndex,
       ),
     );
   }

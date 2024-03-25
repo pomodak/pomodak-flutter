@@ -10,14 +10,14 @@ class StartButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size(200, 60),
+        minimumSize: const Size(160, 54),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       child: const Text(
         'START',
         style: TextStyle(
-          fontSize: 20,
+          fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
       ),

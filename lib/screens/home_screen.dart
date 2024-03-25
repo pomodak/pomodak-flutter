@@ -35,12 +35,15 @@ class HomeScreen extends StatelessWidget {
           ),
           const Expanded(
             flex: 1,
-            child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ShowEggInventoryButton(),
-                  SizedBox(width: 20),
+                  SizedBox(
+                    width: 10,
+                  ),
                   StartButton(),
                 ],
               ),

@@ -10,23 +10,23 @@ import 'package:pomodak/theme/app_theme.dart';
 const List<TabItem> items = [
   TabItem(
     icon: Icons.home_outlined,
-    title: 'Home',
+    title: '홈',
   ),
   TabItem(
     icon: Icons.people_outline,
-    title: 'My',
+    title: '내정보',
   ),
   TabItem(
     icon: Icons.shopping_cart_outlined,
-    title: 'Shop',
+    title: '상점',
   ),
   TabItem(
     icon: Icons.backpack_outlined,
-    title: 'Inventory',
+    title: '인벤토리',
   ),
   TabItem(
     icon: Icons.settings_outlined,
-    title: 'Settings',
+    title: '설정',
   ),
 ];
 

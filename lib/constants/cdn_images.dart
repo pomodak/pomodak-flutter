@@ -21,4 +21,7 @@ class CDNImages {
 
   static const String nest =
       'https://d2quahb2ygxiv.cloudfront.net/c92b5b1ca2b81459a46ef.png';
+
+  static const String egg =
+      'https://d2quahb2ygxiv.cloudfront.net/f4fdd77fb5ffcdf2f2232.png';
 }

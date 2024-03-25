@@ -6,6 +6,7 @@ import 'package:pomodak/screens/more_screen.dart';
 import 'package:pomodak/screens/shop_screen.dart';
 import 'package:pomodak/screens/user_screen.dart';
 import 'package:pomodak/theme/app_theme.dart';
+import 'package:flutter/services.dart';
 
 const List<TabItem> items = [
   TabItem(
@@ -31,6 +32,15 @@ const List<TabItem> items = [
 ];
 
 void main() {
+  // 세로모드 고정
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ],
+  );
+
   runApp(const MyApp());
 }
 

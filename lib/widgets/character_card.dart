@@ -9,10 +9,6 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 3;
-    double cardWidth = (screenWidth / crossAxisCount) - 50;
-
     return Material(
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
@@ -21,25 +17,27 @@ class CharacterCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(8),
           alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GrdaeBadge(grade: characterInventory.grade),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                child: Image.network(
-                  characterInventory.imageUrl,
-                  width: cardWidth,
-                  height: cardWidth,
-                  fit: BoxFit.cover,
+          child: AspectRatio(
+            aspectRatio: 3 / 5,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GrdaeBadge(grade: characterInventory.grade),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                  child: Image.network(
+                    characterInventory.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              CharacterInfo(
-                name: characterInventory.name,
-                sellPrice: characterInventory.sellPrice,
-                quantity: characterInventory.quantity,
-              ),
-            ],
+                CharacterInfo(
+                  name: characterInventory.name,
+                  sellPrice: characterInventory.sellPrice,
+                  quantity: characterInventory.quantity,
+                ),
+              ],
+            ),
           ),
         ),
       ),

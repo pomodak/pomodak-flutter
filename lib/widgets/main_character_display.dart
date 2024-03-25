@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pomodak/constants/cdn_images.dart';
 
 class MainCharacterDisplay extends StatefulWidget {
   final double width;
@@ -47,7 +48,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
       alignment: Alignment.bottomCenter,
       children: [
         Image.network(
-          "https://d2quahb2ygxiv.cloudfront.net/81459a46ef4fdd77fb5ff.png",
+          CDNImages.mascot["normal"]!,
           width: widget.width,
           fit: BoxFit.contain,
         ),

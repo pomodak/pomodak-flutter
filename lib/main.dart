@@ -26,7 +26,7 @@ const List<TabItem> items = [
   ),
   TabItem(
     icon: Icons.settings_outlined,
-    title: 'profile',
+    title: 'Settings',
   ),
 ];
 

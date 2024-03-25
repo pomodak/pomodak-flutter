@@ -95,7 +95,7 @@ class InventoryScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 200,
+                height: 180,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: eggs.length,
@@ -122,9 +122,9 @@ class InventoryScreen extends StatelessWidget {
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  crossAxisSpacing: 10,
+                  crossAxisSpacing: 4,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 0.7,
                 ),
                 itemCount: characters.length,
                 itemBuilder: (context, index) {

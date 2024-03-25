@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/constants/cdn_images.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key});
@@ -10,7 +11,7 @@ class UserProfile extends StatelessWidget {
       children: [
         Center(
           child: Image.network(
-            "https://d2quahb2ygxiv.cloudfront.net/df17af0a7a5c169f90044.png",
+            CDNImages.newMember["mascot"]!,
             width: 120,
             height: 120,
             fit: BoxFit.contain,

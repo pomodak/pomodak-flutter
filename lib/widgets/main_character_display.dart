@@ -16,10 +16,12 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   int messageIndex = 0;
   bool showMessage = true;
 
+  late Timer timer;
+
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       setState(() {
         messageIndex = (messageIndex + 1) % messages.length;
         message = messages[messageIndex];
@@ -31,6 +33,12 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
         });
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
   }
 
   @override

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pomodak/widgets/main_character_display.dart';
 import 'package:pomodak/widgets/show_egg_inventory_button.dart';
 import 'package:pomodak/widgets/start_button.dart';

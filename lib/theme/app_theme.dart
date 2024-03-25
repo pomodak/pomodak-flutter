@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final lightTheme = ThemeData(
     useMaterial3: true, // Material 3 디자인을 사용
+    textTheme: GoogleFonts.gamjaFlowerTextTheme(
+      ThemeData.light().textTheme,
+    ),
     colorScheme: const ColorScheme.light(
       primary: Colors.black, // 앱 바, 버튼 등에 사용될 기본
       onPrimary: Colors.white, // primary 위의 텍스트

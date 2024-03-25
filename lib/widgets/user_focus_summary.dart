@@ -6,7 +6,7 @@ class UserFocusSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      height: 110,
+      height: 100,
       child: Row(
         children: [
           Expanded(
@@ -56,7 +56,7 @@ class SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

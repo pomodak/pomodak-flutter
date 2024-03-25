@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: _widgetOptions, // Prevent swipe to change page
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomBarDefault(
         items: items,

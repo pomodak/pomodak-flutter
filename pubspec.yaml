@@ -38,6 +38,7 @@ dependencies:
   awesome_bottom_bar: ^1.2.4
   google_fonts: ^6.2.1
   table_calendar: ^3.1.1
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

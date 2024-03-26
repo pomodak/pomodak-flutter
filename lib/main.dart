@@ -1,5 +1,6 @@
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/screens/home_screen.dart';
 import 'package:pomodak/screens/inventory_screen.dart';
 import 'package:pomodak/screens/more_screen.dart';
@@ -31,7 +32,8 @@ const List<TabItem> items = [
   ),
 ];
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   // 세로모드 고정
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(

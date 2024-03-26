@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/widgets/heatmap/heatmap.dart';
 import 'package:pomodak/widgets/user_profile.dart';
 import 'package:pomodak/widgets/user_focus_summary.dart';
 
@@ -24,75 +25,98 @@ class _UserScreenState extends State<UserScreen>
     return Scaffold(
       body: DefaultTabController(
         length: 2,
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              leadingWidth: 120,
-              leading: const Padding(
-                padding: EdgeInsets.only(left: 20, top: 10),
-                child: Text(
-                  "내정보",
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              surfaceTintColor: Colors.white,
-              pinned: true,
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.edit),
-                ),
-              ],
-            ),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    UserProfile(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: UserFocusSummary(),
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                leadingWidth: 120,
+                leading: const Padding(
+                  padding: EdgeInsets.only(left: 20, top: 10),
+                  child: Text(
+                    "내정보",
+                    style: TextStyle(
+                      fontSize: 20,
                     ),
-                  ],
-                ),
-              ),
-            ),
-            SliverPersistentHeader(
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(text: "🗓️ 캘린더"),
-                    Tab(text: "🌿 잔디"),
-                  ],
-                ),
-              ),
-              pinned: true,
-            ),
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  Column(
-                    children: [
-                      SizedBox(height: 200),
-                      Text("캘린더 탭 내용"),
-                    ],
                   ),
-                  Column(
-                    children: [
-                      SizedBox(height: 200),
-                      Text("캘린더 탭 내용"),
-                    ],
+                ),
+                surfaceTintColor: Colors.white,
+                pinned: true,
+                actions: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.edit),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    children: [
+                      UserProfile(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: UserFocusSummary(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: "🗓️ 캘린더"),
+                      Tab(text: "🌿 잔디"),
+                    ],
+                  ),
+                ),
+                pinned: true,
+              ),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              const Center(
+                child: Text("캘린더 탭 내용"),
+              ),
+              ListView(
+                children: [
+                  const Center(
+                    child: Text(
+                      "스트릭",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  HeatMap(
+                    datasets: {
+                      DateTime(2024, 3, 6): 2,
+                      DateTime(2024, 3, 7): 4,
+                      DateTime(2024, 3, 8): 5,
+                      DateTime(2024, 3, 9): 7,
+                      DateTime(2024, 3, 13): 6,
+                    },
+                    size: 32,
+                    colorsets: {
+                      1: Colors.green.shade100,
+                      3: Colors.green.shade300,
+                      5: Colors.green.shade500,
+                      7: Colors.green.shade700,
+                    },
+                    onClick: (value) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(value.toString())));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

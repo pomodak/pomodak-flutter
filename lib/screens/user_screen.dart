@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/widgets/heatmap/heatmap.dart';
+import 'package:pomodak/widgets/calendar/calendar.dart';
 import 'package:pomodak/widgets/user_profile.dart';
 import 'package:pomodak/widgets/user_focus_summary.dart';
 
@@ -79,8 +80,19 @@ class _UserScreenState extends State<UserScreen>
           body: TabBarView(
             controller: _tabController,
             children: [
-              const Center(
-                child: Text("캘린더 탭 내용"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: const [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Calendar(),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               ListView(
                 children: [

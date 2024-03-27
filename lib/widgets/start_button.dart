@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class StartButton extends StatelessWidget {
   const StartButton({
@@ -7,8 +9,11 @@ class StartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        authService.logOut();
+      },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 54),
         backgroundColor: Theme.of(context).colorScheme.primary,

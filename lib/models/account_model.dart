@@ -25,6 +25,16 @@ class AccountModel {
       createdAt: DateTime.parse(json['created_at']),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'account_id': accountId,
+      'email': email,
+      'provider': provider,
+      'social_id': socialId,
+      'role': role.toJson(),
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 }
 
 class Role {
@@ -41,5 +51,11 @@ class Role {
       roleId: json['role_id'],
       name: json['name'],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'role_id': roleId,
+      'name': name,
+    };
   }
 }

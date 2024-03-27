@@ -22,6 +22,11 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def kakaoAppKey = localProperties.getProperty('kakaoAppKey')
+if (kakaoAppKey == null) {
+    kakaoAppKey = 'kakaoAppKey'
+}
+
 android {
     namespace "com.example.pomodak"
     compileSdk 33

@@ -33,7 +33,7 @@ if (applicationName == null) {
 }
 
 android {
-    namespace "android_app"
+    namespace applicationName
     compileSdk 33
     ndkVersion flutter.ndkVersion
 
@@ -60,7 +60,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
-        manifestPlaceholders = [kakaoAppKey: kakaoAppKey, applicationName: applicationName]
+        manifestPlaceholders += [kakaoAppKey: kakaoAppKey]
     }
     signingConfigs {
         release {

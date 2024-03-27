@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/router/route_utils.dart';
+import 'package:pomodak/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LogInPage extends StatelessWidget {
+  const LogInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('로그인'),
+        title: Text(AppPage.login.toTitle),
       ),
       body: Center(
         child: TextButton(
-          onPressed: () {},
-          child: const Text('로그인하기'),
+          onPressed: () {
+            authService.login();
+          },
+          child: const Text("Log in"),
         ),
       ),
     );

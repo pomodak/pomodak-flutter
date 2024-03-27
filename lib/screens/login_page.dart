@@ -16,7 +16,7 @@ class LogInPage extends StatelessWidget {
       body: Center(
         child: TextButton(
           onPressed: () {
-            authService.login();
+            authService.loginWithEmail("email@test.com", "qwer@1234");
           },
           child: const Text("Log in"),
         ),

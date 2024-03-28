@@ -7,6 +7,7 @@ import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/screens/login_page.dart';
 import 'package:pomodak/screens/main_page.dart';
 import 'package:pomodak/screens/splash_page.dart';
+import 'package:pomodak/views/screens/register/register_page.dart';
 
 class AppRouter {
   late final AppViewModel appViewModel;
@@ -38,6 +39,11 @@ class AppRouter {
         builder: (context, state) => const LogInPage(),
       ),
       GoRoute(
+        path: AppPage.register.toPath,
+        name: AppPage.register.toName,
+        builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
         path: AppPage.error.toPath,
         name: AppPage.error.toName,
         builder: (context, state) => ErrorPage(error: state.extra.toString()),
@@ -57,6 +63,7 @@ class AppRouter {
 
       // 이동중인 라우트 파악
       final isGoingToLogin = state.matchedLocation == loginLocation;
+      final isGoingToHome = state.matchedLocation == homeLocation;
       final isGoingToInit = state.matchedLocation == splashLocation;
 
       // 앱이 아직 초기화되지 않았고 스플래시 페이지로 가지 않는 경우, 스플래시 페이지
@@ -64,7 +71,7 @@ class AppRouter {
         return splashLocation;
       }
       // 앱이 초기화되었지만 사용자가 로그인하지 않았고 로그인 페이지로 가지 않는 경우, 로그인 페이지
-      else if (isInitialized && !isLogedIn && !isGoingToLogin) {
+      else if (isInitialized && (!isLogedIn && isGoingToHome)) {
         return loginLocation;
       }
       // 사용자가 로그인한 상태에서 로그인 페이지로 가려고 하거나,

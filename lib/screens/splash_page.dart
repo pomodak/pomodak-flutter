@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/router/route_utils.dart';
-import 'package:pomodak/services/app_service.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SplashPage extends StatefulWidget {
@@ -11,18 +12,21 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  late AppService _appService;
+  late AppViewModel _appViewModel;
+  late AuthViewModel _authViewModel;
 
   @override
   void initState() {
-    // 첫 실행에만 사용되기에 재빌드 x
-    _appService = Provider.of<AppService>(context, listen: false);
+    // 첫 실행에만 사용되기에 listen: false
+    _appViewModel = Provider.of<AppViewModel>(context, listen: false);
+    _authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     onStartUp();
     super.initState();
   }
 
   void onStartUp() async {
-    await _appService.onAppStart();
+    await _authViewModel.onAppStart();
+    await _appViewModel.onAppStart();
   }
 
   @override

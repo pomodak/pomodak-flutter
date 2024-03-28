@@ -1,20 +1,23 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/screens/error_page.dart';
-import 'package:pomodak/screens/login_page.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/views/screens/login_page.dart';
 import 'package:pomodak/screens/main_page.dart';
 import 'package:pomodak/screens/splash_page.dart';
-import 'package:pomodak/services/app_service.dart';
 
 class AppRouter {
-  late final AppService appService;
+  late final AppViewModel appViewModel;
+  late final AuthViewModel authViewModel;
   GoRouter get router => _goRouter;
 
-  AppRouter(this.appService);
+  AppRouter(this.appViewModel, this.authViewModel);
 
   late final GoRouter _goRouter = GoRouter(
-    // 앱의 로그인 상태 변경을 리스닝하여 리프레시
-    refreshListenable: appService,
+    // 앱의 로그인 상태와 초기화 상태 변경을 리스닝하여 리프레시
+    refreshListenable: Listenable.merge([appViewModel, authViewModel]),
     // 초기 페이지
     initialLocation: AppPage.home.toPath,
     // 앱의 모든 라우트
@@ -49,8 +52,8 @@ class AppRouter {
       final homeLocation = state.namedLocation(AppPage.home.toName);
       final splashLocation = state.namedLocation(AppPage.splash.toName);
 
-      final isLogedIn = appService.loginState; // 로그인 상태
-      final isInitialized = appService.initialized; // 초기화 상태
+      final isLogedIn = authViewModel.isLoggedIn; // 로그인 상태
+      final isInitialized = appViewModel.initialized; // 초기화 상태
 
       // 이동중인 라우트 파악
       final isGoingToLogin = state.matchedLocation == loginLocation;

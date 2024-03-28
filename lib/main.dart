@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/app_router.dart';
-import 'package:pomodak/services/app_service.dart';
-import 'package:pomodak/services/auth_service.dart';
 import 'package:pomodak/theme/app_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,29 +39,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late AppService appService;
-  late AuthService authService;
-  // 로그인 완료 여부 이벤트 구독
-  late StreamSubscription<bool> authSubscription;
+  late AppViewModel appViewModel;
+  late AuthViewModel authViewModel;
 
   @override
   void initState() {
-    appService = AppService(widget.sharedPreferences);
-    authService = AuthService();
-    authSubscription = authService.onAuthStateChange.listen(onAuthStateChange);
+    appViewModel = AppViewModel(widget.sharedPreferences);
+    authViewModel = AuthViewModel();
     super.initState();
-  }
-
-  // appService.loginState의 setter가 변경사항을
-  // 상태 및 저장소에 저장 후 notifyListeners() 발생
-  void onAuthStateChange(bool login) {
-    appService.loginState = login;
   }
 
   @override
   void dispose() {
-    // 위젯이 제거될 때 StreamSubscription을 취소하여 리소스를 해제
-    authSubscription.cancel();
     super.dispose();
   }
 
@@ -69,9 +58,13 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppService>(create: (_) => appService),
-        Provider<AppRouter>(create: (_) => AppRouter(appService)),
-        Provider<AuthService>(create: (_) => authService),
+        ChangeNotifierProvider<AppViewModel>(create: (_) => appViewModel),
+        ChangeNotifierProvider<AuthViewModel>(
+          create: (_) => authViewModel,
+        ),
+        // 라우터는 리다이렉트를 처리하기 위해 로그인 상태와 앱 상태를 주입받음
+        Provider<AppRouter>(
+            create: (_) => AppRouter(appViewModel, authViewModel)),
       ],
       child: Builder(
         builder: (context) {

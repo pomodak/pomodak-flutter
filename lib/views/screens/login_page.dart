@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/views/widgets/button.dart';
 import 'package:provider/provider.dart';
 
 class LogInPage extends StatefulWidget {
@@ -54,7 +55,7 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    final emailLoginViewModel = Provider.of<AuthViewModel>(context);
+    final authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(AppPage.login.toTitle),
@@ -79,21 +80,18 @@ class _LogInPageState extends State<LogInPage> {
                   onSaved: (value) => _password = value!,
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
+                Button(
+                  text: "로그인",
+                  isLoading: authViewModel.loading,
+                  onTap: () {
                     if (!_formKey.currentState!.validate()) return;
                     _formKey.currentState!.save();
-                    emailLoginViewModel.emailLogin(
+                    authViewModel.emailLogin(
                       context,
                       email: _email,
                       password: _password,
                     );
                   },
-                  child: emailLoginViewModel.loading
-                      ? const CircularProgressIndicator(
-                          color: Colors.black,
-                        )
-                      : const Text('Log In'),
                 ),
               ],
             ),

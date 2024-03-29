@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
-import 'package:pomodak/views/widgets/button.dart';
+import 'package:pomodak/views/widgets/custom_button.dart';
+import 'package:pomodak/views/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
 class LogInPage extends StatefulWidget {
@@ -60,59 +61,68 @@ class _LogInPageState extends State<LogInPage> {
     final authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppPage.login.toTitle),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: _emailValidator,
-                  onSaved: (value) => _email = value!,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: _passwordValidator,
-                  onSaved: (value) => _password = value!,
-                ),
-                const SizedBox(height: 20),
-                Button(
-                  text: "로그인",
-                  isLoading: authViewModel.loading,
-                  onTap: () {
-                    if (!_formKey.currentState!.validate()) return;
-                    _formKey.currentState!.save();
-                    authViewModel.emailLogin(
-                      context,
-                      email: _email,
-                      password: _password,
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      const TextSpan(text: '아직 계정이 없으신가요? '),
-                      TextSpan(
-                        text: ' 회원가입',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            context.go(AppPage.register.toPath);
-                          },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        leading: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                context.go(AppPage.register.toPath);
+              },
+              child: const Icon(Icons.chevron_left, size: 32),
             ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextField(
+                labelText: '이메일',
+                validator: _emailValidator,
+                onSaved: (value) => _email = value!,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 8),
+              CustomTextField(
+                labelText: '패스워드',
+                obscureText: true,
+                validator: _passwordValidator,
+                onSaved: (value) => _password = value!,
+              ),
+              const SizedBox(height: 8),
+              CustomButton(
+                text: "로그인",
+                isLoading: authViewModel.loading,
+                onTap: () {
+                  if (!_formKey.currentState!.validate()) return;
+                  _formKey.currentState!.save();
+                  authViewModel.emailLogin(
+                    context,
+                    email: _email,
+                    password: _password,
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(text: '아직 계정이 없으신가요? '),
+                    TextSpan(
+                      text: ' 회원가입',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          context.go(AppPage.register.toPath);
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

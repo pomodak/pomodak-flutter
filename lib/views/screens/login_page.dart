@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
@@ -129,8 +130,40 @@ class _LogInPageState extends State<LogInPage> {
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: CustomDivider(),
               ),
-
-              
+              CustomButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/google.svg",
+                  height: 20,
+                ),
+                text: "구글 로그인",
+                onTap: () {},
+                backgroundColor: Colors.white,
+                textColor: Colors.black,
+              ),
+              const SizedBox(height: 8),
+              CustomButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/kakao.svg",
+                  height: 16,
+                ),
+                text: "카카오 로그인",
+                onTap: () {},
+                backgroundColor: const Color(0xffFEE500),
+                textColor: Colors.black,
+                borderWidth: 0,
+              ),
+              const SizedBox(height: 8),
+              CustomButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/naver.svg",
+                  height: 20,
+                ),
+                text: "네이버 로그인",
+                onTap: () {},
+                backgroundColor: const Color(0xff03C75A),
+                textColor: Colors.white,
+                borderWidth: 0,
+              )
             ],
           ),
         ),

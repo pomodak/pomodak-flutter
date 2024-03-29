@@ -6,7 +6,9 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color backgroundColor;
   final Color textColor;
-  final IconData? icon;
+  final dynamic icon; // Icon or SvgPicture
+  final Color borderColor;
+  final double borderWidth;
 
   const CustomButton({
     super.key,
@@ -15,20 +17,37 @@ class CustomButton extends StatelessWidget {
     required this.onTap,
     this.backgroundColor = Colors.black,
     this.textColor = Colors.white,
+    this.borderColor = Colors.black12,
+    this.borderWidth = 1,
     this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> rowChildren = [
+      if (icon != null) ...[
+        icon,
+        const SizedBox(width: 12),
+      ],
+      Text(
+        text,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ];
+
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14.0),
+        height: 48,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isLoading ? Colors.grey : backgroundColor, // 로딩 중이면 회색
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+            color: isLoading ? Colors.grey : backgroundColor, // 로딩 중이면 회색
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: borderColor, width: borderWidth)),
         child: isLoading
             ? SizedBox(
                 width: 24,
@@ -42,20 +61,7 @@ class CustomButton extends StatelessWidget {
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, color: textColor),
-                    const SizedBox(width: 8.0),
-                  ],
-                  Text(
-                    text,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                children: rowChildren,
               ),
       ),
     );

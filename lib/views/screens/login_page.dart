@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/widgets/button.dart';

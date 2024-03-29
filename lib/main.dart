@@ -8,6 +8,7 @@ import 'package:pomodak/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,11 +42,22 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late AppViewModel appViewModel;
   late AuthViewModel authViewModel;
+  late MemberViewModel memberViewModel;
 
   @override
   void initState() {
     appViewModel = AppViewModel(widget.sharedPreferences);
-    authViewModel = AuthViewModel();
+    memberViewModel = MemberViewModel();
+
+    authViewModel = AuthViewModel(
+      onLoginSuccess: () async {
+        await memberViewModel.loadMember();
+      },
+      onLogoutComplete: () async {
+        await memberViewModel.remove();
+      },
+    );
+
     super.initState();
   }
 
@@ -62,6 +74,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<AuthViewModel>(
           create: (_) => authViewModel,
         ),
+        ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
         // 라우터는 리다이렉트를 처리하기 위해 로그인 상태와 앱 상태를 주입받음
         Provider<AppRouter>(
             create: (_) => AppRouter(appViewModel, authViewModel)),

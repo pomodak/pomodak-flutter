@@ -16,6 +16,12 @@ class AuthViewModel with ChangeNotifier {
   bool get loading => _loading;
   bool get isLoggedIn => _isLoggedIn;
 
+  // Callbacks
+  Future<void> Function()? onLoginSuccess;
+  Future<void> Function()? onLogoutComplete;
+
+  AuthViewModel({this.onLoginSuccess, this.onLogoutComplete});
+
   setLoading(bool value) {
     _loading = value;
     notifyListeners();
@@ -30,10 +36,14 @@ class AuthViewModel with ChangeNotifier {
     try {
       await _myRepo.emailLoginApi(email: email, password: password);
 
+      await loadAccount(); // 계정 갱신
+
+      if (onLoginSuccess != null) {
+        await onLoginSuccess!();
+      }
       if (context.mounted) {
         MessageUtil.flushbarErrorMessage("로그인 성공", context);
       }
-      await loadAccount();
     } catch (e) {
       if (context.mounted) {
         MessageUtil.flushbarErrorMessage(e.toString(), context);
@@ -53,11 +63,16 @@ class AuthViewModel with ChangeNotifier {
     await _myRepo.logOut();
     _isLoggedIn = false;
     _account = null;
+
+    if (onLogoutComplete != null) {
+      await onLogoutComplete!();
+    }
     notifyListeners();
   }
 
   // 앱 시작 시 실행하는 로직
   Future<void> onAppStart() async {
     await loadAccount();
+    notifyListeners();
   }
 }

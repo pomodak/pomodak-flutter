@@ -22,4 +22,13 @@ class MemberModel {
       point: json['point'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'member_id': memberId,
+      'nickname': nickname,
+      'status_message': statusMessage,
+      'image_url': imageUrl,
+      'point': point,
+    };
+  }
 }

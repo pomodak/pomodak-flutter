@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
+import 'package:pomodak/views/widgets/custom_devider.dart';
 import 'package:pomodak/views/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -110,7 +111,9 @@ class _LogInPageState extends State<LogInPage> {
               Text.rich(
                 TextSpan(
                   children: [
-                    const TextSpan(text: '아직 계정이 없으신가요? '),
+                    const TextSpan(
+                        text: '아직 계정이 없으신가요? ',
+                        style: TextStyle(color: Colors.black54)),
                     TextSpan(
                       text: ' 회원가입',
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -122,6 +125,12 @@ class _LogInPageState extends State<LogInPage> {
                   ],
                 ),
               ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: CustomDivider(),
+              ),
+
+              
             ],
           ),
         ),

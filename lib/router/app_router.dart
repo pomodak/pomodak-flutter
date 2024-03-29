@@ -6,7 +6,7 @@ import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/screens/login_page.dart';
 import 'package:pomodak/screens/main_page.dart';
-import 'package:pomodak/screens/splash_page.dart';
+import 'package:pomodak/views/screens/splash_page.dart';
 import 'package:pomodak/views/screens/register/register_page.dart';
 
 class AppRouter {

@@ -8,6 +8,7 @@ import 'package:pomodak/views/screens/login_page.dart';
 import 'package:pomodak/screens/main_page.dart';
 import 'package:pomodak/views/screens/splash_page.dart';
 import 'package:pomodak/views/screens/register/register_page.dart';
+import 'package:pomodak/views/screens/welcome_page.dart';
 
 class AppRouter {
   late final AppViewModel appViewModel;
@@ -34,6 +35,11 @@ class AppRouter {
         builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
+        path: AppPage.welcome.toPath,
+        name: AppPage.welcome.toName,
+        builder: (context, state) => const WelcomePage(),
+      ),
+      GoRoute(
         path: AppPage.login.toPath,
         name: AppPage.login.toName,
         builder: (context, state) => const LogInPage(),
@@ -54,7 +60,9 @@ class AppRouter {
     // 앱의 상태에 따라 적절한 페이지로 리다이렉팅
     redirect: (_, state) {
       // 전체 라우트 파악
+      final welcomeLocation = state.namedLocation(AppPage.welcome.toName);
       final loginLocation = state.namedLocation(AppPage.login.toName);
+      final registerLocation = state.namedLocation(AppPage.register.toName);
       final homeLocation = state.namedLocation(AppPage.home.toName);
       final splashLocation = state.namedLocation(AppPage.splash.toName);
 
@@ -62,7 +70,9 @@ class AppRouter {
       final isInitialized = appViewModel.initialized; // 초기화 상태
 
       // 이동중인 라우트 파악
+      final isGoingToWelcome = state.matchedLocation == welcomeLocation;
       final isGoingToLogin = state.matchedLocation == loginLocation;
+      final isGoingToRegister = state.matchedLocation == registerLocation;
       final isGoingToHome = state.matchedLocation == homeLocation;
       final isGoingToInit = state.matchedLocation == splashLocation;
 
@@ -70,13 +80,15 @@ class AppRouter {
       if (!isInitialized && !isGoingToInit) {
         return splashLocation;
       }
-      // 앱이 초기화되었지만 사용자가 로그인하지 않았고 로그인 페이지로 가지 않는 경우, 로그인 페이지
+      // 앱이 초기화되었지만 사용자가 로그인하지 않고 홈으로 이동할 경우, 웰컴 페이지
       else if (isInitialized && (!isLogedIn && isGoingToHome)) {
-        return loginLocation;
+        return welcomeLocation;
       }
       // 사용자가 로그인한 상태에서 로그인 페이지로 가려고 하거나,
       // 앱이 이미 초기화된 상태에서 스플래시 페이지로 가려고 하는 경우, 홈 페이지
       else if ((isLogedIn && isGoingToLogin) ||
+          (isLogedIn && isGoingToWelcome) ||
+          (isLogedIn && isGoingToRegister) ||
           (isInitialized && isGoingToInit)) {
         return homeLocation;
       } else {

@@ -65,7 +65,7 @@ class _LogInPageState extends State<LogInPage> {
           children: [
             GestureDetector(
               onTap: () {
-                context.go(AppPage.register.toPath);
+                context.go(AppPage.welcome.toPath);
               },
               child: const Icon(Icons.chevron_left, size: 32),
             ),

@@ -1,4 +1,4 @@
-import 'package:pomodak/data/response/status.dart';
+enum Status { loading, completed, error }
 
 class ApiResponse<T> {
   Status? status;

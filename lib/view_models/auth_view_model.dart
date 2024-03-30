@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:pomodak/repositories/auth_repository.dart';
+import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/domain/account_model.dart';
 

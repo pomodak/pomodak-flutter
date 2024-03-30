@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:pomodak/data/app_exceptions.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:http/http.dart' as http;
-import 'package:pomodak/repositories/auth_repository.dart';
+import 'package:pomodak/data/repositories/auth_repository.dart';
 
 class NetworkApiService extends BaseApiServices {
   static final AuthRepository _authRepository = AuthRepository();

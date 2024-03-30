@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pomodak/data/app_exceptions.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/models/account_model.dart';
@@ -117,23 +118,28 @@ class AuthRepository {
     final expiresIn = int.tryParse(expiresInStr ?? '0') ?? 0;
 
     if (now >= expiresIn) {
-      final response = await http.post(
-        Uri.parse('$_nestApiEndpoint/auth/refresh'),
-        headers: {
-          "Authorization": 'Bearer $refreshToken',
-        },
-      );
+      try {
+        final response = await http.post(
+          Uri.parse('$_nestApiEndpoint/auth/refresh'),
+          headers: {
+            "Authorization": 'Bearer $refreshToken',
+          },
+        );
 
-      if (response.statusCode == 200) {
-        var data =
-            RefreshResponseData.fromJson(json.decode(response.body)["data"]);
-        await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
-        // 새로운 expiresIn 계산 및 저장
-        return data.accessToken;
-      } else {
-        // 로그아웃 처리
-        await logOut();
-        return null;
+        if (response.statusCode == 200) {
+          var data =
+              RefreshResponseData.fromJson(json.decode(response.body)["data"]);
+          await _storeTokens(
+              data.accessToken, data.refreshToken, data.expiresIn);
+          // 새로운 expiresIn 계산 및 저장
+          return data.accessToken;
+        } else {
+          // 로그아웃 처리
+          await logOut();
+          return null;
+        }
+      } catch (e) {
+        throw FetchDataException('No Internet Connection');
       }
     }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final bool isLoading;
+  final bool disabled;
   final VoidCallback onTap;
   final Color backgroundColor;
   final Color textColor;
@@ -14,6 +15,7 @@ class CustomButton extends StatelessWidget {
     super.key,
     required this.text,
     this.isLoading = false,
+    this.disabled = false,
     required this.onTap,
     this.backgroundColor = Colors.black,
     this.textColor = Colors.white,
@@ -40,12 +42,16 @@ class CustomButton extends StatelessWidget {
     ];
 
     return GestureDetector(
-      onTap: isLoading ? null : onTap,
+      onTap: isLoading || disabled ? null : onTap,
       child: Container(
         height: 48,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            color: isLoading ? Colors.grey : backgroundColor, // 로딩 중이면 회색
+            color: isLoading
+                ? Colors.grey
+                : (disabled
+                    ? Colors.grey.shade400
+                    : backgroundColor), // 로딩 중이거나 비활성화 상태면 회색 배경
             borderRadius: BorderRadius.circular(8.0),
             border: Border.all(color: borderColor, width: borderWidth)),
         child: isLoading

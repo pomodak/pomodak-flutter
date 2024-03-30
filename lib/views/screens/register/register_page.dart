@@ -22,6 +22,20 @@ class _RegisterPageState extends State<RegisterPage> {
       SendCheckEmailStep(onSuccess: _goToNextStep),
       EmailRegisterStep(onSuccess: _completeRegistration),
     ];
+    List<Widget> stepTitles = [
+      const Text(
+        "약관동의",
+        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      ),
+      const Text(
+        "가입하기",
+        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      ),
+      const Text(
+        "가입하기",
+        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      ),
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -36,9 +50,16 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 32, bottom: 48),
+                child: stepTitles[_currentStep],
+              ),
               stepWidgets[_currentStep],
             ],
           ),

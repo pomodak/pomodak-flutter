@@ -34,7 +34,7 @@ if (applicationName == null) {
 
 android {
     namespace applicationName
-    compileSdk 33
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {

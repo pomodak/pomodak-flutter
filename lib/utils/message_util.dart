@@ -27,4 +27,21 @@ class MessageUtil {
       duration: const Duration(seconds: 3),
     ).show(context);
   }
+
+  static void flushbarSuccessMessage(String message, BuildContext context) {
+    Flushbar(
+      margin: const EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+      message: message,
+      icon: const Icon(
+        Icons.check,
+        color: Colors.white,
+      ),
+      messageColor: Colors.white,
+      backgroundColor: Colors.green,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 3),
+    ).show(context);
+  }
 }

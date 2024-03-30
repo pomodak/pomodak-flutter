@@ -8,14 +8,9 @@ import 'package:pomodak/views/screens/login/widgets/social_login_list.dart';
 import 'package:pomodak/views/widgets/custom_devider.dart';
 import 'package:provider/provider.dart';
 
-class LogInPage extends StatefulWidget {
+class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
 
-  @override
-  State<LogInPage> createState() => _LogInPageState();
-}
-
-class _LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);

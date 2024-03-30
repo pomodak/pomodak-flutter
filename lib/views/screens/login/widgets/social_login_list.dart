@@ -5,13 +5,13 @@ import 'package:pomodak/views/widgets/custom_button.dart';
 class SocialLoginList extends StatelessWidget {
   final VoidCallback onGoogleLoginTap;
   final VoidCallback onKakaoLoginTap;
-  final VoidCallback onNaverLoginTap;
+  // final VoidCallback onNaverLoginTap;
 
   const SocialLoginList({
     super.key,
     required this.onGoogleLoginTap,
     required this.onKakaoLoginTap,
-    required this.onNaverLoginTap,
+    // required this.onNaverLoginTap,
   });
 
   @override
@@ -34,15 +34,15 @@ class SocialLoginList extends StatelessWidget {
           textColor: Colors.black,
           borderWidth: 0,
         ),
-        const SizedBox(height: 8),
-        CustomButton(
-          icon: SvgPicture.asset("assets/icons/naver.svg", height: 20),
-          text: "네이버 로그인",
-          onTap: onNaverLoginTap,
-          backgroundColor: const Color(0xff03C75A),
-          textColor: Colors.white,
-          borderWidth: 0,
-        ),
+        // const SizedBox(height: 8),
+        // CustomButton(
+        //   icon: SvgPicture.asset("assets/icons/naver.svg", height: 20),
+        //   text: "네이버 로그인",
+        //   onTap: onNaverLoginTap,
+        //   backgroundColor: const Color(0xff03C75A),
+        //   textColor: Colors.white,
+        //   borderWidth: 0,
+        // ),
       ],
     );
   }

@@ -88,7 +88,6 @@ class AuthViewModel with ChangeNotifier {
     try {
       String accessToken = await signInWithKakao();
       await _myRepo.kakaoLoginApi(accessToken: accessToken);
-
       await loadAccount(); // 계정 갱신
 
       if (onLoginSuccess != null) {

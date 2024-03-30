@@ -76,7 +76,7 @@ class _LogInPageState extends State<LogInPage> {
               onKakaoLoginTap: () {
                 authViewModel.kakaoLogin(context);
               },
-              onNaverLoginTap: () {},
+              // onNaverLoginTap: () {},
             ),
           ],
         ),

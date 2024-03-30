@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/views/screens/register/widgets/email_register_form.dart';
 
 class SendCheckEmailStep extends StatelessWidget {
-  final VoidCallback onSuccess;
+  final Function(String email, String password) onSuccess;
 
   const SendCheckEmailStep({super.key, required this.onSuccess});
 
@@ -9,10 +10,9 @@ class SendCheckEmailStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: onSuccess,
-          child: const Text("이메일 발송"),
-        ),
+        EmailRegisterForm(onRegister: (email, password) {
+          onSuccess(email, password);
+        }),
       ],
     );
   }

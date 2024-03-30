@@ -4,6 +4,7 @@ import 'package:pomodak/views/screens/register/steps/agree_to_policy_step.dart';
 import 'package:pomodak/views/screens/register/steps/email_register_step.dart';
 import 'package:pomodak/views/screens/register/steps/send_check_email_step.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pomodak/views/widgets/custom_loading_overlay.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,13 +15,16 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   int _currentStep = 0;
+  String _email = '';
+  String _password = '';
 
   @override
   Widget build(BuildContext context) {
     List<Widget> stepWidgets = [
       AgreeToPolicyStep(onSuccess: _goToNextStep),
-      SendCheckEmailStep(onSuccess: _goToNextStep),
-      EmailRegisterStep(onSuccess: _completeRegistration),
+      SendCheckEmailStep(onSuccess: _completeSendCheckEmail),
+      EmailRegisterStep(
+          onSuccess: _completeRegistration, reSendCode: _resendCode),
     ];
     List<Widget> stepTitles = [
       const Text(
@@ -69,24 +73,39 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _goToNextStep() {
-    if (_currentStep < 2) {
-      setState(() {
-        _currentStep++;
-      });
-    }
+    setState(() =>
+        _currentStep = (_currentStep < 2) ? _currentStep + 1 : _currentStep);
   }
 
   void _goToPreviousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-    } else {
+    setState(() =>
+        _currentStep = (_currentStep > 0) ? _currentStep - 1 : _currentStep);
+    if (_currentStep == 0) {
       context.go(AppPage.login.toPath);
     }
   }
 
-  void _completeRegistration() {
-    context.go(AppPage.home.toPath);
+  void _completeSendCheckEmail(String email, String password) async {
+    _email = email;
+    _password = password;
+    showCustomLoadingOverlay(context);
+    // 이메일 발송
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) hideCustomLoadingOverlay(context);
+    _goToNextStep();
+  }
+
+  void _completeRegistration(String code) async {
+    showCustomLoadingOverlay(context);
+    // 회원가입
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      hideCustomLoadingOverlay(context);
+      context.go(AppPage.home.toPath);
+    }
+  }
+
+  void _resendCode() {
+    _completeSendCheckEmail(_email, _password);
   }
 }

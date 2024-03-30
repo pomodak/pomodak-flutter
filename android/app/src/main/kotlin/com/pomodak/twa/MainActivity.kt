@@ -1,4 +1,4 @@
-package com.example.pomodak
+package com.pomodak.twa
 
 import io.flutter.embedding.android.FlutterActivity
 

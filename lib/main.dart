@@ -1,37 +1,20 @@
-import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:pomodak/screens/home_screen.dart';
-import 'package:pomodak/screens/inventory_screen.dart';
-import 'package:pomodak/screens/more_screen.dart';
-import 'package:pomodak/screens/shop_screen.dart';
-import 'package:pomodak/screens/user_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/theme/app_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const List<TabItem> items = [
-  TabItem(
-    icon: Icons.home_outlined,
-    title: '홈',
-  ),
-  TabItem(
-    icon: Icons.people_outline,
-    title: '내정보',
-  ),
-  TabItem(
-    icon: Icons.shopping_cart_outlined,
-    title: '상점',
-  ),
-  TabItem(
-    icon: Icons.backpack_outlined,
-    title: '인벤토리',
-  ),
-  TabItem(
-    icon: Icons.settings_outlined,
-    title: '설정',
-  ),
-];
-
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   // 세로모드 고정
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -41,81 +24,82 @@ void main() {
     ],
   );
 
-  runApp(const MyApp());
+  // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // runApp() 호출 전 Flutter SDK 초기화
+  KakaoSdk.init(
+    nativeAppKey: dotenv.env['KAKAO_NATIVE_KEY']!,
+    javaScriptAppKey: dotenv.env['KAKAO_JS_APP_KEY']!,
+  );
+
+  final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+  runApp(MyApp(sharedPreferences: sharedPreferences));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  final SharedPreferences sharedPreferences;
+  const MyApp({
+    super.key,
+    required this.sharedPreferences,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pomodak',
-      theme: AppTheme.lightTheme,
-      home: const MyHomePage(),
-    );
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  late final PageController _pageController;
-  int _selectedIndex = 0;
-  final List<Widget> _widgetOptions = [
-    const HomeScreen(),
-    const UserScreen(),
-    const ShopScreen(),
-    const InventoryScreen(),
-    const MoreScreen(),
-  ];
+class _MyAppState extends State<MyApp> {
+  late AppViewModel appViewModel;
+  late AuthViewModel authViewModel;
+  late MemberViewModel memberViewModel;
 
   @override
   void initState() {
+    appViewModel = AppViewModel(widget.sharedPreferences);
+    memberViewModel = MemberViewModel();
+
+    authViewModel = AuthViewModel(
+      onLoginSuccess: () async {
+        await memberViewModel.loadMember();
+      },
+      onLogoutComplete: () async {
+        await memberViewModel.remove();
+      },
+    );
+
     super.initState();
-    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
-  }
-
-  void _onItemTapped(int index) {
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutQuad,
-    );
-  }
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: _widgetOptions,
-      ),
-      bottomNavigationBar: BottomBarDefault(
-        items: items,
-        backgroundColor: Theme.of(context).colorScheme.background,
-        color: Colors.black38,
-        colorSelected: Theme.of(context).colorScheme.primary,
-        onTap: _onItemTapped,
-        indexSelected: _selectedIndex,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppViewModel>(create: (_) => appViewModel),
+        ChangeNotifierProvider<AuthViewModel>(
+          create: (_) => authViewModel,
+        ),
+        ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
+        // 라우터는 리다이렉트를 처리하기 위해 로그인 상태와 앱 상태를 주입받음
+        Provider<AppRouter>(
+            create: (_) => AppRouter(appViewModel, authViewModel)),
+      ],
+      child: Builder(
+        builder: (context) {
+          // listen: false - AppRouter에 변경사항이 생겨도 재빌드 X
+          final GoRouter goRouter =
+              Provider.of<AppRouter>(context, listen: false).router;
+          return MaterialApp.router(
+            title: "Pomodak",
+            theme: AppTheme.lightTheme,
+            routerConfig: goRouter,
+          );
+        },
       ),
     );
   }

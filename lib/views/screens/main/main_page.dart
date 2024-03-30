@@ -1,10 +1,10 @@
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:pomodak/screens/home_screen.dart';
-import 'package:pomodak/screens/inventory_screen.dart';
-import 'package:pomodak/screens/more_screen.dart';
-import 'package:pomodak/screens/shop_screen.dart';
-import 'package:pomodak/screens/user_screen.dart';
+import 'package:pomodak/views/screens/main/home_screen/home_screen.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/inventory_screen.dart';
+import 'package:pomodak/views/screens/main/more_screen/more_screen.dart';
+import 'package:pomodak/views/screens/main/shop_screen/shop_screen.dart';
+import 'package:pomodak/views/screens/main/user_screen/user_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

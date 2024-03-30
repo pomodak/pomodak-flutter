@@ -32,11 +32,10 @@ class ShowUserGuideButton extends StatelessWidget {
           showUserGuide(context);
         },
         child: const Text(
-          "How to use?",
+          "사용방법",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             letterSpacing: 2,
-            fontWeight: FontWeight.w500,
           ),
         ),
       ),

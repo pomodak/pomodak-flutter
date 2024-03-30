@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/widgets/main_character_display.dart';
-import 'package:pomodak/widgets/show_egg_inventory_button.dart';
-import 'package:pomodak/widgets/start_button.dart';
-import 'package:pomodak/widgets/show_user_guide_button.dart';
-import 'package:pomodak/widgets/target_timer_display.dart';
+import 'package:pomodak/views/screens/main/home_screen/widgets/show_user_guide_button.dart';
+import 'package:pomodak/views/screens/main/home_screen/widgets/main_character_display.dart';
+import 'package:pomodak/views/screens/main/home_screen/widgets/show_egg_inventory_button.dart';
+import 'package:pomodak/views/screens/main/home_screen/widgets/start_button.dart';
+import 'package:pomodak/views/screens/main/home_screen/widgets/target_timer_display.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

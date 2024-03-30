@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pomodak/constants/cdn_images.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
 
 class WelcomePage extends StatelessWidget {

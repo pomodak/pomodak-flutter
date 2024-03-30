@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/constants/cdn_images.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/models/member_model.dart';
+import 'package:pomodak/models/domain/member_model.dart';
 import 'package:pomodak/repositories/member_repository.dart';
 
 class MemberViewModel with ChangeNotifier {

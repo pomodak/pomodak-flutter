@@ -1,4 +1,4 @@
-import 'package:pomodak/models/account_model.dart';
+import 'package:pomodak/models/domain/account_model.dart';
 
 class AuthResponseData {
   final AccountModel account;

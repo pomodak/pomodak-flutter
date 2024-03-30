@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/constants/heatmap_color.dart';
+import 'package:pomodak/config/constants/heatmap_color.dart';
 
 class HeatMapContainer extends StatelessWidget {
   final DateTime date;

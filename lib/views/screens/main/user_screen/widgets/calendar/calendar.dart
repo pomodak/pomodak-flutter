@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/widgets/calendar/default_cell_builder.dart';
-import 'package:pomodak/widgets/calendar/dow_builder.dart';
-import 'package:pomodak/widgets/calendar/header_title_builder.dart';
-import 'package:pomodak/widgets/calendar/marked_cell_builder.dart';
-import 'package:pomodak/widgets/calendar/outside_cell_builder.dart';
-import 'package:pomodak/widgets/calendar/selected_cell_builder.dart';
-import 'package:pomodak/widgets/calendar/today_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/default_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/dow_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/header_title_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/marked_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/outside_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/selected_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/today_cell_builder.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {

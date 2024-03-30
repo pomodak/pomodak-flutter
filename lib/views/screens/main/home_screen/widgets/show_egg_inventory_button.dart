@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/constants/cdn_images.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
 
 class ShowEggInventoryButton extends StatelessWidget {
   const ShowEggInventoryButton({super.key});
@@ -8,7 +8,6 @@ class ShowEggInventoryButton extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        // 전체 너비를 계산합니다.
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -54,14 +53,14 @@ class ShowEggInventoryButton extends StatelessWidget {
       onPressed: () => _openBottomSheet(context),
       style: ElevatedButton.styleFrom(
           elevation: 0,
-          minimumSize: const Size(50, 60),
+          minimumSize: const Size(50, 48),
           backgroundColor: Theme.of(context).colorScheme.background,
           foregroundColor: Theme.of(context).colorScheme.primary,
           surfaceTintColor: Theme.of(context).colorScheme.background),
       child: Image.network(
         CDNImages.nest,
-        width: 60,
-        height: 60,
+        width: 48,
+        height: 48,
       ),
     );
   }

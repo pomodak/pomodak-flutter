@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/date_util.dart';
-import 'package:pomodak/widgets/heatmap/heatmap_page.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_page.dart';
 
 class HeatMap extends StatefulWidget {
   final DateTime? startDate;

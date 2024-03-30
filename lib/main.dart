@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/router/app_router.dart';
-import 'package:pomodak/theme/app_theme.dart';
+import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';

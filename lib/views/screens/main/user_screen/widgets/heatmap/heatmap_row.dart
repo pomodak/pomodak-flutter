@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/datasets_util.dart';
 import 'package:pomodak/utils/date_util.dart';
-import 'package:pomodak/widgets/heatmap/heatmap_container.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_container.dart';
 
 class HeatMapRow extends StatelessWidget {
   final List<Widget> dayContainers;

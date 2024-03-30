@@ -15,14 +15,14 @@ class StartButton extends StatelessWidget {
         authViewModel.logOut();
       },
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size(160, 54),
+        minimumSize: const Size(160, 48),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       child: const Text(
-        'START',
+        'Start',
         style: TextStyle(
-          fontSize: 22,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),

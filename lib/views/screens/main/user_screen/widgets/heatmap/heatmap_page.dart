@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/datasets_util.dart';
 import 'package:pomodak/utils/date_util.dart';
-import 'package:pomodak/widgets/heatmap/heatmap_row.dart';
-import 'package:pomodak/widgets/heatmap/heatmap_month_text.dart';
-import 'package:pomodak/widgets/heatmap/heatmap_week_text.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_row.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_month_text.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_week_text.dart';
 
 class HeatMapPage extends StatelessWidget {
   final List<int> _firstDayInfos = [];

@@ -1,4 +1,4 @@
-import 'package:pomodak/models/member_model.dart';
+import 'package:pomodak/models/domain/member_model.dart';
 
 class MemberResponseData {
   final MemberModel member;

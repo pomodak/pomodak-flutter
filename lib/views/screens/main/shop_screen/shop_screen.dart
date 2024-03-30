@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/constants/cdn_images.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});

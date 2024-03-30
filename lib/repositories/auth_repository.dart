@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pomodak/data/app_exceptions.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
-import 'package:pomodak/models/account_model.dart';
+import 'package:pomodak/models/domain/account_model.dart';
 import 'package:pomodak/models/api/auth_response_model.dart';
 import 'package:http/http.dart' as http;
 

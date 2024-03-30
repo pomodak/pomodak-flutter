@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/constants/cdn_images.dart';
-import 'package:pomodak/models/character_inventory.dart';
-import 'package:pomodak/widgets/character_card.dart';
-import 'package:pomodak/widgets/grade_badge.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
+import 'package:pomodak/models/domain/character_inventory_model.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_card.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
 
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<CharacterInventory> characters = [
-      CharacterInventory(
+    final List<CharacterInventoryModel> characters = [
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.common,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.rare,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.epic,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.legendary,
           imageUrl: CDNImages.mascot["finish"]!,
@@ -40,29 +40,29 @@ class InventoryScreen extends StatelessWidget {
           quantity: 1),
     ];
     // 임시
-    final List<CharacterInventory> eggs = [
-      CharacterInventory(
+    final List<CharacterInventoryModel> eggs = [
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.common,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.rare,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.epic,
           imageUrl: CDNImages.mascot["finish"]!,
           name: '초보닭',
           sellPrice: 1234,
           quantity: 1),
-      CharacterInventory(
+      CharacterInventoryModel(
           id: 1,
           grade: CharacterGrade.legendary,
           imageUrl: CDNImages.mascot["finish"]!,

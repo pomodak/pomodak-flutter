@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/models/api/member_response_model.dart';
-import 'package:pomodak/models/member_model.dart';
+import 'package:pomodak/models/domain/member_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String memberKey = "6E45EF1G1AUI3E51BD1VG9SD68";

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/widgets/heatmap/heatmap.dart';
-import 'package:pomodak/widgets/calendar/calendar.dart';
-import 'package:pomodak/widgets/user_profile.dart';
-import 'package:pomodak/widgets/user_focus_summary.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/calendar.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/user_profile.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/user_focus_summary.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});

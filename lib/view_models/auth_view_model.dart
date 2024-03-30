@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:pomodak/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
-import 'package:pomodak/models/account_model.dart';
+import 'package:pomodak/models/domain/account_model.dart';
 
 class AuthViewModel with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn();

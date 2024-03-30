@@ -1,6 +1,6 @@
-import 'package:pomodak/widgets/grade_badge.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
 
-class CharacterInventory {
+class CharacterInventoryModel {
   final int id;
   final CharacterGrade grade;
   final String imageUrl;
@@ -8,7 +8,7 @@ class CharacterInventory {
   final int sellPrice;
   final int quantity;
 
-  CharacterInventory({
+  CharacterInventoryModel({
     required this.id,
     required this.grade,
     required this.imageUrl,

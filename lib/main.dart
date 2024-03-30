@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model.dart';
 import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,11 +60,14 @@ class _MyAppState extends State<MyApp> {
   late AuthViewModel authViewModel;
   late MemberViewModel memberViewModel;
 
+  late TimerOptionsViewModel timerOptionsViewModel;
+  late TimerStateViewModel timerStateViewModel;
+
   @override
   void initState() {
-    appViewModel = AppViewModel(widget.sharedPreferences);
-    memberViewModel = MemberViewModel();
+    super.initState();
 
+    appViewModel = AppViewModel(widget.sharedPreferences);
     authViewModel = AuthViewModel(
       onLoginSuccess: () async {
         await memberViewModel.loadMember();
@@ -71,8 +76,10 @@ class _MyAppState extends State<MyApp> {
         await memberViewModel.remove();
       },
     );
+    memberViewModel = MemberViewModel();
 
-    super.initState();
+    timerOptionsViewModel = TimerOptionsViewModel();
+    timerStateViewModel = TimerStateViewModel(timerOptionsViewModel);
   }
 
   @override
@@ -89,6 +96,11 @@ class _MyAppState extends State<MyApp> {
           create: (_) => authViewModel,
         ),
         ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
+        ChangeNotifierProvider<TimerOptionsViewModel>(
+            create: (_) => timerOptionsViewModel),
+        ChangeNotifierProvider<TimerStateViewModel>(
+            create: (_) => timerStateViewModel),
+
         // 라우터는 리다이렉트를 처리하기 위해 로그인 상태와 앱 상태를 주입받음
         Provider<AppRouter>(
             create: (_) => AppRouter(appViewModel, authViewModel)),

@@ -39,11 +39,11 @@ class AccountModel {
 
 class Role {
   final int roleId;
-  final String name;
+  final String? name;
 
   Role({
     required this.roleId,
-    required this.name,
+    this.name,
   });
 
   factory Role.fromJson(Map<String, dynamic> json) {

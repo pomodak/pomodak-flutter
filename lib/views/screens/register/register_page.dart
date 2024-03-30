@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/router/route_utils.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/screens/register/steps/agree_to_policy_step.dart';
 import 'package:pomodak/views/screens/register/steps/email_register_step.dart';
 import 'package:pomodak/views/screens/register/steps/send_check_email_step.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pomodak/views/widgets/custom_loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -88,19 +90,32 @@ class _RegisterPageState extends State<RegisterPage> {
   void _completeSendCheckEmail(String email, String password) async {
     _email = email;
     _password = password;
-    showCustomLoadingOverlay(context);
-    // 이메일 발송
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) hideCustomLoadingOverlay(context);
+    context.loaderOverlay.show();
+
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    var success = await authViewModel.checkEmail(context, email: email);
+
+    if (mounted) context.loaderOverlay.hide();
+    if (!success) return;
+
     _goToNextStep();
   }
 
   void _completeRegistration(String code) async {
-    showCustomLoadingOverlay(context);
-    // 회원가입
-    await Future.delayed(const Duration(seconds: 2));
+    context.loaderOverlay.show();
+
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    var success = await authViewModel.emailRegister(
+      context,
+      email: _email,
+      password: _password,
+      code: code,
+    );
+
+    if (mounted) context.loaderOverlay.hide();
+    if (!success) return;
+
     if (mounted) {
-      hideCustomLoadingOverlay(context);
       context.go(AppPage.home.toPath);
     }
   }

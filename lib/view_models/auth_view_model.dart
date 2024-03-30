@@ -57,6 +57,66 @@ class AuthViewModel with ChangeNotifier {
     setLoading(false);
   }
 
+  Future<bool> emailRegister(
+    BuildContext context, {
+    required String email,
+    required String password,
+    required String code,
+  }) async {
+    setLoading(true);
+    try {
+      await _myRepo.emailRegisterApi(
+        email: email,
+        password: password,
+        code: code,
+      );
+
+      await loadAccount(); // 계정 갱신
+
+      if (onLoginSuccess != null) {
+        await onLoginSuccess!();
+      }
+      if (context.mounted) {
+        MessageUtil.flushbarSuccessMessage("회원가입 성공", context);
+      }
+
+      setLoading(false);
+      return true;
+    } catch (e) {
+      if (context.mounted) {
+        MessageUtil.flushbarErrorMessage(e.toString(), context);
+      }
+      await logOut();
+
+      setLoading(false);
+      return false;
+    }
+  }
+
+  Future<bool> checkEmail(
+    BuildContext context, {
+    required String email,
+  }) async {
+    setLoading(true);
+    try {
+      await _myRepo.checkEmailApi(
+        email: email,
+      );
+
+      if (context.mounted) {
+        MessageUtil.flushbarSuccessMessage("인증코드를 발송했습니다.", context);
+      }
+      setLoading(false);
+      return true;
+    } catch (e) {
+      if (context.mounted) {
+        MessageUtil.flushbarErrorMessage(e.toString(), context);
+      }
+      setLoading(false);
+      return false;
+    }
+  }
+
   Future<void> googleLogin(BuildContext context) async {
     setLoading(true);
 
@@ -86,7 +146,7 @@ class AuthViewModel with ChangeNotifier {
     setLoading(true);
 
     try {
-      String accessToken = await signInWithKakao();
+      String accessToken = await _signInWithKakao();
       await _myRepo.kakaoLoginApi(accessToken: accessToken);
       await loadAccount(); // 계정 갱신
 
@@ -129,7 +189,7 @@ class AuthViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> signInWithKakao() async {
+  Future<String> _signInWithKakao() async {
     OAuthToken result;
     if (await isKakaoTalkInstalled()) {
       try {

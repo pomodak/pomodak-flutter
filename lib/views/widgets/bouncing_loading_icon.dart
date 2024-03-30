@@ -1,27 +1,6 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-
-void showCustomLoadingOverlay(BuildContext context) {
-  showGeneralDialog(
-    context: context,
-    barrierDismissible: false,
-    transitionDuration: const Duration(milliseconds: 200),
-    barrierColor: Colors.black12.withOpacity(0.3),
-    pageBuilder: (ctx, anim1, anim2) => const SizedBox.shrink(),
-    transitionBuilder: (ctx, anim1, anim2, child) {
-      return const PopScope(
-        canPop: false,
-        child: Center(
-          child: BouncingLoadingIcon(),
-        ),
-      );
-    },
-  );
-}
-
-void hideCustomLoadingOverlay(BuildContext context) {
-  Navigator.of(context).pop();
-}
 
 class BouncingLoadingIcon extends StatefulWidget {
   const BouncingLoadingIcon({super.key});
@@ -38,9 +17,11 @@ class _BouncingLoadingIconState extends State<BouncingLoadingIcon> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      setState(() {
-        _bounceHeight = _bounceHeight == 0.0 ? 20.0 : 0.0;
-      });
+      if (mounted) {
+        setState(() {
+          _bounceHeight = _bounceHeight == 0.0 ? 20.0 : 0.0;
+        });
+      }
     });
   }
 

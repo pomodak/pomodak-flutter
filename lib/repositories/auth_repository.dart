@@ -45,6 +45,29 @@ class AuthRepository {
     }
   }
 
+// 구글 OAuth 로그인
+  Future<dynamic> googleLoginApi({
+    required String idToken,
+  }) async {
+    try {
+      Map body = {
+        "idToken": idToken,
+      };
+      dynamic response = await _apiServices.getPostApiResponse(
+        '$_nestApiEndpoint/auth/google/login/v2',
+        body,
+      );
+      var data = AuthResponseData.fromJson(response["data"]);
+      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+      await _storeAccount(data.account);
+
+      return response;
+    } catch (e) {
+      logOut();
+      rethrow;
+    }
+  }
+
   // 저장소를 확인하여 계정 반환 (에러 발생시 저장소 초기화)
   Future<AccountModel?> loadAccount() async {
     try {
@@ -90,7 +113,7 @@ class AuthRepository {
       }
     }
 
-    return await _storage.read(key: 'accessToken');
+    return await _storage.read(key: 'accessToken', aOptions: _androidOptions);
   }
 
   // 스토리지(토큰, 계정) 비우기

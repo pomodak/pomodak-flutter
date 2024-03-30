@@ -70,7 +70,9 @@ class _LogInPageState extends State<LogInPage> {
               child: CustomDivider(),
             ),
             SocialLoginList(
-              onGoogleLoginTap: () {},
+              onGoogleLoginTap: () {
+                authViewModel.googleLogin(context);
+              },
               onKakaoLoginTap: () {},
               onNaverLoginTap: () {},
             ),

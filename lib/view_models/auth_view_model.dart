@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pomodak/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/account_model.dart';
 
 class AuthViewModel with ChangeNotifier {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final _myRepo = AuthRepository();
 
   AccountModel? _account;
@@ -42,7 +44,32 @@ class AuthViewModel with ChangeNotifier {
         await onLoginSuccess!();
       }
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage("로그인 성공", context);
+        MessageUtil.flushbarSuccessMessage("로그인 성공", context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        MessageUtil.flushbarErrorMessage(e.toString(), context);
+      }
+      await logOut();
+    }
+    setLoading(false);
+  }
+
+  Future<void> googleLogin(BuildContext context) async {
+    setLoading(true);
+
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      var authentication = await googleUser?.authentication;
+      await _myRepo.googleLoginApi(idToken: authentication?.idToken ?? "");
+
+      await loadAccount(); // 계정 갱신
+
+      if (onLoginSuccess != null) {
+        await onLoginSuccess!();
+      }
+      if (context.mounted) {
+        MessageUtil.flushbarSuccessMessage("로그인 성공", context);
       }
     } catch (e) {
       if (context.mounted) {

@@ -46,6 +46,51 @@ class AuthRepository {
     }
   }
 
+  // 이메일로 회원가입
+  Future<dynamic> emailRegisterApi({
+    required String email,
+    required String password,
+    required String code,
+  }) async {
+    try {
+      Map body = {
+        "email": email,
+        "password": password,
+        "code": code,
+      };
+      dynamic response = await _apiServices.getPostApiResponse(
+        '$_nestApiEndpoint/auth/email/register',
+        body,
+      );
+      var data = AuthResponseData.fromJson(response["data"]);
+
+      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+      await _storeAccount(data.account);
+
+      return response;
+    } catch (e) {
+      logOut();
+      rethrow;
+    }
+  }
+
+  // 이메일 확인 메일 발송
+  Future<void> checkEmailApi({
+    required String email,
+  }) async {
+    try {
+      Map body = {
+        "email": email,
+      };
+      await _apiServices.getPostApiResponse(
+        '$_nestApiEndpoint/auth/email/check',
+        body,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // 구글 OAuth 로그인
   Future<dynamic> googleLoginApi({
     required String idToken,
@@ -87,7 +132,6 @@ class AuthRepository {
 
       return response;
     } catch (e) {
-      print(e);
       logOut();
       rethrow;
     }

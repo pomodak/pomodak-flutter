@@ -22,9 +22,19 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def kakaoAppKey = localProperties.getProperty('kakaoAppKey')
+if (kakaoAppKey == null) {
+    kakaoAppKey = 'kakaoAppKey'
+}
+
+def applicationName = localProperties.getProperty('flutter.applicationName')
+if (applicationName == null) {
+    applicationName = 'applicationName'
+}
+
 android {
-    namespace "com.example.pomodak"
-    compileSdk flutter.compileSdkVersion
+    namespace applicationName
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -42,19 +52,38 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.pomodak"
+        applicationId applicationName
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders += [kakaoAppKey: kakaoAppKey]
+    }
+    signingConfigs {
+        release {
+            def keyProperties = new Properties()
+            def keyPropertiesFile = rootProject.file('key.properties')
+            if (keyPropertiesFile.exists()) {
+                keyPropertiesFile.withReader('UTF-8') { reader ->
+                    keyProperties.load(reader)
+                }
+            }
+
+            keyAlias keyProperties['keyAlias']
+            keyPassword keyProperties['keyPassword']
+            storePassword keyProperties['storePassword']
+            storeFile file(keyProperties['storeFile'])
+        }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            // signingConfig signingConfigs.release
             signingConfig signingConfigs.debug
         }
     }

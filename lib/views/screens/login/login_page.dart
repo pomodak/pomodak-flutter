@@ -73,7 +73,9 @@ class _LogInPageState extends State<LogInPage> {
               onGoogleLoginTap: () {
                 authViewModel.googleLogin(context);
               },
-              onKakaoLoginTap: () {},
+              onKakaoLoginTap: () {
+                authViewModel.kakaoLogin(context);
+              },
               onNaverLoginTap: () {},
             ),
           ],

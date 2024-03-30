@@ -45,7 +45,7 @@ class AuthRepository {
     }
   }
 
-// 구글 OAuth 로그인
+  // 구글 OAuth 로그인
   Future<dynamic> googleLoginApi({
     required String idToken,
   }) async {
@@ -63,6 +63,30 @@ class AuthRepository {
 
       return response;
     } catch (e) {
+      logOut();
+      rethrow;
+    }
+  }
+
+  // 카카오 OAuth 로그인
+  Future<dynamic> kakaoLoginApi({
+    required String accessToken,
+  }) async {
+    try {
+      Map body = {
+        "access_token": accessToken,
+      };
+      dynamic response = await _apiServices.getPostApiResponse(
+        '$_nestApiEndpoint/auth/kakao/login/v2',
+        body,
+      );
+      var data = AuthResponseData.fromJson(response["data"]);
+      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+      await _storeAccount(data.account);
+
+      return response;
+    } catch (e) {
+      print(e);
       logOut();
       rethrow;
     }

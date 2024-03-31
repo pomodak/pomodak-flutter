@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TimerOptionsViewModel with ChangeNotifier {
+  late final SharedPreferences sharedPreferences;
+
   // 변경 시 타이머 초기화
   bool _isPomodoroMode = true;
   int _workTime = 25;
@@ -29,6 +32,10 @@ class TimerOptionsViewModel with ChangeNotifier {
   // 최근 변경 된 옵션(타이머 초기화 여부 확인용)
   TimerOptionsChangedEvent? _lastEvent;
   TimerOptionsChangedEvent? get lastEvent => _lastEvent;
+
+  TimerOptionsViewModel({required this.sharedPreferences}) {
+    loadOptions();
+  }
 
   // 옵션값 Setter
   set isPomodoroMode(bool value) {
@@ -61,7 +68,21 @@ class TimerOptionsViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void saveOptions() {
+  void saveOptions() async {
+    // 실제 옵션 변경 적용
+    _isPomodoroMode = _tempIsPomodoroMode;
+    _workTime = _tempWorkTime;
+    _restTime = _tempRestTime;
+    _sections = _tempSections;
+    _isFocusTogetherMode = _tempIsFocusTogetherMode;
+
+    await sharedPreferences.setBool("isPomodoroMode", _isPomodoroMode);
+    await sharedPreferences.setInt("workTime", _workTime);
+    await sharedPreferences.setInt("restTime", _restTime);
+    await sharedPreferences.setInt("sections", _sections);
+    await sharedPreferences.setBool(
+        "isFocusTogetherMode", _isFocusTogetherMode);
+
     // 변경사항 검사
     _lastEvent = TimerOptionsChangedEvent(
       isPomodoroModeChanged: _tempIsPomodoroMode != _isPomodoroMode,
@@ -72,14 +93,18 @@ class TimerOptionsViewModel with ChangeNotifier {
           _tempIsFocusTogetherMode != _isFocusTogetherMode,
     );
 
-    // 실제 옵션 변경 적용
-    _isPomodoroMode = _tempIsPomodoroMode;
-    _workTime = _tempWorkTime;
-    _restTime = _tempRestTime;
-    _sections = _tempSections;
-    _isFocusTogetherMode = _tempIsFocusTogetherMode;
-
     // 리스너들에게 변경 이벤트 전달
+    notifyListeners();
+  }
+
+  void loadOptions() {
+    _isPomodoroMode = sharedPreferences.getBool("isPomodoroMode") ?? true;
+    _workTime = sharedPreferences.getInt("workTime") ?? 25;
+    _restTime = sharedPreferences.getInt("restTime") ?? 5;
+    _sections = sharedPreferences.getInt("sections") ?? 4;
+    _isFocusTogetherMode =
+        sharedPreferences.getBool("isFocusTogetherMode") ?? false;
+
     notifyListeners();
   }
 

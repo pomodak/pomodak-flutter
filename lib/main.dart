@@ -85,7 +85,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<MemberViewModel>(
             create: (_) => MemberViewModel(memberRepository: memberRepository)),
         ChangeNotifierProvider<TimerOptionsViewModel>(
-            create: (_) => TimerOptionsViewModel()),
+            create: (_) => TimerOptionsViewModel(
+                sharedPreferences: widget.sharedPreferences)),
         ChangeNotifierProxyProvider<TimerOptionsViewModel, TimerStateViewModel>(
           create: (_) => TimerStateViewModel(),
           update: (ctx, timerOptionsViewModel, timerStateViewModel) {

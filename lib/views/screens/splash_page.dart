@@ -19,12 +19,12 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
+    super.initState();
     // 첫 실행에만 사용되기에 listen: false
     _appViewModel = Provider.of<AppViewModel>(context, listen: false);
     _authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     _memberViewModel = Provider.of<MemberViewModel>(context, listen: false);
     onStartUp();
-    super.initState();
   }
 
   void onStartUp() async {

@@ -51,6 +51,7 @@ dependencies:
   url_launcher: ^6.2.5
   loader_overlay: ^4.0.0
   json_annotation: ^4.8.1
+  dio: ^5.4.2+1
 
 dev_dependencies:
   flutter_test:

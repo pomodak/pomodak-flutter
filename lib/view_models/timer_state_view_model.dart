@@ -5,8 +5,8 @@ import 'package:pomodak/view_models/timer_options_view_model.dart';
 enum TimerMode { focus, rest, normal }
 
 class TimerStateViewModel with ChangeNotifier {
-  final TimerOptionsViewModel timerOptions;
-  TimerMode _timerMode;
+  late TimerOptionsViewModel timerOptions;
+  late TimerMode _timerMode;
   Timer? _timer;
   int _elapsedSeconds = 0; // 경과 시간(초 단위)
   DateTime? _backgroundTime; // 백그라운드로 전환된 시간
@@ -16,10 +16,12 @@ class TimerStateViewModel with ChangeNotifier {
   int get elapsedSeconds => _elapsedSeconds;
   bool get isRunning => _isRunning;
 
-  TimerStateViewModel(this.timerOptions)
-      : _timerMode =
-            timerOptions.isPomodoroMode ? TimerMode.focus : TimerMode.normal {
-    timerOptions.addListener(_onTimerOptionsChanged);
+  void update(TimerOptionsViewModel timerOptionsViewModel) {
+    timerOptions = timerOptionsViewModel;
+    _timerMode =
+        timerOptions.isPomodoroMode ? TimerMode.focus : TimerMode.normal;
+    _onTimerOptionsChanged();
+    notifyListeners();
   }
 
   void _onTimerOptionsChanged() {

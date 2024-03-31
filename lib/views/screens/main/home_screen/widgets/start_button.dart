@@ -12,7 +12,7 @@ class StartButton extends StatelessWidget {
     final authViewModel = Provider.of<AuthViewModel>(context);
     return ElevatedButton(
       onPressed: () {
-        authViewModel.logOut();
+        authViewModel.logOut(context);
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 48),

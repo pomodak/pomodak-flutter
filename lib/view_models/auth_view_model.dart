@@ -7,54 +7,47 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/domain/account_model.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:provider/provider.dart';
 
 class AuthViewModel with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final _myRepo = AuthRepository();
+  late AuthRepository authRepository;
 
   AccountModel? _account;
-  bool _loading = false;
+  final bool _loading = false;
   bool _isLoggedIn = false;
 
   AccountModel? get account => _account;
   bool get loading => _loading;
   bool get isLoggedIn => _isLoggedIn;
 
-  // Callbacks
-  Future<void> Function()? onLoginSuccess;
-  Future<void> Function()? onLogoutComplete;
-
-  AuthViewModel({this.onLoginSuccess, this.onLogoutComplete});
-
-  setLoading(bool value) {
-    _loading = value;
-    notifyListeners();
-  }
+  AuthViewModel({
+    required this.authRepository,
+  });
 
   Future<void> emailLogin(
     BuildContext context, {
     required String email,
     required String password,
   }) async {
-    setLoading(true);
     try {
-      await _myRepo.emailLoginApi(email: email, password: password);
+      await authRepository.emailLoginApi(email: email, password: password);
 
       await loadAccount(); // 계정 갱신
 
-      if (onLoginSuccess != null) {
-        await onLoginSuccess!();
-      }
       if (context.mounted) {
-        MessageUtil.flushbarSuccessMessage("로그인 성공", context);
+        MessageUtil.showSuccessToast(
+          "로그인 성공",
+        );
+        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
       }
     } catch (e) {
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage(e.toString(), context);
+        MessageUtil.showErrorToast(e.toString());
+        await logOut(context);
       }
-      await logOut();
     }
-    setLoading(false);
   }
 
   Future<bool> emailRegister(
@@ -63,32 +56,26 @@ class AuthViewModel with ChangeNotifier {
     required String password,
     required String code,
   }) async {
-    setLoading(true);
     try {
-      await _myRepo.emailRegisterApi(
+      await authRepository.emailRegisterApi(
         email: email,
         password: password,
         code: code,
       );
 
-      await loadAccount(); // 계정 갱신
-
-      if (onLoginSuccess != null) {
-        await onLoginSuccess!();
-      }
       if (context.mounted) {
-        MessageUtil.flushbarSuccessMessage("회원가입 성공", context);
+        MessageUtil.showSuccessToast("회원가입 성공");
+        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
       }
 
-      setLoading(false);
+      await loadAccount(); // 계정 갱신
       return true;
     } catch (e) {
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage(e.toString(), context);
+        MessageUtil.showErrorToast(e.toString());
+        await logOut(context);
       }
-      await logOut();
 
-      setLoading(false);
       return false;
     }
   }
@@ -97,88 +84,77 @@ class AuthViewModel with ChangeNotifier {
     BuildContext context, {
     required String email,
   }) async {
-    setLoading(true);
     try {
-      await _myRepo.checkEmailApi(
+      await authRepository.checkEmailApi(
         email: email,
       );
 
       if (context.mounted) {
-        MessageUtil.flushbarSuccessMessage("인증코드를 발송했습니다.", context);
+        MessageUtil.showSuccessToast("인증코드를 발송했습니다.");
       }
-      setLoading(false);
       return true;
     } catch (e) {
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage(e.toString(), context);
+        MessageUtil.showErrorToast(e.toString());
       }
-      setLoading(false);
       return false;
     }
   }
 
   Future<void> googleLogin(BuildContext context) async {
-    setLoading(true);
-
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       var authentication = await googleUser?.authentication;
-      await _myRepo.googleLoginApi(idToken: authentication?.idToken ?? "");
+      await authRepository.googleLoginApi(
+          idToken: authentication?.idToken ?? "");
 
       await loadAccount(); // 계정 갱신
 
-      if (onLoginSuccess != null) {
-        await onLoginSuccess!();
-      }
       if (context.mounted) {
-        MessageUtil.flushbarSuccessMessage("로그인 성공", context);
+        MessageUtil.showSuccessToast("로그인 성공");
+        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
       }
     } catch (e) {
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage(e.toString(), context);
+        MessageUtil.showErrorToast(e.toString());
+        await logOut(context);
       }
-      await logOut();
     }
-    setLoading(false);
   }
 
   Future<void> kakaoLogin(BuildContext context) async {
-    setLoading(true);
-
     try {
       String accessToken = await _signInWithKakao();
-      await _myRepo.kakaoLoginApi(accessToken: accessToken);
+      await authRepository.kakaoLoginApi(accessToken: accessToken);
       await loadAccount(); // 계정 갱신
 
-      if (onLoginSuccess != null) {
-        await onLoginSuccess!();
-      }
       if (context.mounted) {
-        MessageUtil.flushbarSuccessMessage("로그인 성공", context);
+        MessageUtil.showSuccessToast(
+          "로그인 성공",
+        );
+        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
       }
     } catch (e) {
       if (context.mounted) {
-        MessageUtil.flushbarErrorMessage(e.toString(), context);
+        MessageUtil.showErrorToast(e.toString());
+        await logOut(context);
       }
-      await logOut();
     }
-
-    setLoading(false);
   }
 
   Future<void> loadAccount() async {
-    _account = await _myRepo.loadAccount();
+    _account = await authRepository.getAccount();
     _isLoggedIn = _account != null;
     notifyListeners();
   }
 
-  Future<void> logOut() async {
-    await _myRepo.logOut();
+  Future<void> logOut(BuildContext context) async {
+    await authRepository.logOut();
     _isLoggedIn = false;
     _account = null;
 
-    if (onLogoutComplete != null) {
-      await onLogoutComplete!();
+    if (context.mounted) {
+      await Provider.of<MemberViewModel>(context, listen: false).remove();
     }
     notifyListeners();
   }

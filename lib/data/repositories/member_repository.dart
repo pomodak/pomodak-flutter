@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
-import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/member_response.dart';
 import 'package:pomodak/models/domain/member_model.dart';
@@ -13,12 +12,12 @@ String memberKey = "6E45EF1G1AUI3E51BD1VG9SD68";
 
 class MemberRepository {
   final String _nestApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
-  final BaseApiServices _apiServices = NetworkApiService();
+  late BaseApiServices apiService;
 
   // 캐시 저장소
   late final SharedPreferences sharedPreferences;
 
-  MemberRepository() {
+  MemberRepository({required this.apiService}) {
     _init();
   }
   Future<void> _init() async {
@@ -43,7 +42,7 @@ class MemberRepository {
   Future<MemberModel?> _fetchMemberFromApi() async {
     try {
       print("서버에서 데이터 요청");
-      Map<String, dynamic> responseJson = await _apiServices.getGetApiResponse(
+      Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
         '$_nestApiEndpoint/members/me',
       );
       BaseApiResponse<MemberResponse> response = BaseApiResponse.fromJson(

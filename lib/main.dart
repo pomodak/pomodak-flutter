@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:pomodak/data/network/network_api_service.dart';
+import 'package:pomodak/data/repositories/auth_repository.dart';
+import 'package:pomodak/data/repositories/member_repository.dart';
+import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
@@ -19,17 +22,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  // 세로모드 고정
+
+  // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 세로모드 고정
   SystemChrome.setPreferredOrientations(
     [
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ],
   );
-
-  // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
-  WidgetsFlutterBinding.ensureInitialized();
 
   // runApp() 호출 전 Flutter SDK 초기화
   KakaoSdk.init(
@@ -56,60 +59,51 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late AppViewModel appViewModel;
-  late AuthViewModel authViewModel;
-  late MemberViewModel memberViewModel;
-
-  late TimerOptionsViewModel timerOptionsViewModel;
-  late TimerStateViewModel timerStateViewModel;
+  late AuthStorage authStorage;
+  late NetworkApiService apiService;
+  late AuthRepository authRepository;
+  late MemberRepository memberRepository;
 
   @override
   void initState() {
     super.initState();
-
-    appViewModel = AppViewModel(widget.sharedPreferences);
-    authViewModel = AuthViewModel(
-      onLoginSuccess: () async {
-        await memberViewModel.loadMember();
-      },
-      onLogoutComplete: () async {
-        await memberViewModel.remove();
-      },
-    );
-    memberViewModel = MemberViewModel();
-
-    timerOptionsViewModel = TimerOptionsViewModel();
-    timerStateViewModel = TimerStateViewModel(timerOptionsViewModel);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    authStorage = AuthStorage();
+    apiService = NetworkApiService(storage: authStorage);
+    authRepository =
+        AuthRepository(apiService: apiService, storage: authStorage);
+    memberRepository = MemberRepository(apiService: apiService);
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppViewModel>(create: (_) => appViewModel),
+        ChangeNotifierProvider<AppViewModel>(
+            create: (_) => AppViewModel(widget.sharedPreferences)),
         ChangeNotifierProvider<AuthViewModel>(
-          create: (_) => authViewModel,
-        ),
-        ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
+            create: (_) => AuthViewModel(authRepository: authRepository)),
+        ChangeNotifierProvider<MemberViewModel>(
+            create: (_) => MemberViewModel(memberRepository: memberRepository)),
         ChangeNotifierProvider<TimerOptionsViewModel>(
-            create: (_) => timerOptionsViewModel),
-        ChangeNotifierProvider<TimerStateViewModel>(
-            create: (_) => timerStateViewModel),
-
-        // 라우터는 리다이렉트를 처리하기 위해 로그인 상태와 앱 상태를 주입받음
-        Provider<AppRouter>(
-            create: (_) => AppRouter(appViewModel, authViewModel)),
+            create: (_) => TimerOptionsViewModel()),
+        ChangeNotifierProxyProvider<TimerOptionsViewModel, TimerStateViewModel>(
+          create: (_) => TimerStateViewModel(),
+          update: (ctx, timerOptionsViewModel, timerStateViewModel) {
+            timerStateViewModel!.update(timerOptionsViewModel);
+            return timerStateViewModel;
+          },
+        ),
       ],
       child: Builder(
         builder: (context) {
-          // listen: false - AppRouter에 변경사항이 생겨도 재빌드 X
-          final GoRouter goRouter =
-              Provider.of<AppRouter>(context, listen: false).router;
+          final appViewModel =
+              Provider.of<AppViewModel>(context, listen: false);
+          final authViewModel =
+              Provider.of<AuthViewModel>(context, listen: false);
+
+          final appRouter = AppRouter(appViewModel, authViewModel);
+          final goRouter = appRouter.router;
+
           return GlobalLoaderOverlay(
             useDefaultLoading: false,
             overlayWidgetBuilder: (_) {

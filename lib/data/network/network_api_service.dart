@@ -1,128 +1,143 @@
-import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/app_exceptions.dart';
+import 'package:pomodak/data/network/auth_interceptor.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
-import 'package:http/http.dart' as http;
-import 'package:pomodak/data/repositories/auth_repository.dart';
-import 'package:pomodak/models/api/base_api_response.dart';
+import 'package:pomodak/data/storagies/auth_storage.dart';
+import 'package:pomodak/models/api/refresh_response.dart';
 
 class NetworkApiService extends BaseApiServices {
-  static final AuthRepository _authRepository = AuthRepository();
+  final Dio _dio = Dio();
+  final String _nestApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
+  final AuthStorage storage;
 
-  @override
-  Future getGetApiResponse(String url) async {
-    dynamic responseJson;
-    final uri = Uri.parse(url);
-    final headers = await _getHeaders();
-    try {
-      final response = await http
-          .get(uri, headers: headers)
-          .timeout(const Duration(seconds: 10));
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      // 인터넷 연결 에러
-      throw FetchDataException('No Internet Connection');
-    }
-
-    return responseJson;
+  NetworkApiService({required this.storage}) {
+    _dio.interceptors.add(AuthInterceptor(
+      storage: storage,
+      refreshToken: refreshToken,
+    ));
   }
 
   @override
-  Future getPostApiResponse(String url, dynamic data) async {
-    dynamic responseJson;
-    final uri = Uri.parse(url);
-    final headers = await _getHeaders();
+  Future<dynamic> getGetApiResponse(String url) async {
     try {
-      final response = await http
-          .post(
-            uri,
-            headers: headers,
-            body: json.encode(data),
-          )
-          .timeout(const Duration(seconds: 10));
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      // 인터넷 연결 에러
-      throw FetchDataException('No Internet Connection');
+      final response = await _dio.get(url);
+      return response.data;
+    } on DioException catch (dioError) {
+      _handleDioError(dioError);
     }
-
-    return responseJson;
   }
 
   @override
-  Future getPatchApiResponse(String url, dynamic data) async {
-    dynamic responseJson;
-    final uri = Uri.parse(url);
-    final headers = await _getHeaders();
+  Future<dynamic> getPostApiResponse(String url, dynamic data) async {
     try {
-      final response = await http
-          .patch(
-            uri,
-            headers: headers,
-            body: json.encode(data),
-          )
-          .timeout(const Duration(seconds: 10));
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      // 인터넷 연결 에러
-      throw FetchDataException('No Internet Connection');
+      final response = await _dio.post(url, data: data);
+      return response.data;
+    } on DioException catch (dioError) {
+      _handleDioError(dioError);
     }
-
-    return responseJson;
   }
 
   @override
-  Future getDeleteApiResponse(String url, dynamic data) async {
-    dynamic responseJson;
-    final uri = Uri.parse(url);
-    final headers = await _getHeaders();
+  Future<dynamic> getPatchApiResponse(String url, dynamic data) async {
     try {
-      final response = await http
-          .delete(
-            uri,
-            headers: headers,
-            body: json.encode(data),
-          )
-          .timeout(const Duration(seconds: 10));
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      // 인터넷 연결 에러
-      throw FetchDataException('No Internet Connection');
-    }
-
-    return responseJson;
-  }
-
-  dynamic _returnResponse(http.Response response) {
-    switch (response.statusCode) {
-      case 200:
-      case 201:
-      case 204:
-        dynamic responseJson = jsonDecode(response.body);
-        return responseJson;
-      default: // 나머지 서버에서 발생한 에러처리
-        dynamic responseJson = jsonDecode(response.body);
-        // 서버에서 body에 message를 담아 보냈을 경우
-        if (responseJson["message"] != null) {
-          return BaseApiResponse.fromJson(responseJson, (json) => null);
-        } else {
-          // 그외
-          throw FetchDataException(
-              "Error occurred while communicating with server with status code ${response.statusCode}");
-        }
+      final response = await _dio.patch(url, data: data);
+      return response.data;
+    } on DioException catch (dioError) {
+      _handleDioError(dioError);
     }
   }
 
-  Future<String?> _getAccessToken() async {
-    return await _authRepository.refreshTokenIfNeeded();
+  @override
+  Future<dynamic> getDeleteApiResponse(String url, dynamic data) async {
+    try {
+      final response = await _dio.delete(url, data: data);
+      return response.data;
+    } on DioException catch (dioError) {
+      _handleDioError(dioError);
+    }
   }
 
-  Future<Map<String, String>> _getHeaders() async {
-    final accessToken = await _getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    };
+  Future<String?> refreshToken() async {
+    final refreshToken = await storage.getRefreshToken();
+
+    if (refreshToken == null) {
+      // 리프레시 토큰이 없다면 로그아웃 처리
+      await storage.deleteAllData();
+      return null;
+    }
+
+    try {
+      // Dio를 사용하여 리프레시 토큰으로 새 액세스 토큰 요청
+      var response = await Dio().post(
+        '$_nestApiEndpoint/auth/refresh',
+        options: Options(headers: {"Authorization": 'Bearer $refreshToken'}),
+      );
+
+      if (response.statusCode == 200) {
+        var data = RefreshResponse.fromJson(response.data);
+        // 새 토큰 저장
+        await storage.storeTokens(
+          data.accessToken,
+          refreshToken: data.refreshToken,
+        );
+
+        return data.accessToken;
+      } else {
+        // 토큰 갱신 실패 시 로그아웃 처리
+        await storage.deleteAllData();
+        return null;
+      }
+    } catch (e) {
+      // 네트워크 오류나 기타 예외 처리
+      await storage.deleteAllData();
+      throw FetchDataException(
+          'Failed to refresh token. No Internet Connection or Server Error');
+    }
+  }
+
+  void _handleDioError(DioException dioError) {
+    String userFriendlyErrorMessage = 'Something went wrong. Please try again.';
+
+    if (dioError.error is SocketException) {
+      userFriendlyErrorMessage =
+          'No Internet Connection. Please check your connection and try again.';
+    } else if (dioError.response != null) {
+      if (dioError.response!.data != null &&
+          dioError.response!.data['message'] != null) {
+        // 서버에서 내려주는 에러메세지가 존재하는 경우
+        userFriendlyErrorMessage = dioError.response!.data['message'];
+      } else if (dioError.response!.statusCode == 401) {
+        userFriendlyErrorMessage = 'Session expired. Please login again.';
+      } else if (dioError.response!.statusCode == 500) {
+        userFriendlyErrorMessage = 'Server error. We are working on it.';
+      } else if (dioError.response!.data != null &&
+          dioError.response!.data['message'] != null) {
+        userFriendlyErrorMessage = dioError.response!.data['message'];
+      } else if (dioError.response!.statusCode! >= 400 &&
+          dioError.response!.statusCode! < 500) {
+        userFriendlyErrorMessage = 'Something went wrong. Please try again.';
+      }
+    }
+
+    // 디버그 모드에서만 로깅
+    if (kDebugMode) {
+      developer.log(
+        'DioError: ${dioError.message}',
+        name: 'NetworkApiService._handleDioError',
+      );
+      if (dioError.response != null) {
+        developer.log(
+          'Response data: ${dioError.response!.data}',
+          name: 'NetworkApiService._handleDioError',
+        );
+      }
+    }
+
+    throw FetchCustomException(userFriendlyErrorMessage);
   }
 }

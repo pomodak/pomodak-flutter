@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
-import 'package:pomodak/models/api/member_response_model.dart';
+import 'package:pomodak/models/api/base_api_response.dart';
+import 'package:pomodak/models/api/member_response.dart';
 import 'package:pomodak/models/domain/member_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,13 +43,19 @@ class MemberRepository {
   Future<MemberModel?> _fetchMemberFromApi() async {
     try {
       print("서버에서 데이터 요청");
-      final response = await _apiServices.getGetApiResponse(
+      Map<String, dynamic> responseJson = await _apiServices.getGetApiResponse(
         '$_nestApiEndpoint/members/me',
       );
-      var data = MemberResponseData.fromJson(response["data"]);
-      await _storeMemberData(data.member);
+      BaseApiResponse<MemberResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => MemberResponse.fromJson(json as Map<String, dynamic>),
+      );
+      var data = response.data;
+      if (data != null) {
+        await _storeMemberData(data.member);
+      }
 
-      return data.member;
+      return data?.member;
     } catch (e) {
       rethrow;
     }

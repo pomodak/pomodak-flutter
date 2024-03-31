@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pomodak/data/app_exceptions.dart';
+import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
+import 'package:pomodak/models/api/login_response.dart';
+import 'package:pomodak/models/api/refresh_response.dart';
 import 'package:pomodak/models/domain/account_model.dart';
-import 'package:pomodak/models/api/auth_response_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRepository {
@@ -21,7 +23,7 @@ class AuthRepository {
   );
 
   // 이메일로 로그인
-  Future<dynamic> emailLoginApi({
+  Future<BaseApiResponse<LoginResponse>> emailLoginApi({
     required String email,
     required String password,
   }) async {
@@ -30,14 +32,20 @@ class AuthRepository {
         "email": email,
         "password": password,
       };
-      dynamic response = await _apiServices.getPostApiResponse(
+      Map<String, dynamic> responseJson = await _apiServices.getPostApiResponse(
         '$_nestApiEndpoint/auth/email/login',
         body,
       );
-      var data = AuthResponseData.fromJson(response["data"]);
+      BaseApiResponse<LoginResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
+      );
 
-      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
-      await _storeAccount(data.account);
+      var data = response.data;
+      if (data != null) {
+        await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+        await _storeAccount(data.account);
+      }
 
       return response;
     } catch (e) {
@@ -47,7 +55,7 @@ class AuthRepository {
   }
 
   // 이메일로 회원가입
-  Future<dynamic> emailRegisterApi({
+  Future<BaseApiResponse<LoginResponse>> emailRegisterApi({
     required String email,
     required String password,
     required String code,
@@ -58,14 +66,21 @@ class AuthRepository {
         "password": password,
         "code": code,
       };
-      dynamic response = await _apiServices.getPostApiResponse(
+      dynamic responseJson = await _apiServices.getPostApiResponse(
         '$_nestApiEndpoint/auth/email/register',
         body,
       );
-      var data = AuthResponseData.fromJson(response["data"]);
+      BaseApiResponse<LoginResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
+      );
 
-      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
-      await _storeAccount(data.account);
+      var data = response.data;
+
+      if (data != null) {
+        await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+        await _storeAccount(data.account);
+      }
 
       return response;
     } catch (e) {
@@ -92,20 +107,27 @@ class AuthRepository {
   }
 
   // 구글 OAuth 로그인
-  Future<dynamic> googleLoginApi({
+  Future<BaseApiResponse<LoginResponse>> googleLoginApi({
     required String idToken,
   }) async {
     try {
       Map body = {
         "idToken": idToken,
       };
-      dynamic response = await _apiServices.getPostApiResponse(
+      dynamic responseJson = await _apiServices.getPostApiResponse(
         '$_nestApiEndpoint/auth/google/login/v2',
         body,
       );
-      var data = AuthResponseData.fromJson(response["data"]);
-      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
-      await _storeAccount(data.account);
+      BaseApiResponse<LoginResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
+      );
+
+      var data = response.data;
+      if (data != null) {
+        await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+        await _storeAccount(data.account);
+      }
 
       return response;
     } catch (e) {
@@ -115,20 +137,27 @@ class AuthRepository {
   }
 
   // 카카오 OAuth 로그인
-  Future<dynamic> kakaoLoginApi({
+  Future<BaseApiResponse<LoginResponse>> kakaoLoginApi({
     required String accessToken,
   }) async {
     try {
       Map body = {
         "access_token": accessToken,
       };
-      dynamic response = await _apiServices.getPostApiResponse(
+      dynamic responseJson = await _apiServices.getPostApiResponse(
         '$_nestApiEndpoint/auth/kakao/login/v2',
         body,
       );
-      var data = AuthResponseData.fromJson(response["data"]);
-      await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
-      await _storeAccount(data.account);
+      BaseApiResponse<LoginResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
+      );
+
+      var data = response.data;
+      if (data != null) {
+        await _storeTokens(data.accessToken, data.refreshToken, data.expiresIn);
+        await _storeAccount(data.account);
+      }
 
       return response;
     } catch (e) {
@@ -163,20 +192,28 @@ class AuthRepository {
 
     if (now >= expiresIn) {
       try {
-        final response = await http.post(
+        final responseJson = await http.post(
           Uri.parse('$_nestApiEndpoint/auth/refresh'),
           headers: {
             "Authorization": 'Bearer $refreshToken',
           },
         );
 
-        if (response.statusCode == 200) {
-          var data =
-              RefreshResponseData.fromJson(json.decode(response.body)["data"]);
-          await _storeTokens(
-              data.accessToken, data.refreshToken, data.expiresIn);
-          // 새로운 expiresIn 계산 및 저장
-          return data.accessToken;
+        if (responseJson.statusCode == 200) {
+          BaseApiResponse<RefreshResponse> response = BaseApiResponse.fromJson(
+            json.decode(responseJson.body),
+            (json) => RefreshResponse.fromJson(json as Map<String, dynamic>),
+          );
+
+          var data = response.data;
+          if (data != null) {
+            await _storeTokens(
+              data.accessToken,
+              data.refreshToken,
+              data.expiresIn,
+            );
+          }
+          return data?.accessToken;
         } else {
           // 로그아웃 처리
           await logOut();

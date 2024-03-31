@@ -1,9 +1,18 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:pomodak/models/domain/role_model.dart';
+
+part 'account_model.g.dart';
+
+@JsonSerializable()
 class AccountModel {
+  @JsonKey(name: 'account_id')
   final String accountId;
   final String? email;
   final String? provider;
+  @JsonKey(name: 'social_id')
   final String? socialId;
-  final Role role;
+  final RoleModel role;
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   AccountModel({
@@ -15,47 +24,8 @@ class AccountModel {
     this.socialId,
   });
 
-  factory AccountModel.fromJson(Map<String, dynamic> json) {
-    return AccountModel(
-      accountId: json['account_id'],
-      email: json['email'],
-      provider: json['provider'],
-      socialId: json['social_id'],
-      role: Role.fromJson(json['role']),
-      createdAt: DateTime.parse(json['created_at']),
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'account_id': accountId,
-      'email': email,
-      'provider': provider,
-      'social_id': socialId,
-      'role': role.toJson(),
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
-}
+  factory AccountModel.fromJson(Map<String, dynamic> json) =>
+      _$AccountModelFromJson(json);
 
-class Role {
-  final int roleId;
-  final String? name;
-
-  Role({
-    required this.roleId,
-    this.name,
-  });
-
-  factory Role.fromJson(Map<String, dynamic> json) {
-    return Role(
-      roleId: json['role_id'],
-      name: json['name'],
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'role_id': roleId,
-      'name': name,
-    };
-  }
+  Map<String, dynamic> toJson() => _$AccountModelToJson(this);
 }

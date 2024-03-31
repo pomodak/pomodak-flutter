@@ -1,6 +1,14 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'member_model.g.dart';
+
+@JsonSerializable()
 class MemberModel {
+  @JsonKey(name: 'member_id')
   final String memberId;
+  @JsonKey(name: 'status_message')
   final String statusMessage;
+  @JsonKey(name: 'image_url')
   final String imageUrl;
   final String nickname;
   final int point;
@@ -13,22 +21,8 @@ class MemberModel {
     required this.point,
   });
 
-  factory MemberModel.fromJson(Map<String, dynamic> json) {
-    return MemberModel(
-      memberId: json['member_id'],
-      statusMessage: json['status_message'],
-      imageUrl: json['image_url'],
-      nickname: json['nickname'],
-      point: json['point'],
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'member_id': memberId,
-      'nickname': nickname,
-      'status_message': statusMessage,
-      'image_url': imageUrl,
-      'point': point,
-    };
-  }
+  factory MemberModel.fromJson(Map<String, dynamic> json) =>
+      _$MemberModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 }

@@ -5,6 +5,7 @@ import 'package:pomodak/data/app_exceptions.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:pomodak/data/repositories/auth_repository.dart';
+import 'package:pomodak/models/api/base_api_response.dart';
 
 class NetworkApiService extends BaseApiServices {
   static final AuthRepository _authRepository = AuthRepository();
@@ -104,7 +105,7 @@ class NetworkApiService extends BaseApiServices {
         dynamic responseJson = jsonDecode(response.body);
         // 서버에서 body에 message를 담아 보냈을 경우
         if (responseJson["message"] != null) {
-          throw FetchCustomException(responseJson["message"]);
+          return BaseApiResponse.fromJson(responseJson, (json) => null);
         } else {
           // 그외
           throw FetchDataException(

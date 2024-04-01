@@ -68,6 +68,9 @@ class TimerStateViewModel with ChangeNotifier {
       } else {
         notifyListeners();
       }
+    } else {
+      // 일반 타이머
+      notifyListeners();
     }
   }
 

@@ -117,17 +117,15 @@ class TimerStateViewModel with ChangeNotifier {
   }
 
   void pomodoroNext() {
-    _sectionCounts = sectionCounts + 1;
-    if (_pomodoroMode == PomodoroMode.rest) {
+    if (sectionCounts + 1 >= timerOptions.sections) {
+      // 한 사이클 완료
       _pomodoroMode = PomodoroMode.focus;
+      _sectionCounts = 0;
+    } else if (_pomodoroMode == PomodoroMode.focus) {
+      _pomodoroMode = PomodoroMode.rest;
+      _sectionCounts = sectionCounts + 1;
     } else {
-      if (sectionCounts == timerOptions.sections) {
-        // 한 사이클 완료
-        _pomodoroMode = PomodoroMode.focus;
-        _sectionCounts = 0;
-      } else {
-        _pomodoroMode = PomodoroMode.rest;
-      }
+      _pomodoroMode = PomodoroMode.focus;
     }
     notifyListeners();
   }

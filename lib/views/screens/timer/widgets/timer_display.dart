@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model.dart';
 import 'package:provider/provider.dart';
@@ -32,19 +33,10 @@ class TimerDisplay extends StatelessWidget {
           : timerOptions.restTime * 60;
       int remainingSeconds = targetSeconds - timerState.elapsedSeconds;
 
-      return _formatSeconds(remainingSeconds);
+      return FormatUtil.formatSeconds(remainingSeconds);
     } else {
       // 일반 모드에서는 경과 시간을 표시
-      return _formatSeconds(timerState.elapsedSeconds);
+      return FormatUtil.formatSeconds(timerState.elapsedSeconds);
     }
-  }
-
-  // 초 단위의 시간을 시:분:초 형태의 문자열로 변환
-  String _formatSeconds(int totalSeconds) {
-    int hours = totalSeconds ~/ 3600;
-    int minutes = (totalSeconds % 3600) ~/ 60;
-    int seconds = totalSeconds % 60;
-
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 }

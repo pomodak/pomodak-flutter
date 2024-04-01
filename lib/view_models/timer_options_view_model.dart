@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+const defaultPomodoroMode = true;
+const defaultWorkTime = 25;
+const defaultRestTime = 5;
+const defaultSections = 4;
+
 class TimerOptionsViewModel with ChangeNotifier {
   late final SharedPreferences sharedPreferences;
 
   // 변경 시 타이머 초기화
-  bool _isPomodoroMode = true;
-  int _workTime = 25;
-  int _restTime = 5;
-  int _sections = 4;
+  bool _isPomodoroMode = defaultPomodoroMode;
+  int _workTime = defaultWorkTime;
+  int _restTime = defaultWorkTime;
+  int _sections = defaultWorkTime;
 
   // 변경 시 타이머 초기화 X
   bool _isFocusTogetherMode = false;
@@ -16,10 +21,10 @@ class TimerOptionsViewModel with ChangeNotifier {
   // bool _isVibrationAlarmEnabled = false; // 진동 on/off (예정)
 
   // 임시 옵션 값 (취소 시 복구를 위해 임시 저장)
-  bool _tempIsPomodoroMode = true;
-  int _tempWorkTime = 25;
-  int _tempRestTime = 5;
-  int _tempSections = 4;
+  bool _tempIsPomodoroMode = defaultPomodoroMode;
+  int _tempWorkTime = defaultWorkTime;
+  int _tempRestTime = defaultWorkTime;
+  int _tempSections = defaultWorkTime;
   bool _tempIsFocusTogetherMode = false;
 
   // 옵션값 Getter
@@ -98,10 +103,11 @@ class TimerOptionsViewModel with ChangeNotifier {
   }
 
   void loadOptions() {
-    _isPomodoroMode = sharedPreferences.getBool("isPomodoroMode") ?? true;
-    _workTime = sharedPreferences.getInt("workTime") ?? 25;
-    _restTime = sharedPreferences.getInt("restTime") ?? 5;
-    _sections = sharedPreferences.getInt("sections") ?? 4;
+    _isPomodoroMode =
+        sharedPreferences.getBool("isPomodoroMode") ?? defaultPomodoroMode;
+    _workTime = sharedPreferences.getInt("workTime") ?? defaultWorkTime;
+    _restTime = sharedPreferences.getInt("restTime") ?? defaultRestTime;
+    _sections = sharedPreferences.getInt("sections") ?? defaultSections;
     _isFocusTogetherMode =
         sharedPreferences.getBool("isFocusTogetherMode") ?? false;
 

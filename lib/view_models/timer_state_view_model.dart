@@ -167,8 +167,8 @@ class TimerStateViewModel with ChangeNotifier {
   void saveRecord(int seconds, bool isCompleted, String? category) {}
 
   // 타이머 일시정지
-  void pause() {
-    _isRunning = false;
+  void pauseToggle() {
+    _isRunning = !_isRunning;
     notifyListeners();
   }
 }

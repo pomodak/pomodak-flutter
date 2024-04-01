@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
+import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
 
 class TimerPage extends StatelessWidget {
@@ -24,11 +25,17 @@ class TimerPage extends StatelessWidget {
                       child: TimerDisplay(),
                     ),
                     Expanded(
-                        child: Column(
-                      children: [
-                        TimerStopButton(),
-                      ],
-                    )),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              TimerPauseButton(),
+                              TimerStopButton(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],

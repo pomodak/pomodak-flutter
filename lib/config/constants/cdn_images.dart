@@ -9,6 +9,10 @@ class CDNImages {
         'https://d2quahb2ygxiv.cloudfront.net/c6b6dc92b5b1ca2b81459.png',
     'animation_sleep':
         'https://d2quahb2ygxiv.cloudfront.net/6b6dc92b5b1ca2b81459a.png',
+    'freeze_work':
+        'https://d2quahb2ygxiv.cloudfront.net/73dfa25837c52b83116c6.png',
+    'freeze_sleep':
+        'https://d2quahb2ygxiv.cloudfront.net/273dfa25837c52b83116c.png',
   };
 
   static const Map<String, String> newMember = {

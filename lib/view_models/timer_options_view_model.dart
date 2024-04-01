@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pomodak/data/storagies/timer_options_storage.dart';
 
 const defaultPomodoroMode = true;
 const defaultWorkTime = 25;
@@ -7,13 +7,12 @@ const defaultRestTime = 5;
 const defaultSections = 4;
 
 class TimerOptionsViewModel with ChangeNotifier {
-  late final SharedPreferences sharedPreferences;
-
+  TimerOptionsStorage storage;
   // 변경 시 타이머 초기화
-  bool _isPomodoroMode = defaultPomodoroMode;
-  int _workTime = defaultWorkTime;
-  int _restTime = defaultWorkTime;
-  int _sections = defaultWorkTime;
+  late bool _isPomodoroMode;
+  late int _workTime;
+  late int _restTime;
+  late int _sections;
 
   // 변경 시 타이머 초기화 X
   bool _isFocusTogetherMode = false;
@@ -21,11 +20,11 @@ class TimerOptionsViewModel with ChangeNotifier {
   // bool _isVibrationAlarmEnabled = false; // 진동 on/off (예정)
 
   // 임시 옵션 값 (취소 시 복구를 위해 임시 저장)
-  bool _tempIsPomodoroMode = defaultPomodoroMode;
-  int _tempWorkTime = defaultWorkTime;
-  int _tempRestTime = defaultWorkTime;
-  int _tempSections = defaultWorkTime;
-  bool _tempIsFocusTogetherMode = false;
+  late bool _tempIsPomodoroMode;
+  late int _tempWorkTime;
+  late int _tempRestTime;
+  late int _tempSections;
+  late bool _tempIsFocusTogetherMode;
 
   // 옵션값 Getter
   bool get isPomodoroMode => _isPomodoroMode;
@@ -38,8 +37,19 @@ class TimerOptionsViewModel with ChangeNotifier {
   TimerOptionsChangedEvent? _lastEvent;
   TimerOptionsChangedEvent? get lastEvent => _lastEvent;
 
-  TimerOptionsViewModel({required this.sharedPreferences}) {
+  TimerOptionsViewModel({required this.storage}) {
     loadOptions();
+  }
+
+  void loadOptions() {
+    _isPomodoroMode = _tempIsPomodoroMode = storage.getIsPomodoroMode();
+    _workTime = _tempWorkTime = storage.getTargetWorkTime();
+    _restTime = _tempRestTime = storage.getTargetRestTime();
+    _sections = _tempSections = storage.getTargetSections();
+    _isFocusTogetherMode =
+        _tempIsFocusTogetherMode = storage.getIsFocusTogetherMode();
+
+    notifyListeners();
   }
 
   // 옵션값 Setter
@@ -74,20 +84,6 @@ class TimerOptionsViewModel with ChangeNotifier {
   }
 
   void saveOptions() async {
-    // 실제 옵션 변경 적용
-    _isPomodoroMode = _tempIsPomodoroMode;
-    _workTime = _tempWorkTime;
-    _restTime = _tempRestTime;
-    _sections = _tempSections;
-    _isFocusTogetherMode = _tempIsFocusTogetherMode;
-
-    await sharedPreferences.setBool("isPomodoroMode", _isPomodoroMode);
-    await sharedPreferences.setInt("workTime", _workTime);
-    await sharedPreferences.setInt("restTime", _restTime);
-    await sharedPreferences.setInt("sections", _sections);
-    await sharedPreferences.setBool(
-        "isFocusTogetherMode", _isFocusTogetherMode);
-
     // 변경사항 검사
     _lastEvent = TimerOptionsChangedEvent(
       isPomodoroModeChanged: _tempIsPomodoroMode != _isPomodoroMode,
@@ -98,19 +94,22 @@ class TimerOptionsViewModel with ChangeNotifier {
           _tempIsFocusTogetherMode != _isFocusTogetherMode,
     );
 
+    // 실제 옵션 변경 적용
+    _isPomodoroMode = _tempIsPomodoroMode;
+    _workTime = _tempWorkTime;
+    _restTime = _tempRestTime;
+    _sections = _tempSections;
+    _isFocusTogetherMode = _tempIsFocusTogetherMode;
+
+    await storage.saveTimerOptions(
+      isPomodoroMode: _isPomodoroMode,
+      isFocusTogetherMode: _isFocusTogetherMode,
+      workTime: _workTime,
+      restTime: _restTime,
+      sections: _sections,
+    );
+
     // 리스너들에게 변경 이벤트 전달
-    notifyListeners();
-  }
-
-  void loadOptions() {
-    _isPomodoroMode =
-        sharedPreferences.getBool("isPomodoroMode") ?? defaultPomodoroMode;
-    _workTime = sharedPreferences.getInt("workTime") ?? defaultWorkTime;
-    _restTime = sharedPreferences.getInt("restTime") ?? defaultRestTime;
-    _sections = sharedPreferences.getInt("sections") ?? defaultSections;
-    _isFocusTogetherMode =
-        sharedPreferences.getBool("isFocusTogetherMode") ?? false;
-
     notifyListeners();
   }
 

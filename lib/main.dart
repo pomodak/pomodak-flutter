@@ -8,6 +8,8 @@ import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/data/storagies/auth_storage.dart';
+import 'package:pomodak/data/storagies/timer_options_storage.dart';
+import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +62,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late AuthStorage authStorage;
+  late TimerOptionsStorage timerOptionsStorage;
+  late TimerStateStorage timerStateStorage;
   late NetworkApiService apiService;
   late AuthRepository authRepository;
   late MemberRepository memberRepository;
@@ -68,6 +72,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     authStorage = AuthStorage();
+    timerOptionsStorage = TimerOptionsStorage(widget.sharedPreferences);
+    timerStateStorage = TimerStateStorage(widget.sharedPreferences);
+
     apiService = NetworkApiService(storage: authStorage);
     authRepository =
         AuthRepository(apiService: apiService, storage: authStorage);
@@ -85,10 +92,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<MemberViewModel>(
             create: (_) => MemberViewModel(memberRepository: memberRepository)),
         ChangeNotifierProvider<TimerOptionsViewModel>(
-            create: (_) => TimerOptionsViewModel(
-                sharedPreferences: widget.sharedPreferences)),
+            create: (_) => TimerOptionsViewModel(storage: timerOptionsStorage)),
         ChangeNotifierProxyProvider<TimerOptionsViewModel, TimerStateViewModel>(
-          create: (_) => TimerStateViewModel(),
+          create: (_) => TimerStateViewModel(storage: timerStateStorage),
           update: (ctx, timerOptionsViewModel, timerStateViewModel) {
             timerStateViewModel!.update(timerOptionsViewModel);
             return timerStateViewModel;

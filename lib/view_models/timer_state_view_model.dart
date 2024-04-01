@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 
 enum PomodoroMode { focus, rest }
 
 class TimerStateViewModel with ChangeNotifier {
+  TimerStateStorage storage;
   late TimerOptionsViewModel timerOptions;
   late PomodoroMode _pomodoroMode = PomodoroMode.focus;
   Timer? _timer;
@@ -19,6 +21,16 @@ class TimerStateViewModel with ChangeNotifier {
   int get sectionCounts => _sectionCounts;
   bool get isRunning => _isRunning;
   PomodoroMode get pomodoroMode => _pomodoroMode;
+
+  TimerStateViewModel({required this.storage}) {
+    _loadState();
+  }
+
+  void _loadState() {
+    _sectionCounts = storage.getCurSections();
+    _pomodoroMode = storage.getCurPomodoroMode();
+    notifyListeners();
+  }
 
   void update(TimerOptionsViewModel timerOptionsViewModel) {
     timerOptions = timerOptionsViewModel;
@@ -47,6 +59,10 @@ class TimerStateViewModel with ChangeNotifier {
       _timer!.cancel();
       _timer = null;
     }
+    storage.saveTimerState(
+      curPomodoroMode: _pomodoroMode,
+      curSections: _sectionCounts,
+    );
     notifyListeners();
   }
 
@@ -127,6 +143,10 @@ class TimerStateViewModel with ChangeNotifier {
     } else {
       _pomodoroMode = PomodoroMode.focus;
     }
+    storage.saveTimerState(
+      curSections: _sectionCounts,
+      curPomodoroMode: _pomodoroMode,
+    );
     notifyListeners();
   }
 

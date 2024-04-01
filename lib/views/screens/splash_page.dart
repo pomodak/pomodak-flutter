@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -34,12 +35,13 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Loading"),
-      ),
-      body: const Center(
-        child: CircularProgressIndicator(),
+      body: Center(
+        child: Image.network(
+          CDNImages.mascot["finish"]!,
+          width: size.width / 2,
+        ),
       ),
     );
   }

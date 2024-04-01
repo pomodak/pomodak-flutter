@@ -27,7 +27,7 @@ class TimerStopButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         if (timerOptions.isPomodoroMode) {
-          timerState.pomodoroEnd();
+          timerState.pomodoroInterupt();
         } else {
           timerState.normalEnd();
         }

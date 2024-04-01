@@ -14,7 +14,7 @@ class TimerRecordStorage {
     return '${memberId}_${_formatDate(dateTime)}';
   }
 
-  Future<void> saveOrUpdateRecord({
+  Future<TimerRecordModel> saveOrUpdateRecord({
     required String memberId,
     required DateTime date,
     required int seconds,
@@ -24,6 +24,8 @@ class TimerRecordStorage {
     final String recordKey = _generateKey(memberId, date);
 
     final TimerRecordModel? existingRecord = _box.get(recordKey);
+
+    late final TimerRecordModel resultRecord;
 
     if (existingRecord != null) {
       final updatedDetails = Map<String, int>.from(existingRecord.details);
@@ -42,7 +44,7 @@ class TimerRecordStorage {
             : existingRecord.totalCompleted,
         details: updatedDetails,
       );
-
+      resultRecord = updatedRecord;
       await _box.put(recordKey, updatedRecord);
     } else {
       final newRecord = TimerRecordModel(
@@ -52,9 +54,10 @@ class TimerRecordStorage {
         totalCompleted: isCompleted ? 1 : 0,
         details: {category: seconds},
       );
-
+      resultRecord = newRecord;
       await _box.put(recordKey, newRecord);
     }
+    return resultRecord;
   }
 
   List<TimerRecordModel> getTimerRecordModelsByMemberId(String memberId) {

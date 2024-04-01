@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class AuthViewModel with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  late AuthRepository authRepository;
+  late final AuthRepository repository;
 
   AccountModel? _account;
   final bool _loading = false;
@@ -23,7 +23,7 @@ class AuthViewModel with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
 
   AuthViewModel({
-    required this.authRepository,
+    required this.repository,
   });
 
   Future<void> emailLogin(
@@ -32,7 +32,7 @@ class AuthViewModel with ChangeNotifier {
     required String password,
   }) async {
     try {
-      await authRepository.emailLoginApi(email: email, password: password);
+      await repository.emailLoginApi(email: email, password: password);
 
       await loadAccount(); // 계정 갱신
 
@@ -57,7 +57,7 @@ class AuthViewModel with ChangeNotifier {
     required String code,
   }) async {
     try {
-      await authRepository.emailRegisterApi(
+      await repository.emailRegisterApi(
         email: email,
         password: password,
         code: code,
@@ -85,7 +85,7 @@ class AuthViewModel with ChangeNotifier {
     required String email,
   }) async {
     try {
-      await authRepository.checkEmailApi(
+      await repository.checkEmailApi(
         email: email,
       );
 
@@ -105,8 +105,7 @@ class AuthViewModel with ChangeNotifier {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       var authentication = await googleUser?.authentication;
-      await authRepository.googleLoginApi(
-          idToken: authentication?.idToken ?? "");
+      await repository.googleLoginApi(idToken: authentication?.idToken ?? "");
 
       await loadAccount(); // 계정 갱신
 
@@ -125,7 +124,7 @@ class AuthViewModel with ChangeNotifier {
   Future<void> kakaoLogin(BuildContext context) async {
     try {
       String accessToken = await _signInWithKakao();
-      await authRepository.kakaoLoginApi(accessToken: accessToken);
+      await repository.kakaoLoginApi(accessToken: accessToken);
       await loadAccount(); // 계정 갱신
 
       if (context.mounted) {
@@ -143,13 +142,13 @@ class AuthViewModel with ChangeNotifier {
   }
 
   Future<void> loadAccount() async {
-    _account = await authRepository.getAccount();
+    _account = await repository.getAccount();
     _isLoggedIn = _account != null;
     notifyListeners();
   }
 
   Future<void> logOut(BuildContext context) async {
-    await authRepository.logOut();
+    await repository.logOut();
     _isLoggedIn = false;
     _account = null;
 

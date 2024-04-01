@@ -2,14 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
+import 'package:pomodak/data/storagies/timer_record_storage.dart';
 import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/data/storagies/timer_options_storage.dart';
 import 'package:pomodak/data/storagies/timer_state_storage.dart';
+import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +20,7 @@ import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model.dart';
 import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
@@ -42,8 +46,15 @@ Future<void> main() async {
     javaScriptAppKey: dotenv.env['KAKAO_JS_APP_KEY']!,
   );
 
+  // 간단한 설정 값 (timer 상태, timer 옵션)
   final SharedPreferences sharedPreferences =
       await SharedPreferences.getInstance();
+
+  // timerRecords 기록
+  await Hive.initFlutter();
+  Hive.registerAdapter(TimerRecordModelAdapter());
+  await Hive.openBox<TimerRecordModel>('timerRecords');
+
   runApp(
     MyApp(sharedPreferences: sharedPreferences),
   );
@@ -64,50 +75,68 @@ class _MyAppState extends State<MyApp> {
   late AuthStorage authStorage;
   late TimerOptionsStorage timerOptionsStorage;
   late TimerStateStorage timerStateStorage;
+  late TimerRecordStorage timerRecordStorage;
+
   late NetworkApiService apiService;
   late AuthRepository authRepository;
   late MemberRepository memberRepository;
 
+  late AppViewModel appViewModel;
+  late AuthViewModel authViewModel;
+  late MemberViewModel memberViewModel;
+  late TimerOptionsViewModel timerOptionsViewModel;
+  late TimerRecordViewModel timerRecordViewModel;
+  late TimerStateViewModel timerStateViewModel;
+
   @override
   void initState() {
     super.initState();
+
+    // flutter_secure_storage
     authStorage = AuthStorage();
+    // sharedPreferences
     timerOptionsStorage = TimerOptionsStorage(widget.sharedPreferences);
     timerStateStorage = TimerStateStorage(widget.sharedPreferences);
-
+    // hive
+    timerRecordStorage = TimerRecordStorage();
+    //network
     apiService = NetworkApiService(storage: authStorage);
     authRepository =
         AuthRepository(apiService: apiService, storage: authStorage);
     memberRepository = MemberRepository(apiService: apiService);
+
+    // ViewModel
+    appViewModel = AppViewModel();
+    authViewModel = AuthViewModel(repository: authRepository);
+    memberViewModel = MemberViewModel(repository: memberRepository);
+    timerOptionsViewModel = TimerOptionsViewModel(storage: timerOptionsStorage);
+    timerRecordViewModel = TimerRecordViewModel(
+      storage: timerRecordStorage,
+      memberViewModel: memberViewModel,
+    );
+    timerStateViewModel = TimerStateViewModel(
+      storage: timerStateStorage,
+      timerRecordViewModel: timerRecordViewModel,
+      timerOptionsViewModel: timerOptionsViewModel,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppViewModel>(
-            create: (_) => AppViewModel(widget.sharedPreferences)),
-        ChangeNotifierProvider<AuthViewModel>(
-            create: (_) => AuthViewModel(authRepository: authRepository)),
-        ChangeNotifierProvider<MemberViewModel>(
-            create: (_) => MemberViewModel(memberRepository: memberRepository)),
+        ChangeNotifierProvider<AppViewModel>(create: (_) => appViewModel),
+        ChangeNotifierProvider<AuthViewModel>(create: (_) => authViewModel),
+        ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
         ChangeNotifierProvider<TimerOptionsViewModel>(
-            create: (_) => TimerOptionsViewModel(storage: timerOptionsStorage)),
-        ChangeNotifierProxyProvider<TimerOptionsViewModel, TimerStateViewModel>(
-          create: (_) => TimerStateViewModel(storage: timerStateStorage),
-          update: (ctx, timerOptionsViewModel, timerStateViewModel) {
-            timerStateViewModel!.update(timerOptionsViewModel);
-            return timerStateViewModel;
-          },
+          create: (_) => timerOptionsViewModel,
+        ),
+        ChangeNotifierProvider<TimerStateViewModel>(
+          create: (_) => timerStateViewModel,
         ),
       ],
       child: Builder(
         builder: (context) {
-          final appViewModel =
-              Provider.of<AppViewModel>(context, listen: false);
-          final authViewModel =
-              Provider.of<AuthViewModel>(context, listen: false);
-
           final appRouter = AppRouter(appViewModel, authViewModel);
           final goRouter = appRouter.router;
 

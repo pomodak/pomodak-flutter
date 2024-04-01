@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_record_view_model.dart';
 
 enum PomodoroMode { focus, rest }
 
 class TimerStateViewModel with ChangeNotifier {
-  TimerStateStorage storage;
-  late TimerOptionsViewModel timerOptions;
+  late final TimerStateStorage storage;
+  late final TimerRecordViewModel timerRecordViewModel;
+  late final TimerOptionsViewModel timerOptionsViewModel;
   late PomodoroMode _pomodoroMode = PomodoroMode.focus;
   Timer? _timer;
   int _elapsedSeconds = 0; // 경과 시간(초 단위)
@@ -22,8 +24,13 @@ class TimerStateViewModel with ChangeNotifier {
   bool get isRunning => _isRunning;
   PomodoroMode get pomodoroMode => _pomodoroMode;
 
-  TimerStateViewModel({required this.storage}) {
+  TimerStateViewModel({
+    required this.storage,
+    required this.timerRecordViewModel,
+    required this.timerOptionsViewModel,
+  }) {
     _loadState();
+    timerOptionsViewModel.addListener(_onTimerOptionsChanged);
   }
 
   void _loadState() {
@@ -32,18 +39,12 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void update(TimerOptionsViewModel timerOptionsViewModel) {
-    timerOptions = timerOptionsViewModel;
-    _onTimerOptionsChanged();
-    notifyListeners();
-  }
-
   void _onTimerOptionsChanged() {
-    if (timerOptions.lastEvent != null &&
-        (timerOptions.lastEvent!.isPomodoroModeChanged ||
-            timerOptions.lastEvent!.workTimeChanged ||
-            timerOptions.lastEvent!.restTimeChanged ||
-            timerOptions.lastEvent!.sectionsChanged)) {
+    if (timerOptionsViewModel.lastEvent != null &&
+        (timerOptionsViewModel.lastEvent!.isPomodoroModeChanged ||
+            timerOptionsViewModel.lastEvent!.workTimeChanged ||
+            timerOptionsViewModel.lastEvent!.restTimeChanged ||
+            timerOptionsViewModel.lastEvent!.sectionsChanged)) {
       resetTimerState();
     }
   }
@@ -70,13 +71,13 @@ class TimerStateViewModel with ChangeNotifier {
     if (!isRunning) return;
     _elapsedSeconds++;
 
-    if (timerOptions.isPomodoroMode == true) {
+    if (timerOptionsViewModel.isPomodoroMode == true) {
       // 뽀모도로 타이머
       int targetSeconds;
       if (_pomodoroMode == PomodoroMode.focus) {
-        targetSeconds = timerOptions.workTime * 60;
+        targetSeconds = timerOptionsViewModel.workTime * 60;
       } else {
-        targetSeconds = timerOptions.restTime * 60;
+        targetSeconds = timerOptionsViewModel.restTime * 60;
       }
 
       if (_elapsedSeconds >= targetSeconds) {
@@ -112,11 +113,15 @@ class TimerStateViewModel with ChangeNotifier {
     }
   }
 
-  void pomodoroEnd() {
+  void pomodoroEnd() async {
     pomodoroStop();
 
     if (pomodoroMode == PomodoroMode.focus) {
-      saveRecord(timerOptions.workTime * 60, true, "default");
+      await timerRecordViewModel.saveRecord(
+        date: DateTime.now(),
+        seconds: timerOptionsViewModel.workTime * 60,
+        isCompleted: true,
+      );
     }
     var prev = pomodoroMode;
     pomodoroNext();
@@ -133,7 +138,7 @@ class TimerStateViewModel with ChangeNotifier {
   }
 
   void pomodoroNext() {
-    if (sectionCounts + 1 >= timerOptions.sections) {
+    if (sectionCounts + 1 >= timerOptionsViewModel.sections) {
       // 한 사이클 완료
       _pomodoroMode = PomodoroMode.focus;
       _sectionCounts = 0;
@@ -150,8 +155,16 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void pomodoroInterupt() {
+  void pomodoroInterupt() async {
     pomodoroStop();
+
+    if (pomodoroMode == PomodoroMode.focus) {
+      await timerRecordViewModel.saveRecord(
+        date: DateTime.now(),
+        seconds: _elapsedSeconds,
+        isCompleted: false,
+      );
+    }
     _elapsedSeconds = 0;
     notifyListeners();
   }
@@ -168,23 +181,21 @@ class TimerStateViewModel with ChangeNotifier {
     }
   } // 0부터 증가하는 타이머
 
-  void normalEnd() {
+  void normalEnd() async {
     if (_isRunning) {
       _timer?.cancel();
       _timer = null;
       _isRunning = false;
 
-      saveRecord(elapsedSeconds, false, "default");
+      await timerRecordViewModel.saveRecord(
+        date: DateTime.now(),
+        seconds: _elapsedSeconds,
+        isCompleted: false,
+      );
       _elapsedSeconds = 0;
       notifyListeners();
     }
   }
-
-  // 타이머 기록 (storage로 구현할 예정)
-  // [DateTime] : {int totalSeconds, int totalCompleted, List<String, int> details}도 함께기록
-  // List는 {category: totalSeconds}이고 카테고리는 기본값 default를 가짐
-  // 저장할때 키가 존재하는지 확인 해서 없으면 생성 후 넣기, 있으면 totalSeconds 추가
-  void saveRecord(int seconds, bool isCompleted, String? category) {}
 
   // 타이머 일시정지
   void pauseToggle() {

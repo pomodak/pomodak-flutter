@@ -13,8 +13,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPomodoroMode =
-        Provider.of<TimerOptionsViewModel>(context).isPomodoroMode;
+    final timerOptionsViewModel = Provider.of<TimerOptionsViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const <Widget>[ShowUserGuideButton()],
@@ -31,7 +30,8 @@ class HomeScreen extends StatelessWidget {
                     child: MainCharacterDisplay(),
                   ),
                   const TimerTargetDisplay(),
-                  if (isPomodoroMode) const TimerSectionCounter(),
+                  if (timerOptionsViewModel.isPomodoroMode)
+                    const TimerSectionCounter(),
                 ],
               ),
             ),

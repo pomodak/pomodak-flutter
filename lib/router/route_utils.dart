@@ -1,4 +1,13 @@
-enum AppPage { splash, welcome, login, register, home, error }
+enum AppPage {
+  splash,
+  welcome,
+  login,
+  register,
+  home,
+  error,
+  timer,
+  timerAlarm
+}
 
 extension AppPageExtension on AppPage {
   String get toPath {
@@ -15,6 +24,10 @@ extension AppPageExtension on AppPage {
         return "/splash";
       case AppPage.error:
         return "/error";
+      case AppPage.timer:
+        return "/timer";
+      case AppPage.timerAlarm:
+        return "/timer-alarm";
       default:
         return "/";
     }
@@ -34,23 +47,12 @@ extension AppPageExtension on AppPage {
         return "SPLASH";
       case AppPage.error:
         return "ERROR";
+      case AppPage.timer:
+        return "TIMER";
+      case AppPage.timerAlarm:
+        return "TIMER_ALARM";
       default:
         return "HOME";
-    }
-  }
-
-  String get toTitle {
-    switch (this) {
-      case AppPage.home:
-        return "My App";
-      case AppPage.login:
-        return "My App Log In";
-      case AppPage.splash:
-        return "My App Splash";
-      case AppPage.error:
-        return "My App Error";
-      default:
-        return "My App";
     }
   }
 }

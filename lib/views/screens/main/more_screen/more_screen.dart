@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('설정'),
@@ -47,7 +50,9 @@ class MoreScreen extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                 leading: const Icon(Icons.logout_outlined),
                 title: const Text('로그아웃'),
-                onTap: () {},
+                onTap: () async {
+                  await authViewModel.logOut(context);
+                },
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),

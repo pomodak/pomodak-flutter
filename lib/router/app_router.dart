@@ -8,6 +8,8 @@ import 'package:pomodak/views/screens/login/login_page.dart';
 import 'package:pomodak/views/screens/main/main_page.dart';
 import 'package:pomodak/views/screens/splash_page.dart';
 import 'package:pomodak/views/screens/register/register_page.dart';
+import 'package:pomodak/views/screens/timer/timer_page.dart';
+import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 import 'package:pomodak/views/screens/welcome_page.dart';
 
 class AppRouter {
@@ -21,13 +23,23 @@ class AppRouter {
     // 앱의 로그인 상태와 초기화 상태 변경을 리스닝하여 리프레시
     refreshListenable: Listenable.merge([appViewModel, authViewModel]),
     // 초기 페이지
-    initialLocation: AppPage.home.toPath,
+    initialLocation: AppPage.splash.toPath,
     // 앱의 모든 라우트
     routes: <GoRoute>[
       GoRoute(
         path: AppPage.home.toPath,
         name: AppPage.home.toName,
         builder: (context, state) => const MyHomePage(),
+      ),
+      GoRoute(
+        path: AppPage.timer.toPath,
+        name: AppPage.timer.toName,
+        builder: (context, state) => const TimerPage(),
+      ),
+      GoRoute(
+        path: AppPage.timerAlarm.toPath,
+        name: AppPage.timerAlarm.toName,
+        builder: (context, state) => const TimerAlarmPage(),
       ),
       GoRoute(
         path: AppPage.splash.toPath,
@@ -61,6 +73,8 @@ class AppRouter {
     redirect: (_, state) {
       // 전체 라우트 파악
       final welcomeLocation = state.namedLocation(AppPage.welcome.toName);
+      final timerLocation = state.namedLocation(AppPage.timer.toName);
+      final timerAlarmLocation = state.namedLocation(AppPage.timerAlarm.toName);
       final loginLocation = state.namedLocation(AppPage.login.toName);
       final registerLocation = state.namedLocation(AppPage.register.toName);
       final homeLocation = state.namedLocation(AppPage.home.toName);
@@ -74,6 +88,8 @@ class AppRouter {
       final isGoingToLogin = state.matchedLocation == loginLocation;
       final isGoingToRegister = state.matchedLocation == registerLocation;
       final isGoingToHome = state.matchedLocation == homeLocation;
+      final isGoingToTimer = state.matchedLocation == timerLocation;
+      final isGoingToTimerAlarm = state.matchedLocation == timerAlarmLocation;
       final isGoingToInit = state.matchedLocation == splashLocation;
 
       // 앱이 아직 초기화되지 않았고 스플래시 페이지로 가지 않는 경우, 스플래시 페이지
@@ -81,7 +97,10 @@ class AppRouter {
         return splashLocation;
       }
       // 앱이 초기화되었지만 사용자가 로그인하지 않고 홈으로 이동할 경우, 웰컴 페이지
-      else if (isInitialized && (!isLogedIn && isGoingToHome)) {
+      else if (isInitialized &&
+          ((!isLogedIn && isGoingToHome) ||
+              (!isLogedIn && isGoingToTimer) ||
+              (!isLogedIn && isGoingToTimerAlarm))) {
         return welcomeLocation;
       }
       // 사용자가 로그인한 상태에서 로그인 페이지로 가려고 하거나,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -37,7 +36,7 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppPage.splash.toTitle),
+        title: const Text("Loading"),
       ),
       body: const Center(
         child: CircularProgressIndicator(),

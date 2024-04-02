@@ -27,13 +27,15 @@ class TimerStopButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         if (timerOptions.isPomodoroMode) {
-          timerState.pomodoroInterupt();
+          if (timerState.pomodoroMode == PomodoroMode.focus) {
+            timerState.pomodoroInterupt(context);
+          } else {
+            timerState.pomodoroNext();
+            context.go("/");
+          }
         } else {
-          timerState.normalEnd();
+          timerState.normalEnd(context);
         }
-
-        // 메인으로 이동
-        context.go("/");
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 48),

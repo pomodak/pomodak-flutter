@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
+import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 
 enum PomodoroMode { focus, rest }
 
@@ -67,7 +69,7 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void _tick() {
+  void _tick(BuildContext context) {
     if (!isRunning) return;
     _elapsedSeconds++;
 
@@ -81,7 +83,7 @@ class TimerStateViewModel with ChangeNotifier {
       }
 
       if (_elapsedSeconds >= targetSeconds) {
-        pomodoroEnd();
+        pomodoroEnd(context);
       } else {
         notifyListeners();
       }
@@ -92,12 +94,12 @@ class TimerStateViewModel with ChangeNotifier {
   }
 
   // 뽀모도로 모드 타이머
-  void pomodoroStart() {
+  void pomodoroStart(BuildContext context) {
     if (!_isRunning) {
       _isRunning = true;
       _timer = Timer.periodic(
         const Duration(seconds: 1),
-        (Timer timer) => _tick(),
+        (Timer timer) => _tick(context),
       );
       notifyListeners();
     }
@@ -113,7 +115,7 @@ class TimerStateViewModel with ChangeNotifier {
     }
   }
 
-  void pomodoroEnd() async {
+  void pomodoroEnd(BuildContext context) async {
     pomodoroStop();
 
     if (pomodoroMode == PomodoroMode.focus) {
@@ -125,15 +127,41 @@ class TimerStateViewModel with ChangeNotifier {
     }
     var prev = pomodoroMode;
     pomodoroNext();
-
     if (prev == PomodoroMode.focus) {
       if (sectionCounts == 0) {
         // 사이클 완료 알람 dialog
+        if (context.mounted) {
+          context.go(
+            "/timer-alarm",
+            extra: AlarmInfo(
+              alarmType: AlarmType.finish,
+              time: timerOptionsViewModel.workTime * 60,
+            ),
+          );
+        }
       } else {
         // 집중 끝 알람 dialog
+        if (context.mounted) {
+          context.go(
+            "/timer-alarm",
+            extra: AlarmInfo(
+              alarmType: AlarmType.work,
+              time: timerOptionsViewModel.workTime * 60,
+            ),
+          );
+        }
       }
     } else {
       // 휴식 끝 알람 dialog
+      if (context.mounted) {
+        context.go(
+          "/timer-alarm",
+          extra: AlarmInfo(
+            alarmType: AlarmType.rest,
+            time: timerOptionsViewModel.restTime * 60,
+          ),
+        );
+      }
     }
   }
 
@@ -152,48 +180,68 @@ class TimerStateViewModel with ChangeNotifier {
       curSections: _sectionCounts,
       curPomodoroMode: _pomodoroMode,
     );
-    notifyListeners();
-  }
-
-  void pomodoroInterupt() async {
-    pomodoroStop();
-
-    if (pomodoroMode == PomodoroMode.focus) {
-      await timerRecordViewModel.saveRecord(
-        date: DateTime.now(),
-        seconds: _elapsedSeconds,
-        isCompleted: false,
-      );
-    }
     _elapsedSeconds = 0;
     notifyListeners();
   }
 
+  void pomodoroInterupt(BuildContext context) async {
+    final int time = _elapsedSeconds;
+    pomodoroStop();
+    if (pomodoroMode == PomodoroMode.focus) {
+      await timerRecordViewModel.saveRecord(
+        date: DateTime.now(),
+        seconds: time,
+        isCompleted: false,
+      );
+    }
+    notifyListeners();
+    if (context.mounted) {
+      context.go(
+        "/timer-alarm",
+        extra: AlarmInfo(
+          alarmType: AlarmType.giveup,
+          time: time,
+        ),
+      );
+    }
+  }
+
   // 일반 모드 타이머
-  void normalStart() {
+  void normalStart(BuildContext context) {
     if (!_isRunning) {
       _isRunning = true;
       _timer = Timer.periodic(
         const Duration(seconds: 1),
-        (Timer timer) => _tick(),
+        (Timer timer) => _tick(context),
       );
       notifyListeners();
     }
   } // 0부터 증가하는 타이머
 
-  void normalEnd() async {
+  void normalEnd(BuildContext context) async {
     if (_isRunning) {
+      final int time = _elapsedSeconds;
       _timer?.cancel();
       _timer = null;
       _isRunning = false;
+      _elapsedSeconds = 0;
 
       await timerRecordViewModel.saveRecord(
         date: DateTime.now(),
-        seconds: _elapsedSeconds,
+        seconds: time,
         isCompleted: false,
       );
-      _elapsedSeconds = 0;
       notifyListeners();
+
+      if (context.mounted) {
+        context.go(
+          "/timer-alarm",
+          extra: AlarmInfo(
+            alarmType: AlarmType.normal,
+            time: time,
+          ),
+        );
+      }
     }
   }
 

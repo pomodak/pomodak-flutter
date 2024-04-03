@@ -134,6 +134,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<TimerStateViewModel>(
           create: (_) => timerStateViewModel,
         ),
+        ChangeNotifierProvider<TimerRecordViewModel>(
+          create: (_) => timerRecordViewModel,
+        ),
       ],
       child: Builder(
         builder: (context) {

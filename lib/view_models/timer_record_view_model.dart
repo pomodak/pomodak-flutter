@@ -9,6 +9,12 @@ class TimerRecordViewModel extends ChangeNotifier {
   // 캐시로 사용될 타이머 기록 리스트
   List<TimerRecordModel> records = [];
 
+  Map<DateTime, int> get recordDatasets => {
+        for (var record in records)
+          DateTime(record.date.year, record.date.month, record.date.day):
+              record.totalSeconds
+      };
+
   TimerRecordViewModel({
     required this.storage,
     required this.memberViewModel,
@@ -56,10 +62,6 @@ class TimerRecordViewModel extends ChangeNotifier {
       category: category,
     );
 
-    print(newOrUpdatedRecord.date);
-    print(newOrUpdatedRecord.totalCompleted);
-    print(newOrUpdatedRecord.totalSeconds);
-
     // 새로 저장되거나 업데이트된 기록을 캐시에 반영
     _updateCacheWithRecord(newOrUpdatedRecord);
   }
@@ -76,4 +78,56 @@ class TimerRecordViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  MonthlyStatistics getMonthlyStatistics(int year, int month) {
+    DateTime startOfMonth = DateTime(year, month);
+    DateTime endOfMonth =
+        DateTime(year, month + 1).subtract(const Duration(days: 1));
+
+    int totalSeconds = 0;
+    int totalCompleted = 0;
+    Map<String, int> categoryDetails = {};
+
+    for (var record in records) {
+      if (record.date.isAfter(startOfMonth.subtract(const Duration(days: 1))) &&
+          record.date.isBefore(endOfMonth.add(const Duration(days: 1)))) {
+        totalSeconds += record.totalSeconds;
+        totalCompleted += record.totalCompleted;
+
+        // 카테고리별 집중 시간 계산
+        record.details.forEach((category, seconds) {
+          if (categoryDetails.containsKey(category)) {
+            categoryDetails[category] = categoryDetails[category]! + seconds;
+          } else {
+            categoryDetails[category] = seconds;
+          }
+        });
+      }
+    }
+
+    return MonthlyStatistics(
+      totalSeconds: totalSeconds,
+      totalCompleted: totalCompleted,
+      categoryDetails: categoryDetails,
+    );
+  }
+
+  TimerRecordModel? getTimerRecordByDate(int year, int month, int day) {
+    return storage.getTimerRecordByMemberIdAndDate(
+      memberViewModel.member?.memberId ?? "",
+      DateTime(year, month, day),
+    );
+  }
+}
+
+class MonthlyStatistics {
+  final int totalSeconds;
+  final int totalCompleted;
+  final Map<String, int> categoryDetails; // 카테고리별 집중 시간
+
+  MonthlyStatistics({
+    required this.totalSeconds,
+    required this.totalCompleted,
+    required this.categoryDetails,
+  });
 }

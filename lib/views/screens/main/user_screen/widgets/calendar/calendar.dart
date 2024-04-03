@@ -9,7 +9,11 @@ import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/today_ce
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
-  const Calendar({super.key});
+  final Map<DateTime, int> datasets;
+  const Calendar({
+    super.key,
+    required this.datasets,
+  });
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -71,10 +75,12 @@ class _CalendarState extends State<Calendar> {
         },
       ),
       eventLoader: (day) {
-        if (14 < day.day && day.day < 23) {
-          return ["test"];
+        int? totalSecons =
+            widget.datasets[DateTime(day.year, day.month, day.day)];
+        if (totalSecons == null) {
+          return [];
         }
-        return [];
+        return [totalSecons];
       },
       firstDay: DateTime.utc(2023, 10, 16),
       lastDay: DateTime.now(),

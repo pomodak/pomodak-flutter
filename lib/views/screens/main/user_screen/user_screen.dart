@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap.dart';
-import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/calendar.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/user_calendar.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/user_heatmap.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_profile.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_focus_summary.dart';
 
@@ -79,54 +79,9 @@ class _UserScreenState extends State<UserScreen>
           },
           body: TabBarView(
             controller: _tabController,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: const [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Calendar(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              ListView(
-                children: [
-                  const Center(
-                    child: Text(
-                      "스트릭",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  HeatMap(
-                    datasets: {
-                      DateTime(2024, 3, 6): 2,
-                      DateTime(2024, 3, 7): 4,
-                      DateTime(2024, 3, 8): 5,
-                      DateTime(2024, 3, 9): 7,
-                      DateTime(2024, 3, 13): 6,
-                    },
-                    size: 32,
-                    colorsets: {
-                      1: Colors.green.shade100,
-                      3: Colors.green.shade300,
-                      5: Colors.green.shade500,
-                      7: Colors.green.shade700,
-                    },
-                    onClick: (value) {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(value.toString())));
-                    },
-                  ),
-                ],
-              ),
+            children: const [
+              UserCalendar(),
+              UserHeatMap(),
             ],
           ),
         ),

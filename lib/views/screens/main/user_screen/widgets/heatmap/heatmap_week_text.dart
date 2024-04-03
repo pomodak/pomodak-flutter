@@ -32,7 +32,7 @@ class HeatMapWeekText extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: fontSize ?? 14,
-                color: fontColor,
+                color: label == "일" ? Colors.red : fontColor,
               ),
             ),
           ),

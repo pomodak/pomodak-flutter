@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/view_models/timer_record_view_model.dart';
+import 'package:provider/provider.dart';
 
 class UserFocusSummary extends StatelessWidget {
   const UserFocusSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    DateTime now = DateTime.now();
+    final timerRecordViewModel = Provider.of<TimerRecordViewModel>(context);
+    final monthlyStatistics =
+        timerRecordViewModel.getMonthlyStatistics(now.year, now.month);
+    final todayRecord =
+        timerRecordViewModel.getTimerRecordByDate(now.year, now.month, now.day);
+
+    return SizedBox(
       height: 100,
       child: Row(
         children: [
@@ -13,8 +22,8 @@ class UserFocusSummary extends StatelessWidget {
             flex: 1,
             child: SummaryCard(
               title: "Today Focus",
-              focusCount: 4,
-              focusMinutes: 100,
+              focusCount: todayRecord?.totalCompleted ?? 0,
+              focusMinutes: (todayRecord?.totalSeconds ?? 0) ~/ 60,
               isInversed: true,
             ),
           ),
@@ -22,8 +31,8 @@ class UserFocusSummary extends StatelessWidget {
             flex: 1,
             child: SummaryCard(
               title: "Monthly Focus",
-              focusCount: 22,
-              focusMinutes: 2331,
+              focusCount: monthlyStatistics.totalCompleted,
+              focusMinutes: monthlyStatistics.totalSeconds ~/ 60,
               isInversed: false,
             ),
           ),

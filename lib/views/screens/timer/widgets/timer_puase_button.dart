@@ -11,7 +11,7 @@ class TimerPauseButton extends StatelessWidget {
 
     return ElevatedButton(
       onPressed: () {
-        timerState.pauseToggle();
+        timerState.togglePause();
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 48),

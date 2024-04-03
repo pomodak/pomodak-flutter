@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
@@ -25,8 +24,6 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _startTimer() {
-    final timerOptionsViewModel =
-        Provider.of<TimerOptionsViewModel>(context, listen: false);
     final timerStateViewModel =
         Provider.of<TimerStateViewModel>(context, listen: false);
 
@@ -41,11 +38,7 @@ class _TimerPageState extends State<TimerPage> {
       );
     }
 
-    if (timerOptionsViewModel.isPomodoroMode) {
-      timerStateViewModel.pomodoroStart(onTimerEnd);
-    } else {
-      timerStateViewModel.normalStart(onTimerEnd);
-    }
+    timerStateViewModel.timerStart(onTimerEnd);
   }
 
   @override

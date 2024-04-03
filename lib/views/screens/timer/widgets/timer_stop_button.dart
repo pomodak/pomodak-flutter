@@ -41,9 +41,9 @@ class TimerStopButton extends StatelessWidget {
       onPressed: () {
         if (timerOptions.isPomodoroMode) {
           if (timerState.pomodoroMode == PomodoroMode.focus) {
-            timerState.pomodoroInterupt(onTimerEnd);
+            timerState.pomodoroGiveUp(onTimerEnd);
           } else {
-            timerState.pomodoroNext();
+            timerState.pomodoroPass();
             context.go("/");
           }
         } else {

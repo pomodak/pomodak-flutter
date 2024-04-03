@@ -32,6 +32,10 @@ class TimerStateViewModel with ChangeNotifier {
     required this.timerRecordViewModel,
     required this.timerOptionsViewModel,
   }) {
+    _initialize();
+  }
+
+  void _initialize() {
     _loadState();
     timerOptionsViewModel.addListener(_onTimerOptionsChanged);
   }
@@ -52,7 +56,7 @@ class TimerStateViewModel with ChangeNotifier {
     }
   }
 
-  // 타이머 상태 초기화
+  // 타이머 상태 초기화 (옵션 변경 시 호출)
   void resetTimerState() {
     _pomodoroMode = PomodoroMode.focus;
     _sectionCounts = 0;
@@ -70,24 +74,8 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void _tick(Function(AlarmType, int) onTimerEnd) {
-    if (!isRunning) return;
-
-    _elapsedSeconds++;
-
-    // 뽀모도로 모드 & 타이머 목표에 도달
-    if (timerOptionsViewModel.isPomodoroMode == true) {
-      final targetSeconds = _getTargetSeconds();
-      if (_elapsedSeconds >= targetSeconds) {
-        pomodoroEnd(onTimerEnd);
-        return;
-      }
-    }
-    notifyListeners();
-  }
-
-  // 뽀모도로 모드 타이머
-  void pomodoroStart(Function(AlarmType, int) onTimerEnd) {
+  // 타이머 시작
+  void timerStart(Function(AlarmType, int) onTimerEnd) {
     if (_isRunning) return;
     _isRunning = true;
     _timer = Timer.periodic(
@@ -97,10 +85,8 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // 타이머 멈추기 & elapsedSeconds 초기화
-  void _pomodoroStop() {
+  void _timerStop() {
     if (!_isRunning) return;
-
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -108,30 +94,104 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // 타이머
-  void pomodoroEnd(Function(AlarmType, int) onTimerEnd) async {
-    _pomodoroStop();
+  void normalEnd(Function(AlarmType, int) onTimerEnd) {
+    if (!_isRunning) return;
+    int time = _elapsedSeconds;
+    _timerStop();
+    _recordTimerSession(time: time, isCompleted: false);
+    notifyListeners();
+    onTimerEnd(AlarmType.normal, time);
+  }
+
+  void pomodoroEnd(Function(AlarmType, int) onTimerEnd) {
+    if (!_isRunning) return;
+    _timerStop();
 
     if (pomodoroMode == PomodoroMode.focus) {
-      _recordTimerSession(isCompleted: true);
+      _recordTimerSession(
+        time: timerOptionsViewModel.workTime * 60,
+        isCompleted: true,
+      );
     }
-    var prev = pomodoroMode;
-    pomodoroNext();
-    if (prev == PomodoroMode.focus) {
-      if (sectionCounts == 0) {
-        // 사이클 완료 알람 dialog
-        onTimerEnd(AlarmType.finish, timerOptionsViewModel.workTime * 60);
-      } else {
-        // 집중 끝 알람 dialog
-        onTimerEnd(AlarmType.work, timerOptionsViewModel.workTime * 60);
-      }
-    } else {
-      // 휴식 끝 알람 dialog
-      onTimerEnd(AlarmType.rest, timerOptionsViewModel.restTime * 60);
+
+    _pomodoroNext();
+    _notifyEndBasedOnMode(onTimerEnd);
+  }
+
+  void pomodoroPass() {
+    _timerStop();
+    _pomodoroNext();
+  }
+
+  void pomodoroGiveUp(Function(AlarmType, int) onTimerEnd) async {
+    final int time = _elapsedSeconds;
+    _timerStop();
+    if (pomodoroMode == PomodoroMode.focus) {
+      _recordTimerSession(time: time, isCompleted: false);
+    }
+    notifyListeners();
+    onTimerEnd(AlarmType.giveup, time);
+  }
+
+  void togglePause() {
+    _isRunning = !_isRunning;
+    notifyListeners();
+  }
+
+  void _tick(Function(AlarmType, int) onTimerEnd) {
+    if (!isRunning) return;
+
+    _updateElapsedTime();
+    _checkAndHandleTargetReached(onTimerEnd);
+  }
+
+  void _updateElapsedTime() {
+    _elapsedSeconds++;
+    notifyListeners();
+  }
+
+  void _checkAndHandleTargetReached(Function(AlarmType, int) onTimerEnd) {
+    if (!timerOptionsViewModel.isPomodoroMode) return;
+
+    final targetReached = _elapsedSeconds >= _getTargetSeconds();
+    if (targetReached) {
+      pomodoroEnd(onTimerEnd);
     }
   }
 
-  void pomodoroNext() {
+  void _notifyEndBasedOnMode(Function(AlarmType, int) onTimerEnd) {
+    AlarmType alarmType;
+
+    if (_pomodoroMode == PomodoroMode.focus) {
+      alarmType = _sectionCounts == 0 ? AlarmType.finish : AlarmType.work;
+    } else {
+      alarmType = AlarmType.rest;
+    }
+
+    _recordTimerSession(time: _getTargetSeconds(), isCompleted: true);
+
+    onTimerEnd(alarmType, _getTargetSeconds());
+
+    notifyListeners();
+  }
+
+  int _getTargetSeconds() {
+    int targetMinutes = _pomodoroMode == PomodoroMode.focus
+        ? timerOptionsViewModel.workTime
+        : timerOptionsViewModel.restTime;
+    return targetMinutes * 60;
+  }
+
+  void _recordTimerSession(
+      {required int time, required bool isCompleted}) async {
+    await timerRecordViewModel.saveRecord(
+      date: DateTime.now(),
+      seconds: time,
+      isCompleted: isCompleted,
+    );
+  }
+
+  void _pomodoroNext() {
     if (_pomodoroMode == PomodoroMode.focus) {
       _pomodoroMode = PomodoroMode.rest;
       _sectionCounts = sectionCounts + 1;
@@ -148,72 +208,6 @@ class TimerStateViewModel with ChangeNotifier {
       curSections: _sectionCounts,
       curPomodoroMode: _pomodoroMode,
     );
-    _elapsedSeconds = 0;
     notifyListeners();
-  }
-
-  void pomodoroInterupt(Function(AlarmType, int) onTimerEnd) async {
-    final int time = _elapsedSeconds;
-    _pomodoroStop();
-    if (pomodoroMode == PomodoroMode.focus) {
-      _recordTimerSession(isCompleted: false);
-    }
-    notifyListeners();
-    onTimerEnd(
-      AlarmType.giveup,
-      time,
-    );
-  }
-
-  // 일반 모드 타이머
-  void normalStart(Function(AlarmType, int) onTimerEnd) {
-    if (!_isRunning) {
-      _isRunning = true;
-      _timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer timer) => _tick(onTimerEnd),
-      );
-      notifyListeners();
-    }
-  } // 0부터 증가하는 타이머
-
-  void normalEnd(Function(AlarmType, int) onTimerEnd) async {
-    if (_isRunning) {
-      final int time = _elapsedSeconds;
-      _timer?.cancel();
-      _timer = null;
-      _isRunning = false;
-      _elapsedSeconds = 0;
-
-      await timerRecordViewModel.saveRecord(
-        date: DateTime.now(),
-        seconds: time,
-        isCompleted: false,
-      );
-      notifyListeners();
-      onTimerEnd(AlarmType.normal, time);
-    }
-  }
-
-  // 타이머 일시정지
-  void pauseToggle() {
-    _isRunning = !_isRunning;
-    notifyListeners();
-  }
-
-  int _getTargetSeconds() {
-    int targetMinutes = _pomodoroMode == PomodoroMode.focus
-        ? timerOptionsViewModel.workTime
-        : timerOptionsViewModel.restTime;
-    return targetMinutes * 60;
-  }
-
-  // 기록
-  void _recordTimerSession({required bool isCompleted}) async {
-    await timerRecordViewModel.saveRecord(
-      date: DateTime.now(),
-      seconds: _elapsedSeconds,
-      isCompleted: isCompleted,
-    );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/config/constants/cdn_images.dart';
+import 'package:pomodak/view_models/shop_view_model.dart';
+import 'package:pomodak/views/screens/main/shop_screen/widgets/shop_list_item.dart';
+import 'package:provider/provider.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -16,6 +18,9 @@ class _ShopScreenState extends State<ShopScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    final shopViewModel = Provider.of<ShopViewModel>(context, listen: false);
+    shopViewModel.loadShop();
   }
 
   @override
@@ -53,92 +58,39 @@ class _ShopScreenState extends State<ShopScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                for (var i = 0; i < 10; ++i)
-                  ShopListItem(
-                    imageUrl: CDNImages.mascot["normal"]!,
-                    name: "무료알$i",
-                    price: 400,
-                    requiredTime: 1200,
-                  )
-              ],
-            ),
-          ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                for (var i = 0; i < 10; ++i)
-                  ShopListItem(
-                    imageUrl: CDNImages.mascot["exhausted"]!,
-                    name: "아이템$i",
-                    price: 400,
-                    requiredTime: 7200,
-                  )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ShopListItem extends StatelessWidget {
-  final String imageUrl, name;
-  final num price;
-  final num? requiredTime;
-
-  const ShopListItem({
-    super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.price,
-    this.requiredTime,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: GestureDetector(
-        onTap: () {},
-        child: Row(
-          children: [
-            Image.network(
-              imageUrl,
-              width: 100,
-              height: 100,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    "$price원",
-                  ),
-                  if (requiredTime != null)
-                    Text("⌛️ ${(requiredTime! / 60).floor()}분")
-                ],
+      body: Consumer<ShopViewModel>(
+        builder: (context, shop, child) {
+          return TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (var item in shop.foodItems)
+                      ShopListItem(
+                        imageUrl: item.imageUrl,
+                        name: item.name,
+                        price: item.cost,
+                        requiredTime: item.requiredStudyTime,
+                      )
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Icon(Icons.chevron_right)
-          ],
-        ),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (var item in shop.consumableItems)
+                      ShopListItem(
+                        imageUrl: item.imageUrl,
+                        name: item.name,
+                        price: item.cost,
+                      )
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

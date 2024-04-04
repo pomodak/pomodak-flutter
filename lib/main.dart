@@ -8,6 +8,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
+import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/data/storagies/timer_record_storage.dart';
 import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/data/storagies/timer_options_storage.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model.dart';
@@ -80,6 +82,7 @@ class _MyAppState extends State<MyApp> {
   late NetworkApiService apiService;
   late AuthRepository authRepository;
   late MemberRepository memberRepository;
+  late ShopRepository shopRepository;
 
   late AppViewModel appViewModel;
   late AuthViewModel authViewModel;
@@ -87,6 +90,7 @@ class _MyAppState extends State<MyApp> {
   late TimerOptionsViewModel timerOptionsViewModel;
   late TimerRecordViewModel timerRecordViewModel;
   late TimerStateViewModel timerStateViewModel;
+  late ShopViewModel shopViewModel;
 
   @override
   void initState() {
@@ -104,6 +108,7 @@ class _MyAppState extends State<MyApp> {
     authRepository =
         AuthRepository(apiService: apiService, storage: authStorage);
     memberRepository = MemberRepository(apiService: apiService);
+    shopRepository = ShopRepository(apiService: apiService);
 
     // ViewModel
     appViewModel = AppViewModel();
@@ -119,6 +124,8 @@ class _MyAppState extends State<MyApp> {
       timerRecordViewModel: timerRecordViewModel,
       timerOptionsViewModel: timerOptionsViewModel,
     );
+
+    shopViewModel = ShopViewModel(repository: shopRepository);
   }
 
   @override
@@ -128,6 +135,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<AppViewModel>(create: (_) => appViewModel),
         ChangeNotifierProvider<AuthViewModel>(create: (_) => authViewModel),
         ChangeNotifierProvider<MemberViewModel>(create: (_) => memberViewModel),
+
+        // 타이머 관련
         ChangeNotifierProvider<TimerOptionsViewModel>(
           create: (_) => timerOptionsViewModel,
         ),
@@ -137,6 +146,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<TimerRecordViewModel>(
           create: (_) => timerRecordViewModel,
         ),
+
+        // 상점
+        ChangeNotifierProvider<ShopViewModel>(create: (_) => shopViewModel),
       ],
       child: Builder(
         builder: (context) {

@@ -12,7 +12,7 @@ class CharacterModel {
   final String grade;
   @JsonKey(name: 'image_url')
   final String imageUrl;
-  final int name;
+  final String name;
   @JsonKey(name: 'sell_price')
   final int sellPrice;
 

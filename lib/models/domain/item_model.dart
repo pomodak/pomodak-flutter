@@ -26,10 +26,8 @@ class ItemModel {
     required this.imageUrl,
   });
 
-  // JSON 역직렬화 생성자
   factory ItemModel.fromJson(Map<String, dynamic> json) =>
       _$ItemModelFromJson(json);
 
-  // JSON 직렬화 메서드
   Map<String, dynamic> toJson() => _$ItemModelToJson(this);
 }

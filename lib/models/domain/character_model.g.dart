@@ -12,7 +12,7 @@ CharacterModel _$CharacterModelFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String,
       grade: json['grade'] as String,
       imageUrl: json['image_url'] as String,
-      name: json['name'] as int,
+      name: json['name'] as String,
       sellPrice: json['sell_price'] as int,
     );
 

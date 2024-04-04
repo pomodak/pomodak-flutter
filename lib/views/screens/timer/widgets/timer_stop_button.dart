@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model.dart';
-import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 import 'package:provider/provider.dart';
 
 class TimerStopButton extends StatelessWidget {
@@ -25,29 +24,17 @@ class TimerStopButton extends StatelessWidget {
       }
     }
 
-    void onTimerEnd(AlarmType alarmType, int time) {
-      if (context.mounted) {
-        context.go(
-          "/timer-alarm",
-          extra: AlarmInfo(
-            alarmType: alarmType,
-            time: time,
-          ),
-        );
-      }
-    }
-
     return ElevatedButton(
       onPressed: () {
         if (timerOptions.isPomodoroMode) {
           if (timerState.pomodoroMode == PomodoroMode.focus) {
-            timerState.pomodoroGiveUp(onTimerEnd);
+            timerState.pomodoroGiveUp();
           } else {
             timerState.pomodoroPass();
             context.go("/");
           }
         } else {
-          timerState.normalEnd(onTimerEnd);
+          timerState.normalEnd();
         }
       },
       style: ElevatedButton.styleFrom(

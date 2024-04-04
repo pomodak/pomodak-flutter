@@ -7,7 +7,7 @@ import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 
 enum PomodoroMode { focus, rest }
 
-class TimerStateViewModel with ChangeNotifier {
+class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   // DI
   final TimerStateStorage storage;
   final TimerRecordViewModel timerRecordViewModel;
@@ -19,7 +19,11 @@ class TimerStateViewModel with ChangeNotifier {
   int _elapsedSeconds = 0; // 경과 시간(초 단위)
   bool _isRunning = false; // 타이머 실행 상태
   int _sectionCounts = 0; // 섹션 수
-  // DateTime? _backgroundTime; // 백그라운드로 전환된 시간
+
+  // onTimerEnd 콜백 함수를 저장할 변수 추가
+  Function(AlarmType, int)? _onTimerEnd;
+  bool _isBackgroundRunning = false;
+  final timerHandler = TimerDifferenceHandler.instance; // 백그라운드 타이머 계산
 
   // 타이머 상태에 대한 Getter
   int get elapsedSeconds => _elapsedSeconds;
@@ -33,6 +37,40 @@ class TimerStateViewModel with ChangeNotifier {
     required this.timerOptionsViewModel,
   }) {
     _initialize();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.paused:
+        // 앱이 백그라운드로 이동할 때
+        _isBackgroundRunning = isRunning; // 전환될때 타이머가 실행중이었는지 기록
+        int temp = _elapsedSeconds;
+        _timerStop(); // 내부에서 _elaspedSeconds가 초기화 되어서 temp로 복구
+        _elapsedSeconds = temp;
+        timerHandler.setPuasedAt(); // 백그라운드 전환 시간 기록
+        notifyListeners();
+        break;
+      case AppLifecycleState.resumed:
+        // 앱이 다시 활성화될 때
+        timerStart(_onTimerEnd!); // 제거된 타이머 이벤트를 복구
+        if (_isBackgroundRunning) {
+          _elapsedSeconds += timerHandler.getTimerGapSeconds();
+        } else {
+          _isRunning = false; // 이전에 일시정지 상태였으면 다시 일시정지 상태로
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   void _initialize() {
@@ -76,17 +114,16 @@ class TimerStateViewModel with ChangeNotifier {
 
   // 타이머 시작
   void timerStart(Function(AlarmType, int) onTimerEnd) {
-    if (_isRunning) return;
+    _onTimerEnd = onTimerEnd;
     _isRunning = true;
     _timer = Timer.periodic(
       const Duration(seconds: 1),
-      (Timer timer) => _tick(onTimerEnd),
+      (Timer timer) => _tick(),
     );
     notifyListeners();
   }
 
   void _timerStop() {
-    if (!_isRunning) return;
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -94,16 +131,19 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void normalEnd(Function(AlarmType, int) onTimerEnd) {
+  void normalEnd() {
     if (!_isRunning) return;
     int time = _elapsedSeconds;
     _timerStop();
     _recordTimerSession(time: time, isCompleted: false);
     notifyListeners();
-    onTimerEnd(AlarmType.normal, time);
+
+    if (_onTimerEnd != null) {
+      _onTimerEnd!(AlarmType.giveup, time);
+    }
   }
 
-  void pomodoroEnd(Function(AlarmType, int) onTimerEnd) {
+  void pomodoroEnd() {
     if (!_isRunning) return;
     _timerStop();
 
@@ -114,8 +154,8 @@ class TimerStateViewModel with ChangeNotifier {
       );
     }
 
+    _notifyEndBasedOnMode();
     _pomodoroNext();
-    _notifyEndBasedOnMode(onTimerEnd);
   }
 
   void pomodoroPass() {
@@ -123,14 +163,16 @@ class TimerStateViewModel with ChangeNotifier {
     _pomodoroNext();
   }
 
-  void pomodoroGiveUp(Function(AlarmType, int) onTimerEnd) async {
+  void pomodoroGiveUp() async {
     final int time = _elapsedSeconds;
     _timerStop();
     if (pomodoroMode == PomodoroMode.focus) {
       _recordTimerSession(time: time, isCompleted: false);
     }
     notifyListeners();
-    onTimerEnd(AlarmType.giveup, time);
+    if (_onTimerEnd != null) {
+      _onTimerEnd!(AlarmType.giveup, time);
+    }
   }
 
   void togglePause() {
@@ -138,11 +180,11 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void _tick(Function(AlarmType, int) onTimerEnd) {
+  void _tick() {
     if (!isRunning) return;
 
     _updateElapsedTime();
-    _checkAndHandleTargetReached(onTimerEnd);
+    _checkAndHandleTargetReached();
   }
 
   void _updateElapsedTime() {
@@ -150,27 +192,31 @@ class TimerStateViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void _checkAndHandleTargetReached(Function(AlarmType, int) onTimerEnd) {
+  void _checkAndHandleTargetReached() {
     if (!timerOptionsViewModel.isPomodoroMode) return;
 
     final targetReached = _elapsedSeconds >= _getTargetSeconds();
     if (targetReached) {
-      pomodoroEnd(onTimerEnd);
+      pomodoroEnd();
     }
   }
 
-  void _notifyEndBasedOnMode(Function(AlarmType, int) onTimerEnd) {
+  void _notifyEndBasedOnMode() {
     AlarmType alarmType;
 
     if (_pomodoroMode == PomodoroMode.focus) {
-      alarmType = _sectionCounts == 0 ? AlarmType.finish : AlarmType.work;
+      alarmType = _sectionCounts == timerOptionsViewModel.sections - 1
+          ? AlarmType.finish
+          : AlarmType.work;
     } else {
       alarmType = AlarmType.rest;
     }
 
     _recordTimerSession(time: _getTargetSeconds(), isCompleted: true);
 
-    onTimerEnd(alarmType, _getTargetSeconds());
+    if (_onTimerEnd != null) {
+      _onTimerEnd!(alarmType, _getTargetSeconds());
+    }
 
     notifyListeners();
   }
@@ -209,5 +255,26 @@ class TimerStateViewModel with ChangeNotifier {
       curPomodoroMode: _pomodoroMode,
     );
     notifyListeners();
+  }
+}
+
+class TimerDifferenceHandler {
+  static late DateTime pausedAt;
+
+  static final TimerDifferenceHandler _instance = TimerDifferenceHandler();
+
+  static TimerDifferenceHandler get instance => _instance;
+
+  int getTimerGapSeconds() {
+    final DateTime dateTimeNow = DateTime.now();
+    final Duration gapTime = dateTimeNow.difference(pausedAt);
+    final int gapSeconds = gapTime.inSeconds;
+
+    return gapSeconds;
+  }
+
+  void setPuasedAt() {
+    final DateTime dateTimeNow = DateTime.now();
+    pausedAt = dateTimeNow;
   }
 }

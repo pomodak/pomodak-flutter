@@ -1,20 +1,25 @@
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:pomodak/models/domain/character_model.dart';
 
-// 임시
+part 'character_inventory_model.g.dart';
+
+@JsonSerializable()
 class CharacterInventoryModel {
-  final int id;
-  final CharacterGrade grade;
-  final String imageUrl;
-  final String name;
-  final int sellPrice;
+  @JsonKey(name: 'character_inventory_id')
+  final String characterInventoryId;
+  @JsonKey(name: 'quantity')
   final int quantity;
+  @JsonKey(name: 'character')
+  final CharacterModel character;
 
   CharacterInventoryModel({
-    required this.id,
-    required this.grade,
-    required this.imageUrl,
-    required this.name,
-    required this.sellPrice,
+    required this.characterInventoryId,
     required this.quantity,
+    required this.character,
   });
+
+  factory CharacterInventoryModel.fromJson(Map<String, dynamic> json) =>
+      _$CharacterInventoryModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CharacterInventoryModelToJson(this);
 }

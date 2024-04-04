@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
+import 'package:pomodak/models/api/members/character_inventory_response.dart';
 import 'package:pomodak/models/api/members/member_response.dart';
+import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/models/domain/member_model.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/models/domain/streak_model.dart';
@@ -71,6 +73,25 @@ class MemberRepository {
       );
       var data = response.data;
       return data?.palette;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<CharacterInventoryModel>> fetchMemberCharacterInventory(
+      String memberId) async {
+    try {
+      Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
+        '$_nestApiEndpoint/members/$memberId/character-inventory',
+      );
+      BaseApiResponse<CharacterInventoryResponse> response =
+          BaseApiResponse.fromJson(
+        responseJson,
+        (json) =>
+            CharacterInventoryResponse.fromJson(json as Map<String, dynamic>),
+      );
+      var data = response.data;
+      return data?.characterInventory ?? [];
     } catch (e) {
       rethrow;
     }

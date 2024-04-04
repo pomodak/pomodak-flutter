@@ -1,18 +1,18 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
 
 part 'character_model.g.dart';
 
 @JsonSerializable()
 class CharacterModel {
   @JsonKey(name: 'character_id')
-  final String characterId;
-  @JsonKey(name: 'description')
-  final String description;
-  @JsonKey(name: 'grade')
-  final String grade;
+  final int characterId;
+  @JsonKey(name: 'grade', fromJson: _gradeFromJson, toJson: _gradeToJson)
+  final CharacterGrade grade;
   @JsonKey(name: 'image_url')
   final String imageUrl;
   final String name;
+  final String description;
   @JsonKey(name: 'sell_price')
   final int sellPrice;
 
@@ -29,4 +29,19 @@ class CharacterModel {
       _$CharacterModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
+
+  static CharacterGrade _gradeFromJson(String grade) =>
+      stringToCharacterGrade(grade);
+
+  static String _gradeToJson(CharacterGrade grade) =>
+      characterGradeToString(grade);
+}
+
+String characterGradeToString(CharacterGrade grade) {
+  return grade.toString().split('.').last;
+}
+
+CharacterGrade stringToCharacterGrade(String grade) {
+  return CharacterGrade.values.firstWhere(
+      (e) => e.toString().split('.').last.toLowerCase() == grade.toLowerCase());
 }

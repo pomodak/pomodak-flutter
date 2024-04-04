@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
+import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/members/character_inventory_response.dart';
 import 'package:pomodak/models/api/members/item_inventory_response.dart';
@@ -101,10 +102,11 @@ class MemberRepository {
 
   Future<List<ItemInventoryModel>> fetchMemberItemInventory(
     String memberId,
+    ItemType itemType,
   ) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
-        '$_nestApiEndpoint/members/$memberId/item-inventory',
+        '$_nestApiEndpoint/members/$memberId/item-inventory?${itemType == ItemType.food ? "item_type=Food" : "item_type=Consumable"}',
       );
       BaseApiResponse<ItemInventoryResponse> response =
           BaseApiResponse.fromJson(

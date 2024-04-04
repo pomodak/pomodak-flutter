@@ -40,7 +40,7 @@ class AuthViewModel with ChangeNotifier {
         MessageUtil.showSuccessToast(
           "로그인 성공",
         );
-        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
+        await Provider.of<MemberViewModel>(context, listen: false).login();
       }
     } catch (e) {
       if (context.mounted) {
@@ -65,7 +65,7 @@ class AuthViewModel with ChangeNotifier {
 
       if (context.mounted) {
         MessageUtil.showSuccessToast("회원가입 성공");
-        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
+        await Provider.of<MemberViewModel>(context, listen: false).login();
       }
 
       await loadAccount(); // 계정 갱신
@@ -111,7 +111,7 @@ class AuthViewModel with ChangeNotifier {
 
       if (context.mounted) {
         MessageUtil.showSuccessToast("로그인 성공");
-        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
+        await Provider.of<MemberViewModel>(context, listen: false).login();
       }
     } catch (e) {
       if (context.mounted) {
@@ -131,7 +131,7 @@ class AuthViewModel with ChangeNotifier {
         MessageUtil.showSuccessToast(
           "로그인 성공",
         );
-        await Provider.of<MemberViewModel>(context, listen: false).loadMember();
+        await Provider.of<MemberViewModel>(context, listen: false).login();
       }
     } catch (e) {
       if (context.mounted) {

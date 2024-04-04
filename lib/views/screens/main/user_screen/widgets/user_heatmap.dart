@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/utils/color_util.dart';
 import 'package:pomodak/utils/format_util.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,11 @@ class UserHeatMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timerRecordViewModel = Provider.of<TimerRecordViewModel>(context);
+    final memberViewModel = Provider.of<MemberViewModel>(context);
     final datasets = timerRecordViewModel.recordDatasets;
+
+    var palette = memberViewModel.palette;
+
     return ListView(
       children: [
         const Center(
@@ -26,10 +32,18 @@ class UserHeatMap extends StatelessWidget {
           datasets: datasets,
           size: 32,
           colorsets: {
-            1: Colors.green.shade100,
-            3: Colors.green.shade300,
-            5: Colors.green.shade500,
-            7: Colors.green.shade700,
+            1: palette != null
+                ? Color(HexColor.fromHex(palette.lightColor))
+                : Colors.green.shade100,
+            3600: palette != null
+                ? Color(HexColor.fromHex(palette.normalColor))
+                : Colors.green.shade300,
+            10800: palette != null
+                ? Color(HexColor.fromHex(palette.darkColor))
+                : Colors.green.shade500,
+            18000: palette != null
+                ? Color(HexColor.fromHex(palette.darkerColor))
+                : Colors.green.shade700,
           },
           onClick: (value) {
             String dateStr = value.toString().split(" ")[0];

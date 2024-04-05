@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 // 앱 설정 & 앱 초기화 여부 확인
@@ -14,10 +13,7 @@ class AppViewModel with ChangeNotifier {
   }
 
   // 앱 시작 시 실행하는 로직
-  Future<void> onAppStart() async {
-    await Future.delayed(const Duration(seconds: 2));
-
+  void onAppStart() {
     _initialized = true;
-    notifyListeners();
   }
 }

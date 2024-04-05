@@ -11,7 +11,7 @@ class MemberViewModel with ChangeNotifier {
   // DI
   late final MemberRepository repository;
 
-  // 데이터
+  // Data
   MemberModel? _member;
   PaletteModel? _palette;
   List<ItemInventoryModel> _foodInventory = [];
@@ -127,7 +127,7 @@ class MemberViewModel with ChangeNotifier {
 
   // 로그인 후 초기데이터 조회 후 캐싱
   // 이후 데이터 변경작업 발생 시 개별 load 함수 호출로 캐시 업데이트
-  Future<void> login() async {
+  Future<void> loadMemberRelatedData() async {
     await loadMember();
     if (_member != null) {
       loadPalette();
@@ -139,7 +139,7 @@ class MemberViewModel with ChangeNotifier {
   }
 
   Future<void> onAppStart() async {
-    await login();
+    await loadMemberRelatedData();
   }
 
   void _handleError(String field, Object e) {

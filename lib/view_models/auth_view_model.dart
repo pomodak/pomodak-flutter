@@ -8,160 +8,149 @@ import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/domain/account_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
-import 'package:provider/provider.dart';
 
 class AuthViewModel with ChangeNotifier {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // DI
   late final AuthRepository repository;
+  final MemberViewModel memberViewModel;
 
+  // Data
   AccountModel? _account;
-  final bool _loading = false;
   bool _isLoggedIn = false;
 
+  // 로딩 상태
+  bool _isLoadingLogin = false;
+  bool _isLoadingRegister = false;
+  bool _isLoadingCheckEmail = false;
+
+  // 에러 메시지
+  String? _loginError;
+  String? _registerError;
+  String? _checkEmailError;
+
   AccountModel? get account => _account;
-  bool get loading => _loading;
   bool get isLoggedIn => _isLoggedIn;
 
-  AuthViewModel({
-    required this.repository,
-  });
+  bool get isLoadingLogin => _isLoadingLogin;
+  bool get isLoadingRegister => _isLoadingRegister;
+  bool get isLoadingCheckEmail => _isLoadingCheckEmail;
 
-  Future<void> emailLogin(
-    BuildContext context, {
+  String? get loginError => _loginError;
+  String? get registerError => _registerError;
+  String? get checkEmailError => _checkEmailError;
+
+  AuthViewModel({required this.repository, required this.memberViewModel});
+
+  Future<void> loadAccount() async {
+    _account = await repository.getAccount(); // secureStorage에서 계정 정보 가져오기
+    _isLoggedIn = _account != null;
+    notifyListeners();
+  }
+
+  Future<void> emailLogin({
     required String email,
     required String password,
   }) async {
+    if (_isLoadingLogin) return;
+    _setLoadingState('login', isLoading: true);
     try {
       await repository.emailLoginApi(email: email, password: password);
-
-      await loadAccount(); // 계정 갱신
-
-      if (context.mounted) {
-        MessageUtil.showSuccessToast(
-          "로그인 성공",
-        );
-        await Provider.of<MemberViewModel>(context, listen: false).login();
-      }
+      await _loginSuccess();
     } catch (e) {
-      if (context.mounted) {
-        MessageUtil.showErrorToast(e.toString());
-        await logOut(context);
-      }
+      _handleError("login", e);
+      await logOut();
+    } finally {
+      _setLoadingState('login', isLoading: false);
     }
   }
 
-  Future<bool> emailRegister(
-    BuildContext context, {
+  Future<bool> emailRegister({
     required String email,
     required String password,
     required String code,
   }) async {
+    if (_isLoadingRegister) return false;
+    _setLoadingState('register', isLoading: true);
     try {
       await repository.emailRegisterApi(
         email: email,
         password: password,
         code: code,
       );
-
-      if (context.mounted) {
-        MessageUtil.showSuccessToast("회원가입 성공");
-        await Provider.of<MemberViewModel>(context, listen: false).login();
-      }
-
-      await loadAccount(); // 계정 갱신
+      await _loginSuccess();
       return true;
     } catch (e) {
-      if (context.mounted) {
-        MessageUtil.showErrorToast(e.toString());
-        await logOut(context);
-      }
-
+      _handleError('register', e);
+      await logOut();
       return false;
+    } finally {
+      _setLoadingState('register', isLoading: false);
     }
   }
 
-  Future<bool> checkEmail(
-    BuildContext context, {
+  Future<bool> checkEmail({
     required String email,
   }) async {
+    if (_isLoadingCheckEmail) return false;
+    _setLoadingState('checkEmail', isLoading: true);
     try {
       await repository.checkEmailApi(
         email: email,
       );
 
-      if (context.mounted) {
-        MessageUtil.showSuccessToast("인증코드를 발송했습니다.");
-      }
+      MessageUtil.showSuccessToast("인증코드를 발송했습니다.");
       return true;
     } catch (e) {
-      if (context.mounted) {
-        MessageUtil.showErrorToast(e.toString());
-      }
+      _handleError('checkEmail', e);
       return false;
+    } finally {
+      _setLoadingState('checkEmail', isLoading: false);
     }
   }
 
-  Future<void> googleLogin(BuildContext context) async {
+  Future<void> googleLogin() async {
+    if (_isLoadingLogin) return;
+    _setLoadingState('login', isLoading: true);
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       var authentication = await googleUser?.authentication;
       await repository.googleLoginApi(idToken: authentication?.idToken ?? "");
-
-      await loadAccount(); // 계정 갱신
-
-      if (context.mounted) {
-        MessageUtil.showSuccessToast("로그인 성공");
-        await Provider.of<MemberViewModel>(context, listen: false).login();
-      }
+      await _loginSuccess();
     } catch (e) {
-      if (context.mounted) {
-        MessageUtil.showErrorToast(e.toString());
-        await logOut(context);
-      }
+      _handleError('login', e);
+      await logOut();
+    } finally {
+      _setLoadingState('login', isLoading: false);
     }
   }
 
-  Future<void> kakaoLogin(BuildContext context) async {
+  Future<void> kakaoLogin() async {
+    if (_isLoadingLogin) return;
+    _setLoadingState('login', isLoading: true);
     try {
       String accessToken = await _signInWithKakao();
       await repository.kakaoLoginApi(accessToken: accessToken);
-      await loadAccount(); // 계정 갱신
-
-      if (context.mounted) {
-        MessageUtil.showSuccessToast(
-          "로그인 성공",
-        );
-        await Provider.of<MemberViewModel>(context, listen: false).login();
-      }
+      await _loginSuccess();
     } catch (e) {
-      if (context.mounted) {
-        MessageUtil.showErrorToast(e.toString());
-        await logOut(context);
-      }
+      _handleError('login', e);
+      await logOut();
+    } finally {
+      _setLoadingState('login', isLoading: false);
     }
   }
 
-  Future<void> loadAccount() async {
-    _account = await repository.getAccount();
-    _isLoggedIn = _account != null;
-    notifyListeners();
-  }
-
-  Future<void> logOut(BuildContext context) async {
+  Future<void> logOut() async {
     await repository.logOut();
     _isLoggedIn = false;
     _account = null;
 
-    if (context.mounted) {
-      await Provider.of<MemberViewModel>(context, listen: false).remove();
-    }
+    await memberViewModel.remove();
     notifyListeners();
   }
 
   // 앱 시작 시 실행하는 로직
   Future<void> onAppStart() async {
     await loadAccount();
-    notifyListeners();
   }
 
   Future<String> _signInWithKakao() async {
@@ -196,5 +185,47 @@ class AuthViewModel with ChangeNotifier {
       }
     }
     return result.accessToken;
+  }
+
+  Future<void> _loginSuccess() async {
+    await loadAccount(); // 계정 정보 갱신
+    await memberViewModel.loadMemberRelatedData(); // 회원 정보 갱신
+    MessageUtil.showSuccessToast("로그인 성공");
+  }
+
+  void _handleError(String field, Object e) {
+    final errorMessage = e.toString();
+    _setError(field, errorMessage);
+    MessageUtil.showErrorToast(errorMessage);
+  }
+
+  void _setLoadingState(String field, {required bool isLoading}) {
+    switch (field) {
+      case 'login':
+        _isLoadingLogin = isLoading;
+        break;
+      case 'register':
+        _isLoadingRegister = isLoading;
+        break;
+      case 'checkEmail':
+        _isLoadingCheckEmail = isLoading;
+        break;
+    }
+    notifyListeners();
+  }
+
+  void _setError(String field, [String? errorMessage]) {
+    switch (field) {
+      case 'login':
+        _loginError = errorMessage;
+        break;
+      case 'register':
+        _registerError = errorMessage;
+        break;
+      case 'checkEmail':
+        _checkEmailError = errorMessage;
+        break;
+    }
+    notifyListeners();
   }
 }

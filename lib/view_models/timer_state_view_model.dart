@@ -43,6 +43,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -61,12 +62,15 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         // 앱이 다시 활성화될 때
-        timerStart(_onTimerEnd!); // 제거된 타이머 이벤트를 복구
+        if (_onTimerEnd != null) {
+          timerStart(_onTimerEnd!); // 제거된 타이머 이벤트를 복구
+        }
         if (_isBackgroundRunning) {
           _elapsedSeconds += timerHandler.getTimerGapSeconds();
         } else {
           _isRunning = false; // 이전에 일시정지 상태였으면 다시 일시정지 상태로
         }
+        notifyListeners();
         break;
       default:
         break;

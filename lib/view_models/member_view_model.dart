@@ -70,7 +70,7 @@ class MemberViewModel with ChangeNotifier {
   Future<void> login() async {
     await loadMember();
     if (_member != null) {
-      await loadPalette();
+      loadPalette();
       loadFoodInventory();
       loadConsumableInventory();
       loadCharacters();

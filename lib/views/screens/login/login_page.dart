@@ -35,8 +35,7 @@ class LogInPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: EmailLoginForm(
                 onLogin: (email, password) {
-                  authViewModel.emailLogin(context,
-                      email: email, password: password);
+                  authViewModel.emailLogin(email: email, password: password);
                 },
               ),
             ),
@@ -66,10 +65,10 @@ class LogInPage extends StatelessWidget {
             ),
             SocialLoginList(
               onGoogleLoginTap: () {
-                authViewModel.googleLogin(context);
+                authViewModel.googleLogin();
               },
               onKakaoLoginTap: () {
-                authViewModel.kakaoLogin(context);
+                authViewModel.kakaoLogin();
               },
               // onNaverLoginTap: () {},
             ),

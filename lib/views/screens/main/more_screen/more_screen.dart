@@ -51,7 +51,7 @@ class MoreScreen extends StatelessWidget {
                 leading: const Icon(Icons.logout_outlined),
                 title: const Text('로그아웃'),
                 onTap: () async {
-                  await authViewModel.logOut(context);
+                  await authViewModel.logOut();
                 },
               ),
               const Padding(

@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
     context.loaderOverlay.show();
 
     final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-    var success = await authViewModel.checkEmail(context, email: email);
+    var success = await authViewModel.checkEmail(email: email);
 
     if (mounted) context.loaderOverlay.hide();
     if (!success) return;
@@ -106,7 +106,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
     final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     var success = await authViewModel.emailRegister(
-      context,
       email: _email,
       password: _password,
       code: code,

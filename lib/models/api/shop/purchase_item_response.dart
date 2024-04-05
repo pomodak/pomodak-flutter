@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
-import 'package:pomodak/models/domain/item_model.dart';
 
 part 'purchase_item_response.g.dart';
 

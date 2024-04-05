@@ -50,4 +50,25 @@ class ShopRepository {
       rethrow;
     }
   }
+
+  Future<TransactionRecordModel?> sellCharacter(
+      String characterInventoryId, int count) async {
+    try {
+      Map<String, dynamic> responseJson = await apiService.getPostApiResponse(
+        '$_springApiEndpoint/v2/shop/sell',
+        {
+          'character_inventory_id': characterInventoryId,
+          'count': count,
+        },
+      );
+      BaseApiResponse<PurchaseItemResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => PurchaseItemResponse.fromJson(json as Map<String, dynamic>),
+      );
+      var data = response.data;
+      return data?.transactionRecord;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -54,6 +54,7 @@ class AuthViewModel with ChangeNotifier {
     if (_isLoadingLogin) return;
     _setLoadingState('login', isLoading: true);
     try {
+      _setError("login");
       await repository.emailLoginApi(email: email, password: password);
       await _loginSuccess();
     } catch (e) {
@@ -72,6 +73,7 @@ class AuthViewModel with ChangeNotifier {
     if (_isLoadingRegister) return false;
     _setLoadingState('register', isLoading: true);
     try {
+      _setError("register");
       await repository.emailRegisterApi(
         email: email,
         password: password,
@@ -94,6 +96,7 @@ class AuthViewModel with ChangeNotifier {
     if (_isLoadingCheckEmail) return false;
     _setLoadingState('checkEmail', isLoading: true);
     try {
+      _setError("checkEmail");
       await repository.checkEmailApi(
         email: email,
       );
@@ -112,6 +115,7 @@ class AuthViewModel with ChangeNotifier {
     if (_isLoadingLogin) return;
     _setLoadingState('login', isLoading: true);
     try {
+      _setError("login");
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       var authentication = await googleUser?.authentication;
       await repository.googleLoginApi(idToken: authentication?.idToken ?? "");
@@ -128,6 +132,7 @@ class AuthViewModel with ChangeNotifier {
     if (_isLoadingLogin) return;
     _setLoadingState('login', isLoading: true);
     try {
+      _setError("login");
       String accessToken = await _signInWithKakao();
       await repository.kakaoLoginApi(accessToken: accessToken);
       await _loginSuccess();

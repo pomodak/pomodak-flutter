@@ -80,6 +80,7 @@ class ShopViewModel with ChangeNotifier {
 
       memberViewModel.loadFoodInventory();
       memberViewModel.loadConsumableInventory();
+      memberViewModel.loadMember(refresh: true);
 
       MessageUtil.showSuccessToast('구매가 완료되었습니다.');
       return result;

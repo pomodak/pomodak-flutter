@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/item_model.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/views/screens/main/shop_screen/widgets/shop_list_item.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,31 @@ class ShopScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          leadingWidth: 120,
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/icons/feather100x100.png",
+                  width: 24,
+                  height: 24,
+                ),
+                const SizedBox(width: 8),
+                Consumer<MemberViewModel>(
+                  builder: (context, memverViewModel, child) {
+                    return Text(
+                      memverViewModel.member?.point.toString() ?? "0",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    );
+                  },
+                )
+              ],
+            ),
+          ),
           title: const Text('상점'),
           bottom: const TabBar(
             tabs: <Widget>[

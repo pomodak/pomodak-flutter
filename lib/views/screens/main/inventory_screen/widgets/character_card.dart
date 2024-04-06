@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_grade_badge.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_sell_character_dialog.dart';
 
 class CharacterCard extends StatelessWidget {

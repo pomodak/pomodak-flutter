@@ -29,7 +29,7 @@ class CharacterCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GrdaeBadge(grade: character.grade),
+                CharacterGradeBadge(grade: character.grade),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),

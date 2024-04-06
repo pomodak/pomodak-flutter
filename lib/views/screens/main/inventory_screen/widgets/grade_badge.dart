@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 enum CharacterGrade { common, rare, epic, legendary }
 
-class GrdaeBadge extends StatelessWidget {
+class CharacterGradeBadge extends StatelessWidget {
   final CharacterGrade grade;
 
-  const GrdaeBadge({super.key, required this.grade});
+  const CharacterGradeBadge({super.key, required this.grade});
 
   @override
   Widget build(BuildContext context) {

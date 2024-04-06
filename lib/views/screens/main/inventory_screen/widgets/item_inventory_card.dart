@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
+import 'package:pomodak/utils/message_util.dart';
 
 class ItemInventoryCard extends StatelessWidget {
   final ItemInventoryModel itemInventory;
@@ -12,7 +13,9 @@ class ItemInventoryCard extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          MessageUtil.showSuccessToast("아이템 사용");
+        },
         borderRadius: BorderRadius.circular(10),
         child: Container(
           padding: const EdgeInsets.all(8),

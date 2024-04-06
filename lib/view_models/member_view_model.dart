@@ -106,7 +106,7 @@ class MemberViewModel with ChangeNotifier {
     _setLoadingState('consumableInventory', isLoading: true);
     try {
       _consumableInventory = await repository.fetchMemberItemInventory(
-          member?.memberId as String, ItemType.food);
+          member?.memberId as String, ItemType.consumable);
       _setError('consumableInventory');
     } catch (e) {
       _handleError("consumableInventory", e);

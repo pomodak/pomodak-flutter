@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
+import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
 
 class CharacterCard extends StatelessWidget {
@@ -12,7 +13,9 @@ class CharacterCard extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          MessageUtil.showSuccessToast("캐릭터 판매");
+        },
         borderRadius: BorderRadius.circular(10),
         child: Container(
           padding: const EdgeInsets.all(8),

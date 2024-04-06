@@ -128,7 +128,10 @@ class _MyAppState extends State<MyApp> {
       timerOptionsViewModel: timerOptionsViewModel,
     );
 
-    shopViewModel = ShopViewModel(repository: shopRepository);
+    shopViewModel = ShopViewModel(
+      repository: shopRepository,
+      memberViewModel: memberViewModel,
+    );
   }
 
   @override

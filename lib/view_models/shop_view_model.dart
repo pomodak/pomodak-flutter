@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
+import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 import 'package:pomodak/models/domain/item_model.dart';
 import 'package:pomodak/utils/message_util.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 
 class ShopViewModel with ChangeNotifier {
   // DI
   late final ShopRepository repository;
+  late final MemberViewModel memberViewModel;
 
   // Data
   List<ItemModel> _foodItems = [];
@@ -15,11 +18,13 @@ class ShopViewModel with ChangeNotifier {
   bool _isLoadingFoodItems = false;
   bool _isLoadingConsumableItems = false;
   bool _isLoadingbuyItem = false;
+  bool _isLoadingsellCharacter = false;
 
   // 에러 메시지
   String? _foodItemsError;
   String? _consumableItemsError;
   String? _buyItemError;
+  String? _sellCharacterError;
 
   List<ItemModel> get foodItems => _foodItems;
   List<ItemModel> get consumableItems => _consumableItems;
@@ -27,12 +32,14 @@ class ShopViewModel with ChangeNotifier {
   bool get isLoadingFoodItems => _isLoadingFoodItems;
   bool get isLoadingConsumableItems => _isLoadingConsumableItems;
   bool get isLoadingbuyItem => _isLoadingbuyItem;
+  bool get isLoadingsellCharacter => _isLoadingsellCharacter;
 
   String? get foodItemsError => _foodItemsError;
   String? get consumableItemsError => _consumableItemsError;
   String? get buyItemError => _buyItemError;
+  String? get sellCharacterError => _sellCharacterError;
 
-  ShopViewModel({required this.repository});
+  ShopViewModel({required this.repository, required this.memberViewModel});
 
   Future<void> loadFoodItems() async {
     if (_isLoadingFoodItems) return;
@@ -64,16 +71,44 @@ class ShopViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> buyItem(String itemId, int count) async {
-    if (_isLoadingbuyItem) return;
+  Future<TransactionRecordModel?> buyItem(String itemId, int count) async {
+    if (_isLoadingbuyItem) return null;
     _setLoadingState('buyItem', isLoading: true);
     try {
       _setError("buyItem");
-      await repository.buyItem(itemId, count);
+      var result = await repository.buyItem(itemId, count);
+
+      memberViewModel.loadFoodInventory();
+      memberViewModel.loadConsumableInventory();
+
       MessageUtil.showSuccessToast('구매가 완료되었습니다.');
+      return result;
     } catch (e) {
       _handleError('buyItem', e);
+    } finally {
+      _setLoadingState('buyItem', isLoading: false);
     }
+    return null;
+  }
+
+  Future<TransactionRecordModel?> sellCharacter(
+      String characterInventoryId, int count) async {
+    if (_isLoadingbuyItem) return null;
+    _setLoadingState('sellCharacter', isLoading: true);
+    try {
+      _setError("sellCharacter");
+      var result = await repository.sellCharacter(characterInventoryId, count);
+
+      memberViewModel.loadCharacterInventory();
+
+      MessageUtil.showSuccessToast('판매가 완료되었습니다.');
+      return result;
+    } catch (e) {
+      _handleError('sellCharacter', e);
+    } finally {
+      _setLoadingState('sellCharacter', isLoading: false);
+    }
+    return null;
   }
 
   Future<void> loadShop() async {
@@ -98,6 +133,9 @@ class ShopViewModel with ChangeNotifier {
       case 'buyItem':
         _isLoadingbuyItem = isLoading;
         break;
+      case 'sellCharacter':
+        _isLoadingsellCharacter = isLoading;
+        break;
     }
     notifyListeners();
   }
@@ -112,6 +150,9 @@ class ShopViewModel with ChangeNotifier {
         break;
       case 'buyItem':
         _buyItemError = errorMessage;
+        break;
+      case 'sellCharacter':
+        _sellCharacterError = errorMessage;
         break;
     }
     notifyListeners();

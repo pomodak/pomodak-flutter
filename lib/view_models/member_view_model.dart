@@ -24,6 +24,7 @@ class MemberViewModel with ChangeNotifier {
   bool _isLoadingFoodInventory = false;
   bool _isLoadingConsumableInventory = false;
   bool _isLoadingCharacterInventory = false;
+  bool _isLoadingConsumeItem = false;
 
   // 에러 메시지
   String? _memberError;
@@ -31,6 +32,7 @@ class MemberViewModel with ChangeNotifier {
   String? _foodInventoryError;
   String? _consumableInventoryError;
   String? _characterInventoryError;
+  String? _consumeItemError;
 
   MemberModel? get member => _member;
   PaletteModel? get palette => _palette;
@@ -43,21 +45,27 @@ class MemberViewModel with ChangeNotifier {
   bool get isLoadingFoodInventory => _isLoadingFoodInventory;
   bool get isLoadingConsumableInventory => _isLoadingConsumableInventory;
   bool get isLoadingCharacterInventory => _isLoadingCharacterInventory;
+  bool get isLoadingConsumeItem => _isLoadingConsumeItem;
 
   String? get memberError => _memberError;
   String? get paletteError => _paletteError;
   String? get foodInventoryError => _foodInventoryError;
   String? get consumableInventoryError => _consumableInventoryError;
   String? get characterInventoryError => _characterInventoryError;
+  String? get consumeItemError => _consumeItemError;
 
   MemberViewModel({required this.repository});
 
-  Future<void> loadMember() async {
+  Future<void> loadMember({bool? refresh}) async {
     if (_isLoadingMember) return;
     _setLoadingState('member', isLoading: true);
     try {
-      _member = await repository.fetchMemberData();
-      _memberError = null;
+      _setError("member");
+      if (refresh != null && refresh) {
+        _member = await repository.fetchMemberFromApi(); // 새로 요청
+      } else {
+        _member = await repository.fetchMemberData();
+      }
     } catch (e) {
       _handleError("member", e);
     } finally {
@@ -121,6 +129,33 @@ class MemberViewModel with ChangeNotifier {
     }
   }
 
+  // ConsumableItemAcquisition, CharacterAcquisition, PaletteAcuisition, PointAcquisition
+  // 위 타입으로 캐스팅 해야함
+  Future<dynamic> consumeItem(String inventoryId) async {
+    if (_isLoadingConsumeItem) return;
+    _setLoadingState('consumeItem', isLoading: true);
+    try {
+      _setError('consumeItem');
+      var result = await repository.consumeItem(inventoryId);
+
+      if (result.result == acquisitionResults['consumableItem']) {
+        loadConsumableInventory();
+      } else if (result.result == acquisitionResults['character']) {
+        loadCharacterInventory();
+      } else if (result.result == acquisitionResults['palette']) {
+        loadPalette();
+      } else if (result.result == acquisitionResults['point']) {
+        loadMember(refresh: true);
+      }
+
+      return result;
+    } catch (e) {
+      _handleError('consumeItem', e);
+    } finally {
+      _setLoadingState('consumeItem', isLoading: false);
+    }
+  }
+
   Future<void> remove() async {
     return repository.clearMemberData();
   }
@@ -165,6 +200,9 @@ class MemberViewModel with ChangeNotifier {
       case "characterInventory":
         _isLoadingCharacterInventory = isLoading;
         break;
+      case "consumeItem":
+        _isLoadingConsumeItem = isLoading;
+        break;
     }
     notifyListeners();
   }
@@ -185,6 +223,9 @@ class MemberViewModel with ChangeNotifier {
         break;
       case "characterInventory":
         _characterInventoryError = errorMessage;
+        break;
+      case "consumeItem":
+        _consumeItemError = errorMessage;
         break;
     }
     notifyListeners();

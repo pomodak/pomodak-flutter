@@ -16,27 +16,25 @@ void showBuyItemDialog(BuildContext context, ItemModel item, int maxCount) {
         ),
         insetPadding: const EdgeInsets.symmetric(horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDialogTitle(item.name),
-              const SizedBox(height: 4),
-              Text(item.description, style: const TextStyle(fontSize: 14)),
-              const SizedBox(height: 16),
-              _buildQuantitySelector(
-                context,
-                count,
-                maxCount,
-                item.cost,
-                (newCount) => count = newCount,
-              ),
-              const SizedBox(height: 16),
-              _buildActionButtons(context, item, count),
-            ],
-          ),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDialogTitle(item.name),
+                  const SizedBox(height: 4),
+                  Text(item.description, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 16),
+                  _buildQuantitySelector(context, count, maxCount, item.cost,
+                      (newCount) => count = newCount, setState),
+                  _buildTotalCost(item.cost * count),
+                  const SizedBox(height: 16),
+                  _buildActionButtons(context, item, count),
+                ],
+              );
+            })),
       );
     },
   );
@@ -49,82 +47,90 @@ Widget _buildDialogTitle(String name) {
   );
 }
 
-Widget _buildQuantitySelector(
-  BuildContext context,
-  int count,
-  int maxCount,
-  int cost,
-  Function(int) onCountChanged,
-) {
-  return StatefulBuilder(
-    builder: (BuildContext context, StateSetter setState) {
-      int totalCost = count * cost;
+Widget _buildTotalCost(int totalCost) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(
+        "$totalCost원",
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 18),
+      ),
+    ],
+  );
+}
 
-      return Column(
+Widget _buildQuantitySelector(BuildContext context, int count, int maxCount,
+    int cost, Function(int) onCountChanged, setState) {
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () => setState(() {
-                  if (count > 1) onCountChanged(--count);
-                }),
-              ),
-              Text("$count",
-                  style: const TextStyle(
-                      fontSize: 32, fontWeight: FontWeight.bold)),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => setState(() {
-                  if (count < maxCount) onCountChanged(++count);
-                }),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.remove),
+            onPressed: () => setState(() {
+              if (count > 1) onCountChanged(--count);
+            }),
           ),
-          Text(
-            "$totalCost원",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18),
+          Text("$count",
+              style:
+                  const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => setState(() {
+              if (count < maxCount) onCountChanged(++count);
+            }),
           ),
         ],
-      );
-    },
+      ),
+    ],
   );
 }
 
 Widget _buildActionButtons(BuildContext context, ItemModel item, int count) {
-  return Row(
-    children: [
-      Expanded(
-        child: TextButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+  return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState) {
+      final shopViewModel = Provider.of<ShopViewModel>(context, listen: false);
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                surfaceTintColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("취소"),
             ),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text("취소"),
-        ),
-      ),
-      const SizedBox(width: 10),
-      Expanded(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              onPressed: () {
+                shopViewModel.buyItem(item.itemId, count);
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                "구매",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
-          onPressed: () {
-            final shopViewModel =
-                Provider.of<ShopViewModel>(context, listen: false);
-            shopViewModel.buyItem(item.itemId, count);
-            Navigator.of(context).pop();
-          },
-          child: const Text("구매하기", style: TextStyle(color: Colors.white)),
-        ),
-      ),
-    ],
+        ],
+      );
+    },
   );
 }

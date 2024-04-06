@@ -110,7 +110,12 @@ class NetworkApiService extends BaseApiServices {
       if (dioError.response!.data != null &&
           dioError.response!.data['message'] != null) {
         // 서버에서 내려주는 에러메세지가 존재하는 경우
-        userFriendlyErrorMessage = dioError.response!.data['message'];
+
+        if (dioError.response!.data['message'] is List) {
+          userFriendlyErrorMessage = dioError.response!.data['message'][0];
+        } else {
+          userFriendlyErrorMessage = dioError.response!.data['message'];
+        }
       } else if (dioError.response!.statusCode == 401) {
         userFriendlyErrorMessage = 'Session expired. Please login again.';
       } else if (dioError.response!.statusCode == 500) {

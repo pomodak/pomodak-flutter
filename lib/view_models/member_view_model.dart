@@ -139,7 +139,7 @@ class MemberViewModel with ChangeNotifier {
       var result = await repository.consumeItem(inventoryId);
 
       if (result.result == acquisitionResults['consumableItem']) {
-        loadConsumableInventory();
+        // loadConsumableInventory();
       } else if (result.result == acquisitionResults['character']) {
         loadCharacterInventory();
       } else if (result.result == acquisitionResults['palette']) {
@@ -147,6 +147,8 @@ class MemberViewModel with ChangeNotifier {
       } else if (result.result == acquisitionResults['point']) {
         loadMember(refresh: true);
       }
+
+      loadConsumableInventory();
 
       return result;
     } catch (e) {

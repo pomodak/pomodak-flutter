@@ -33,7 +33,7 @@ Map<String, String> acquisitionResults = {
 
 class MemberRepository {
   final String _nestApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
-  final String _springApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
+  final String _springApiEndpoint = dotenv.env['SPRING_API_ENDPOINT']!;
   late BaseApiServices apiService;
 
   // 캐시 저장소

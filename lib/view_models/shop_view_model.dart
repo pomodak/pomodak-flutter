@@ -11,8 +11,8 @@ class ShopViewModel with ChangeNotifier {
   late final MemberViewModel memberViewModel;
 
   // Data
-  List<ItemModel> _foodItems = [];
-  List<ItemModel> _consumableItems = [];
+  List<ItemModel>? _foodItems;
+  List<ItemModel>? _consumableItems;
 
   // 로딩 상태
   bool _isLoadingFoodItems = false;
@@ -26,8 +26,8 @@ class ShopViewModel with ChangeNotifier {
   String? _buyItemError;
   String? _sellCharacterError;
 
-  List<ItemModel> get foodItems => _foodItems;
-  List<ItemModel> get consumableItems => _consumableItems;
+  List<ItemModel> get foodItems => _foodItems ?? [];
+  List<ItemModel> get consumableItems => _consumableItems ?? [];
 
   bool get isLoadingFoodItems => _isLoadingFoodItems;
   bool get isLoadingConsumableItems => _isLoadingConsumableItems;
@@ -111,7 +111,18 @@ class ShopViewModel with ChangeNotifier {
     return null;
   }
 
+  // 첫 로드만 실행
   Future<void> loadShop() async {
+    if (_foodItems == null) {
+      await loadFoodItems();
+    }
+    if (_consumableItems == null) {
+      await loadConsumableItems();
+    }
+  }
+
+  // 에러 발생 시 재시도를 위한 refetch
+  Future<void> refetchShop() async {
     await loadFoodItems();
     await loadConsumableItems();
   }

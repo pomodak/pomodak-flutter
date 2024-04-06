@@ -67,10 +67,7 @@ class ShopItemsList extends StatelessWidget {
         children: items
             .map(
               (item) => ShopListItem(
-                imageUrl: item.imageUrl,
-                name: item.name,
-                price: item.cost,
-                requiredTime: item.requiredStudyTime,
+                item: item,
               ),
             )
             .toList(),

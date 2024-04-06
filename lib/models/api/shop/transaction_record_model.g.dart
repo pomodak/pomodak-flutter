@@ -9,12 +9,12 @@ part of 'transaction_record_model.dart';
 TransactionRecordModel _$TransactionRecordModelFromJson(
         Map<String, dynamic> json) =>
     TransactionRecordModel(
-      transactionRecordId: json['transaction_record_id'] as String,
+      transactionRecordId: json['transaction_record_id'] as int,
       transactionType: TransactionRecordModel._transactionTypeFromJson(
           json['transaction_type'] as String),
       notes: json['notes'] as String,
-      count: json['count'] as String,
-      amount: json['amount'] as String,
+      count: json['count'] as int,
+      amount: json['amount'] as int,
       balanceAfterTransaction: json['balance_after_transaction'] as int,
     );
 

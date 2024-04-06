@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/utils/message_util.dart';
+import 'package:pomodak/models/domain/item_model.dart';
+import 'package:pomodak/views/screens/main/shop_screen/widgets/show_buy_item_dialog.dart';
 
 class ShopListItem extends StatelessWidget {
-  final String imageUrl, name;
-  final num price;
-  final num? requiredTime;
+  final ItemModel item;
 
   const ShopListItem({
     super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.price,
-    this.requiredTime,
+    required this.item,
   });
 
   @override
@@ -20,7 +16,7 @@ class ShopListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: InkWell(
         onTap: () {
-          MessageUtil.showSuccessToast("아이템 구매");
+          showBuyItemDialog(context, item, item.itemType == "Food" ? 4 : 20);
         },
         borderRadius: BorderRadius.circular(10),
         child: Padding(
@@ -28,7 +24,7 @@ class ShopListItem extends StatelessWidget {
           child: Row(
             children: [
               Image.network(
-                imageUrl,
+                item.imageUrl,
                 width: 70,
                 height: 70,
               ),
@@ -39,21 +35,21 @@ class ShopListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      item.name,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "$price원",
+                      "${item.cost}원",
                       style: const TextStyle(
                         fontSize: 13,
                       ),
                     ),
-                    if (requiredTime != null)
+                    if (item.requiredStudyTime != null)
                       Text(
-                        "⌛️ ${(requiredTime! / 60).floor()}분",
+                        "⌛️ ${(item.requiredStudyTime! / 60).floor()}분",
                         style: const TextStyle(
                           fontSize: 13,
                         ),

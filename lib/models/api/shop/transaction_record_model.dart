@@ -7,15 +7,15 @@ enum TransactionType { purchase, sell }
 @JsonSerializable()
 class TransactionRecordModel {
   @JsonKey(name: 'transaction_record_id')
-  final String transactionRecordId;
+  final int transactionRecordId;
   @JsonKey(
       name: 'transaction_type',
       fromJson: _transactionTypeFromJson,
       toJson: _transactionTypeToJson)
   final TransactionType transactionType; // 거래 타입 (구매, 판매)
   final String notes; // 메모 (구매한 아이템 이름)
-  final String count; // 구매수량
-  final String amount; // 총가격
+  final int count; // 구매수량
+  final int amount; // 총가격
   @JsonKey(name: 'balance_after_transaction')
   final int balanceAfterTransaction; // 거래 후 잔액
 

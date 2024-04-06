@@ -31,7 +31,7 @@ class ShopRepository {
     }
   }
 
-  Future<TransactionRecordModel?> buyItem(String itemId, int count) async {
+  Future<TransactionRecordModel?> buyItem(int itemId, int count) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getPostApiResponse(
         '$_springApiEndpoint/v2/shop/purchase',

@@ -71,7 +71,7 @@ class ShopViewModel with ChangeNotifier {
     }
   }
 
-  Future<TransactionRecordModel?> buyItem(String itemId, int count) async {
+  Future<TransactionRecordModel?> buyItem(int itemId, int count) async {
     if (_isLoadingbuyItem) return null;
     _setLoadingState('buyItem', isLoading: true);
     try {

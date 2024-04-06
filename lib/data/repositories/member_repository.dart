@@ -6,6 +6,7 @@ import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/members/character_inventory_response.dart';
+import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/api/members/item_inventory_response.dart';
 import 'package:pomodak/models/api/members/member_response.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
@@ -17,8 +18,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String memberKey = "6E45EF1G1AUI3E51BD1VG9SD68";
 
+const String consumableItemAcquisition = "Consumable Item Acquisition";
+const String characterAcquisition = "Character Acquisition";
+const String paletteAcquisition = "Palette Acquisition";
+const String pointAcquisition = "Point Acquisition";
+
+// 외부에서 타입 캐스팅을 하기 위해 Map으로 저장
+Map<String, String> acquisitionResults = {
+  'consumableItem': consumableItemAcquisition,
+  'character': characterAcquisition,
+  'palette': paletteAcquisition,
+  'point': pointAcquisition,
+};
+
 class MemberRepository {
   final String _nestApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
+  final String _springApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
   late BaseApiServices apiService;
 
   // 캐시 저장소
@@ -37,7 +52,7 @@ class MemberRepository {
       if (memberData != null) {
         return MemberModel.fromJson(json.decode(memberData));
       } else {
-        return await _fetchMemberFromApi();
+        return await fetchMemberFromApi();
       }
     } catch (e) {
       clearMemberData();
@@ -45,7 +60,7 @@ class MemberRepository {
     }
   }
 
-  Future<MemberModel?> _fetchMemberFromApi() async {
+  Future<MemberModel?> fetchMemberFromApi() async {
     try {
       Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
         '$_nestApiEndpoint/members/me',
@@ -115,6 +130,53 @@ class MemberRepository {
       );
       var data = response.data;
       return data?.itemInventory ?? [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> consumeItem(String inventoryId) async {
+    try {
+      Map<String, dynamic> responseJson = await apiService.getPostApiResponse(
+        '$_springApiEndpoint/v2/item-inventory/$inventoryId',
+        {},
+      );
+
+      final String result = responseJson["data"]["result"];
+      late final BaseApiResponse<dynamic> response;
+      switch (result) {
+        case consumableItemAcquisition:
+          response = BaseApiResponse.fromJson(
+            responseJson,
+            (json) => ConsumableItemAcquisition.fromJson(
+                json as Map<String, dynamic>),
+          );
+          break;
+        case characterAcquisition:
+          response = BaseApiResponse.fromJson(
+            responseJson,
+            (json) =>
+                CharacterAcquisition.fromJson(json as Map<String, dynamic>),
+          );
+          break;
+        case paletteAcquisition:
+          response = BaseApiResponse.fromJson(
+            responseJson,
+            (json) => PaletteAcquisition.fromJson(json as Map<String, dynamic>),
+          );
+          break;
+        case pointAcquisition:
+          response = BaseApiResponse.fromJson(
+            responseJson,
+            (json) => PointAcquisition.fromJson(json as Map<String, dynamic>),
+          );
+          break;
+        default:
+          throw Exception('Unknown result type: $result');
+      }
+
+      var data = response.data;
+      return data;
     } catch (e) {
       rethrow;
     }

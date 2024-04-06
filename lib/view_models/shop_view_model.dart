@@ -82,7 +82,7 @@ class ShopViewModel with ChangeNotifier {
       memberViewModel.loadConsumableInventory();
       memberViewModel.loadMember(refresh: true);
 
-      MessageUtil.showSuccessToast('구매가 완료되었습니다.');
+      MessageUtil.showSuccessToast(result?.notes ?? '구매가 완료되었습니다.');
       return result;
     } catch (e) {
       _handleError('buyItem', e);
@@ -101,8 +101,9 @@ class ShopViewModel with ChangeNotifier {
       var result = await repository.sellCharacter(characterInventoryId, count);
 
       memberViewModel.loadCharacterInventory();
+      memberViewModel.loadMember(refresh: true);
 
-      MessageUtil.showSuccessToast('판매가 완료되었습니다.');
+      MessageUtil.showSuccessToast(result?.notes ?? '판매가 완료되었습니다.');
       return result;
     } catch (e) {
       _handleError('sellCharacter', e);

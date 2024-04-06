@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
-import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/grade_badge.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_sell_character_dialog.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterInventoryModel characterInventory;
@@ -14,7 +14,11 @@ class CharacterCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: () {
-          MessageUtil.showSuccessToast("캐릭터 판매");
+          showSellCharacterDialog(
+            context,
+            characterInventory,
+            characterInventory.quantity,
+          );
         },
         borderRadius: BorderRadius.circular(10),
         child: Container(

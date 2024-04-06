@@ -3,7 +3,8 @@ import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/inventory_bottom_sheet.dart';
 
 class ShowEggInventoryButton extends StatelessWidget {
-  const ShowEggInventoryButton({super.key});
+  final VoidCallback onNavigateToShop;
+  const ShowEggInventoryButton({super.key, required this.onNavigateToShop});
 
   void _openBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -12,7 +13,7 @@ class ShowEggInventoryButton extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        return const EggInventoryBottomSheet();
+        return EggInventoryBottomSheet(onNavigateToShop: onNavigateToShop);
       },
     );
   }

@@ -15,19 +15,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late final PageController _pageController;
+  late final List<Widget> _widgetOptions;
   int _selectedIndex = 0;
-  final List<Widget> _widgetOptions = [
-    const HomeScreen(),
-    const UserScreen(),
-    const ShopScreen(),
-    const InventoryScreen(),
-    const MoreScreen(),
-  ];
+
+  void navigateToShop() {
+    _onItemTapped(2);
+  }
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _widgetOptions = [
+      HomeScreen(
+          onNavigateToShop: navigateToShop), // Now 'this' can be accessed
+      const UserScreen(),
+      const ShopScreen(),
+      const InventoryScreen(),
+      const MoreScreen(),
+    ];
   }
 
   @override

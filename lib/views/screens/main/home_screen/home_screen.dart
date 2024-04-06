@@ -9,7 +9,8 @@ import 'package:pomodak/views/screens/main/home_screen/widgets/timer_target_disp
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onNavigateToShop;
+  const HomeScreen({super.key, required this.onNavigateToShop});
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +37,17 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ShowEggInventoryButton(),
-                  SizedBox(
+                  ShowEggInventoryButton(onNavigateToShop: onNavigateToShop),
+                  const SizedBox(
                     width: 10,
                   ),
-                  TimerStartButton()
+                  const TimerStartButton()
                 ],
               ),
             ),

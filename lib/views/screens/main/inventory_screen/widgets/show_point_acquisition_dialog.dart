@@ -54,7 +54,7 @@ class _ResultDetails extends StatelessWidget {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         Text(
-          '${pointAcquisitionMember.point} 포인트를 획득했습니다!',
+          '${pointAcquisitionMember.earnedPoint} 포인트를 획득했습니다!',
           style: const TextStyle(fontSize: 18),
         ),
         const SizedBox(height: 20),

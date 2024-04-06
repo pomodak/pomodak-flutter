@@ -10,6 +10,7 @@ ItemInventoryModel _$ItemInventoryModelFromJson(Map<String, dynamic> json) =>
     ItemInventoryModel(
       itemInventoryId: json['item_inventory_id'] as String,
       quantity: json['quantity'] as int,
+      progress: json['progress'] as int,
       item: ItemModel.fromJson(json['item'] as Map<String, dynamic>),
     );
 
@@ -17,5 +18,6 @@ Map<String, dynamic> _$ItemInventoryModelToJson(ItemInventoryModel instance) =>
     <String, dynamic>{
       'item_inventory_id': instance.itemInventoryId,
       'quantity': instance.quantity,
+      'progress': instance.progress,
       'item': instance.item,
     };

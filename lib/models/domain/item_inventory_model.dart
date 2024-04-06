@@ -9,12 +9,15 @@ class ItemInventoryModel {
   final String itemInventoryId;
   @JsonKey(name: 'quantity')
   final int quantity;
+  @JsonKey(name: 'progress')
+  final int progress;
   @JsonKey(name: 'item')
   final ItemModel item;
 
   ItemInventoryModel({
     required this.itemInventoryId,
     required this.quantity,
+    required this.progress,
     required this.item,
   });
 

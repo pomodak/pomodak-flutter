@@ -21,7 +21,9 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   int _sectionCounts = 0; // 섹션 수
 
   // onTimerEnd 콜백 함수를 저장할 변수 추가
+  // (null이 아닐 경우 타이머를 진행중인 상태)
   Function(AlarmType, int)? _onTimerEnd;
+  // (백그라운드 전환 시 타이머가 실행중이었는지 기록하여 돌아왔을때 처리)
   bool _isBackgroundRunning = false;
   final timerHandler = TimerDifferenceHandler.instance; // 백그라운드 타이머 계산
 
@@ -221,7 +223,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     if (_onTimerEnd != null) {
       _onTimerEnd!(alarmType, _getTargetSeconds());
     }
-
+    _onTimerEnd = null; // 알람 이벤트 제거
     notifyListeners();
   }
 

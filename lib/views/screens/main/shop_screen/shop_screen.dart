@@ -18,9 +18,13 @@ class _ShopScreenState extends State<ShopScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
-    final shopViewModel = Provider.of<ShopViewModel>(context, listen: false);
-    shopViewModel.loadShop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final shopViewModel =
+            Provider.of<ShopViewModel>(context, listen: false);
+        shopViewModel.loadShop();
+      }
+    });
   }
 
   @override

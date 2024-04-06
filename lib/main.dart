@@ -112,11 +112,11 @@ class _MyAppState extends State<MyApp> {
 
     // ViewModel
     appViewModel = AppViewModel();
+    memberViewModel = MemberViewModel(repository: memberRepository);
     authViewModel = AuthViewModel(
       repository: authRepository,
       memberViewModel: memberViewModel,
     );
-    memberViewModel = MemberViewModel(repository: memberRepository);
     timerOptionsViewModel = TimerOptionsViewModel(storage: timerOptionsStorage);
     timerRecordViewModel = TimerRecordViewModel(
       storage: timerRecordStorage,

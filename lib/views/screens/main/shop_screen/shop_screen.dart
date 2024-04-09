@@ -42,7 +42,11 @@ class ShopScreen extends StatelessWidget {
               ],
             ),
           ),
-          title: const Text('상점'),
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [Text("상점")],
+          ),
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(

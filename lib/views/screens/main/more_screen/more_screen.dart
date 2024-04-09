@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
+import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -70,15 +72,21 @@ class MoreScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 16, letterSpacing: 1.2),
                 ),
               ),
-              const ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                leading: Icon(Icons.document_scanner_outlined),
-                title: Text('이용약관'),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Icons.document_scanner_outlined),
+                title: const Text('이용약관'),
+                onTap: () {
+                  showTermsModal(context);
+                },
               ),
-              const ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                leading: Icon(Icons.shield_outlined),
-                title: Text('개인정보처리방침'),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(Icons.shield_outlined),
+                title: const Text('개인정보처리방침'),
+                onTap: () {
+                  showPrivacyPolicyModal(context);
+                },
               ),
             ],
           ),

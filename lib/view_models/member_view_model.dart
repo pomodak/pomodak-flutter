@@ -25,6 +25,7 @@ class MemberViewModel with ChangeNotifier {
   bool _isLoadingConsumableInventory = false;
   bool _isLoadingCharacterInventory = false;
   bool _isLoadingConsumeItem = false;
+  bool _isLoadingMemberUpdate = false;
 
   // 에러 메시지
   String? _memberError;
@@ -33,6 +34,7 @@ class MemberViewModel with ChangeNotifier {
   String? _consumableInventoryError;
   String? _characterInventoryError;
   String? _consumeItemError;
+  String? _memberUpdateError;
 
   MemberModel? get member => _member;
   PaletteModel? get palette => _palette;
@@ -46,6 +48,7 @@ class MemberViewModel with ChangeNotifier {
   bool get isLoadingConsumableInventory => _isLoadingConsumableInventory;
   bool get isLoadingCharacterInventory => _isLoadingCharacterInventory;
   bool get isLoadingConsumeItem => _isLoadingConsumeItem;
+  bool get isLoadingMemberUpdate => _isLoadingMemberUpdate;
 
   String? get memberError => _memberError;
   String? get paletteError => _paletteError;
@@ -53,6 +56,7 @@ class MemberViewModel with ChangeNotifier {
   String? get consumableInventoryError => _consumableInventoryError;
   String? get characterInventoryError => _characterInventoryError;
   String? get consumeItemError => _consumeItemError;
+  String? get memberUpdateError => _memberUpdateError;
 
   MemberViewModel({required this.repository});
 
@@ -126,6 +130,29 @@ class MemberViewModel with ChangeNotifier {
       _handleError("characterInventory", e);
     } finally {
       _setLoadingState('characterInventory', isLoading: false);
+    }
+  }
+
+  Future<void> updateMemberInfo({
+    String? nickname,
+    String? imageUrl,
+    String? statusMessage,
+  }) async {
+    if (member == null || _isLoadingMemberUpdate) return;
+    _setLoadingState('memberUpdate', isLoading: true);
+    try {
+      await repository.updateMember(
+        member?.memberId ?? "",
+        nickname: nickname,
+        imageUrl: imageUrl,
+        statusMessage: statusMessage,
+      );
+      await loadMember(refresh: true);
+      MessageUtil.showSuccessToast("성공적으로 업데이트 되었습니다.");
+    } catch (e) {
+      _handleError("memberUpdate", e);
+    } finally {
+      _setLoadingState('memberUpdate', isLoading: false);
     }
   }
 
@@ -205,6 +232,9 @@ class MemberViewModel with ChangeNotifier {
       case "consumeItem":
         _isLoadingConsumeItem = isLoading;
         break;
+      case 'memberUpdate':
+        _isLoadingMemberUpdate = isLoading;
+        break;
     }
     notifyListeners();
   }
@@ -228,6 +258,9 @@ class MemberViewModel with ChangeNotifier {
         break;
       case "consumeItem":
         _consumeItemError = errorMessage;
+        break;
+      case 'memberUpdate':
+        _memberUpdateError = errorMessage;
         break;
     }
     notifyListeners();

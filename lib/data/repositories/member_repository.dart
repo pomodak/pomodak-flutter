@@ -135,6 +135,33 @@ class MemberRepository {
     }
   }
 
+  Future<void> updateMember(
+    String memberId, {
+    String? nickname,
+    String? imageUrl,
+    String? statusMessage,
+  }) async {
+    try {
+      Map<String, dynamic> responseJson = await apiService.getPatchApiResponse(
+        '$_nestApiEndpoint/members/$memberId',
+        {
+          'nickname': nickname,
+          'image_url': imageUrl,
+          'status_message': statusMessage,
+        },
+      );
+      BaseApiResponse<void> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) {},
+      );
+      var data = response.data;
+
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<dynamic> consumeItem(String inventoryId) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getPostApiResponse(

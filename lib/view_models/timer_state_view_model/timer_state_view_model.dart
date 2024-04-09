@@ -3,6 +3,7 @@ import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/pomodoro_manager.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_end_state.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_difference_handler.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_manager.dart';
@@ -15,24 +16,22 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerStateStorage storage;
   final TimerRecordViewModel timerRecordViewModel;
   final TimerOptionsViewModel timerOptionsViewModel;
+  final PomodoroManager pomodoroManager;
 
   // state
-  PomodoroMode _pomodoroMode = PomodoroMode.focus;
   final TimerManager _timerManager = TimerManager();
   final TimerDifferenceHandler _timerDifferenceHandler =
       TimerDifferenceHandler.instance;
   final TimerEndState _timerEndState = TimerEndState();
-
-  int _sectionCounts = 0; // 섹션 수
 
   // (백그라운드 전환 시 타이머가 실행중이었는지 기록하여 돌아왔을때 처리)
   bool _isBackgroundRunning = false;
 
   // 타이머 상태에 대한 Getter
   int get elapsedSeconds => _timerManager.elapsedSeconds;
-  int get sectionCounts => _sectionCounts;
   bool get isRunning => _timerManager.isRunning;
-  PomodoroMode get pomodoroMode => _pomodoroMode;
+  int get sectionCounts => pomodoroManager.sectionCounts;
+  PomodoroMode get pomodoroMode => pomodoroManager.pomodoroMode;
   bool get isTimerEnded => _timerEndState.isTimerEnded;
   AlarmType? get lastAlarmType => _timerEndState.lastAlarmType;
   int? get lastElaspedSeconds => _timerEndState.lastElapsedSeconds;
@@ -41,13 +40,14 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     required this.storage,
     required this.timerRecordViewModel,
     required this.timerOptionsViewModel,
-  }) {
+  }) : pomodoroManager = PomodoroManager(
+          timerOptionsViewModel: timerOptionsViewModel,
+          storage: storage,
+        ) {
     _init();
   }
 
   void _init() {
-    _sectionCounts = storage.getCurSections();
-    _pomodoroMode = storage.getCurPomodoroMode();
     timerOptionsViewModel.addListener(_onTimerOptionsChanged);
     WidgetsBinding.instance.addObserver(this);
   }
@@ -66,19 +66,8 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
             timerOptionsViewModel.lastEvent!.workTimeChanged ||
             timerOptionsViewModel.lastEvent!.restTimeChanged ||
             timerOptionsViewModel.lastEvent!.sectionsChanged)) {
-      resetTimerState();
+      pomodoroManager.reset();
     }
-  }
-
-  // 타이머 상태 초기화 (옵션 변경 시 호출)
-  void resetTimerState() {
-    _pomodoroMode = PomodoroMode.focus;
-    _sectionCounts = 0;
-    storage.saveTimerState(
-      curPomodoroMode: _pomodoroMode,
-      curSections: _sectionCounts,
-    );
-    notifyListeners();
   }
 
   @override
@@ -101,10 +90,11 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     _isBackgroundRunning = _timerManager.isRunning;
     if (_timerManager.isRunning) {
       _timerManager.pause();
-      int remainingTime = _getTargetSeconds() - _timerManager.elapsedSeconds;
+      int remainingTime =
+          pomodoroManager.getTargetSeconds() - _timerManager.elapsedSeconds;
       LocalNotificationUtil.schedulePomodoroNotification(
         seconds: remainingTime,
-        pomodoroMode: _pomodoroMode,
+        pomodoroMode: pomodoroManager.pomodoroMode,
       );
       _timerDifferenceHandler.setPuasedAt();
       notifyListeners();
@@ -119,7 +109,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
       // 뽀모도로 모드면 종료된지 체크 후 종료 처리
       if (timerOptionsViewModel.isPomodoroMode) {
         final targetReached =
-            _timerManager.elapsedSeconds >= _getTargetSeconds();
+            _timerManager.elapsedSeconds >= pomodoroManager.getTargetSeconds();
         if (targetReached) {
           pomodoroEnd();
           return;
@@ -139,7 +129,10 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void normalEnd() {
-    _timerEndState.reset();
+    _timerEndState.setTimerEndState(
+      AlarmType.normal,
+      pomodoroManager.getTargetSeconds(),
+    );
     _recordTimerSession(time: _timerManager.elapsedSeconds, isCompleted: false);
     _timerManager.stop();
     notifyListeners();
@@ -148,26 +141,26 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   void pomodoroEnd() {
     _timerEndState.setTimerEndState(
       pomodoroMode == PomodoroMode.focus
-          ? _sectionCounts + 1 == timerOptionsViewModel.sections
+          ? pomodoroManager.sectionCounts + 1 == timerOptionsViewModel.sections
               ? AlarmType.finish
               : AlarmType.work
           : AlarmType.rest,
-      _getTargetSeconds(),
+      pomodoroManager.getTargetSeconds(),
     );
 
     if (pomodoroMode == PomodoroMode.focus) {
       _recordTimerSession(
-        time: _getTargetSeconds(),
+        time: pomodoroManager.getTargetSeconds(),
         isCompleted: true,
       );
     }
     _timerManager.stop();
-    _pomodoroNext();
+    pomodoroManager.nextPhase();
   }
 
   void pomodoroPass() {
     _timerManager.stop();
-    _pomodoroNext();
+    pomodoroManager.nextPhase();
   }
 
   void pomodoroGiveUp() async {
@@ -203,18 +196,11 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   void _checkAndHandleTargetReached(int seconds) {
     if (!timerOptionsViewModel.isPomodoroMode) return;
-    final targetReached = seconds >= _getTargetSeconds();
+    final targetReached = seconds >= pomodoroManager.getTargetSeconds();
 
     if (targetReached) {
       pomodoroEnd();
     }
-  }
-
-  int _getTargetSeconds() {
-    int targetMinutes = _pomodoroMode == PomodoroMode.focus
-        ? timerOptionsViewModel.workTime
-        : timerOptionsViewModel.restTime;
-    return targetMinutes * 60;
   }
 
   void _recordTimerSession(
@@ -224,25 +210,5 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
       seconds: time,
       isCompleted: isCompleted,
     );
-  }
-
-  void _pomodoroNext() {
-    if (_pomodoroMode == PomodoroMode.focus) {
-      _pomodoroMode = PomodoroMode.rest;
-      _sectionCounts = sectionCounts + 1;
-
-      // 한 사이클 완료
-      if (_sectionCounts == timerOptionsViewModel.sections) {
-        _pomodoroMode = PomodoroMode.focus;
-        _sectionCounts = 0;
-      }
-    } else {
-      _pomodoroMode = PomodoroMode.focus;
-    }
-    storage.saveTimerState(
-      curSections: _sectionCounts,
-      curPomodoroMode: _pomodoroMode,
-    );
-    notifyListeners();
   }
 }

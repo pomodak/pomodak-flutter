@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/show_user_guide_button.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/main_character_display.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timerOptionsViewModel = Provider.of<TimerOptionsViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: const <Widget>[ShowUserGuideButton()],
@@ -50,7 +52,13 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  const TimerStartButton()
+                  const TimerStartButton(),
+                  GestureDetector(
+                    onTap: () {
+                      LocalNotificationUtil.test();
+                    },
+                    child: const Icon(Icons.notifications),
+                  ),
                 ],
               ),
             ),

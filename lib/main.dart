@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
@@ -19,6 +17,7 @@ import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -29,28 +28,6 @@ import 'package:pomodak/view_models/timer_state_view_model.dart';
 import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-final FlutterLocalNotificationsPlugin local = FlutterLocalNotificationsPlugin();
-
-void _permissionWithNotification() async {
-  if (await Permission.notification.isDenied &&
-      !await Permission.notification.isPermanentlyDenied) {
-    await [Permission.notification].request();
-  }
-}
-
-void _initialization() async {
-  AndroidInitializationSettings android =
-      const AndroidInitializationSettings("@mipmap/ic_launcher");
-  DarwinInitializationSettings ios = const DarwinInitializationSettings(
-    requestSoundPermission: false,
-    requestBadgePermission: false,
-    requestAlertPermission: false,
-  );
-  InitializationSettings settings =
-      InitializationSettings(android: android, iOS: ios);
-  await local.initialize(settings);
-}
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -157,8 +134,8 @@ class _MyAppState extends State<MyApp> {
       memberViewModel: memberViewModel,
     );
 
-    _initialization();
-    _permissionWithNotification();
+    LocalNotificationUtil.initialization();
+    LocalNotificationUtil.permissionWithNotification();
   }
 
   @override

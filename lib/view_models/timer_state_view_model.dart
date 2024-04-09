@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/storagies/timer_state_storage.dart';
+import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
@@ -59,17 +60,35 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
         int temp = _elapsedSeconds;
         _timerStop(); // 내부에서 _elaspedSeconds가 초기화 되어서 temp로 복구
         _elapsedSeconds = temp;
+        // 백그라운드 전환 시 타이머가 실행중이라면 푸시알림 예약
+        if (_isBackgroundRunning && timerOptionsViewModel.isPomodoroMode) {
+          var restSeconds = _getTargetSeconds() - _elapsedSeconds;
+          LocalNotificationUtil.schedulePomodoroNotification(
+            seconds: restSeconds,
+            pomodoroMode: _pomodoroMode,
+          );
+        }
         timerHandler.setPuasedAt(); // 백그라운드 전환 시간 기록
         notifyListeners();
         break;
       case AppLifecycleState.resumed:
         // 앱이 다시 활성화될 때
+        LocalNotificationUtil.canclePomodoroNotification(); // 예약된 푸시알림 취소
+        if (_isBackgroundRunning) {
+          _elapsedSeconds += timerHandler.getTimerGapSeconds();
+          // 뽀모도로 모드면 종료된지 체크 후 종료 처리
+          if (timerOptionsViewModel.isPomodoroMode) {
+            final targetReached = _elapsedSeconds >= _getTargetSeconds();
+            if (targetReached) {
+              pomodoroEnd();
+            }
+          }
+        }
+
         if (_onTimerEnd != null) {
           timerStart(_onTimerEnd!); // 제거된 타이머 이벤트를 복구
         }
-        if (_isBackgroundRunning) {
-          _elapsedSeconds += timerHandler.getTimerGapSeconds();
-        } else {
+        if (!_isBackgroundRunning) {
           _isRunning = false; // 이전에 일시정지 상태였으면 다시 일시정지 상태로
         }
         notifyListeners();
@@ -200,6 +219,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     if (!timerOptionsViewModel.isPomodoroMode) return;
 
     final targetReached = _elapsedSeconds >= _getTargetSeconds();
+
     if (targetReached) {
       pomodoroEnd();
     }

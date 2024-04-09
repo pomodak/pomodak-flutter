@@ -35,6 +35,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   bool _showMessage = false;
 
   void _showRandomMessage(List<String> messages) {
+    if (!mounted) return;
     setState(() {
       _currentMessage = messages[Random().nextInt(messages.length)];
       _showMessage = true;
@@ -43,6 +44,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
 
   void _hideMessageAfterDelay() {
     Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
       setState(() => _showMessage = false);
     });
   }
@@ -66,7 +68,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   void initState() {
     super.initState();
     _messageTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      if (!_showMessage) {
+      if (!_showMessage && mounted) {
         _handleMessageDisplay();
       }
     });

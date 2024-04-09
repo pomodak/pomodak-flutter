@@ -4,3 +4,11 @@
 </p>
 
 ### 플러터로 마이그레이션 진행중
+
+#### Task
+
+- [ ] 내정보 수정
+- [ ] 계정 삭제
+- [ ] local notification
+- [ ] timer-options modal
+- [ ] together timer

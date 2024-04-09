@@ -3,7 +3,7 @@ import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_alarm_state.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_end_state.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_difference_handler.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_manager.dart';
 import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
@@ -21,7 +21,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerManager _timerManager = TimerManager();
   final TimerDifferenceHandler _timerDifferenceHandler =
       TimerDifferenceHandler.instance;
-  final TimerAlarmState _timerAlarmState = TimerAlarmState();
+  final TimerEndState _timerEndState = TimerEndState();
 
   int _sectionCounts = 0; // 섹션 수
 
@@ -33,19 +33,30 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   int get sectionCounts => _sectionCounts;
   bool get isRunning => _timerManager.isRunning;
   PomodoroMode get pomodoroMode => _pomodoroMode;
-  bool get isTimerEnded => _timerAlarmState.isTimerEnded;
-  AlarmType? get lastAlarmType => _timerAlarmState.lastAlarmType;
-  int? get lastElaspedSeconds => _timerAlarmState.lastElapsedSeconds;
+  bool get isTimerEnded => _timerEndState.isTimerEnded;
+  AlarmType? get lastAlarmType => _timerEndState.lastAlarmType;
+  int? get lastElaspedSeconds => _timerEndState.lastElapsedSeconds;
 
   TimerStateViewModel({
     required this.storage,
     required this.timerRecordViewModel,
     required this.timerOptionsViewModel,
   }) {
+    _init();
+  }
+
+  void _init() {
     _sectionCounts = storage.getCurSections();
     _pomodoroMode = storage.getCurPomodoroMode();
     timerOptionsViewModel.addListener(_onTimerOptionsChanged);
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    _timerManager.stop();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   //  timerOptions의 특정 값들의 변경 이벤트를 감지하여 타이머 상태 초기화
@@ -68,13 +79,6 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
       curSections: _sectionCounts,
     );
     notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _timerManager.stop();
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 
   @override
@@ -135,14 +139,14 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void normalEnd() {
-    _timerAlarmState.reset();
+    _timerEndState.reset();
     _recordTimerSession(time: _timerManager.elapsedSeconds, isCompleted: false);
     _timerManager.stop();
     notifyListeners();
   }
 
   void pomodoroEnd() {
-    _timerAlarmState.setTimerAlarmState(
+    _timerEndState.setTimerEndState(
       pomodoroMode == PomodoroMode.focus
           ? _sectionCounts + 1 == timerOptionsViewModel.sections
               ? AlarmType.finish
@@ -167,7 +171,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void pomodoroGiveUp() async {
-    _timerAlarmState.setTimerAlarmState(
+    _timerEndState.setTimerEndState(
       AlarmType.giveup,
       _timerManager.elapsedSeconds,
     );
@@ -193,7 +197,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   // 알람 표시 후 타이머 종료 상태를 리셋하는 메서드
   void resetTimerEndStatus() {
-    _timerAlarmState.reset();
+    _timerEndState.reset();
     notifyListeners();
   }
 

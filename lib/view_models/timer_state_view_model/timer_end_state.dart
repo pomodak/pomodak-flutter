@@ -1,11 +1,11 @@
 import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 
-class TimerAlarmState {
+class TimerEndState {
   bool isTimerEnded = false;
   AlarmType? lastAlarmType;
   int? lastElapsedSeconds;
 
-  void setTimerAlarmState(AlarmType type, int elapsedSeconds) {
+  void setTimerEndState(AlarmType type, int elapsedSeconds) {
     isTimerEnded = true;
     lastAlarmType = type;
     lastElapsedSeconds = elapsedSeconds;

@@ -31,6 +31,9 @@ class UserProfile extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
+        const SizedBox(
+          height: 12,
+        ),
         Text(
           nickname,
           style: const TextStyle(
@@ -38,7 +41,7 @@ class UserProfile extends StatelessWidget {
             letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         Text(
           statusMessage,
           style: const TextStyle(

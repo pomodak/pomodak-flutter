@@ -134,9 +134,9 @@ class MemberViewModel with ChangeNotifier {
   }
 
   Future<void> updateMemberInfo({
-    String? nickname,
-    String? imageUrl,
-    String? statusMessage,
+    required String nickname,
+    required String imageUrl,
+    required String statusMessage,
   }) async {
     if (member == null || _isLoadingMemberUpdate) return;
     _setLoadingState('memberUpdate', isLoading: true);

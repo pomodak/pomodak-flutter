@@ -12,7 +12,11 @@ class MoreScreen extends StatelessWidget {
     var authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('설정'),
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [Text("설정")],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

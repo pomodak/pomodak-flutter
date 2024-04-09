@@ -137,9 +137,9 @@ class MemberRepository {
 
   Future<void> updateMember(
     String memberId, {
-    String? nickname,
-    String? imageUrl,
-    String? statusMessage,
+    required String nickname,
+    required String imageUrl,
+    required String statusMessage,
   }) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getPatchApiResponse(
@@ -155,7 +155,6 @@ class MemberRepository {
         (json) {},
       );
       var data = response.data;
-
       return data;
     } catch (e) {
       rethrow;

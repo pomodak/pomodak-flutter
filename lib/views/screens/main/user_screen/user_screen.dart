@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_calendar.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/user_edit_modal.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_heatmap.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_profile.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_focus_summary.dart';
@@ -44,7 +45,9 @@ class _UserScreenState extends State<UserScreen>
                 pinned: true,
                 actions: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      UserEditModal.show(context);
+                    },
                     icon: const Icon(Icons.edit),
                   ),
                 ],

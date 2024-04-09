@@ -8,6 +8,7 @@ import 'package:pomodak/data/app_exceptions.dart';
 import 'package:pomodak/data/network/auth_interceptor.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/data/storagies/auth_storage.dart';
+import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/refresh_response.dart';
 
 class NetworkApiService extends BaseApiServices {
@@ -64,7 +65,6 @@ class NetworkApiService extends BaseApiServices {
 
   Future<String?> refreshToken() async {
     final refreshToken = await storage.getRefreshToken();
-
     if (refreshToken == null) {
       // 리프레시 토큰이 없다면 로그아웃 처리
       await storage.deleteAllData();
@@ -73,13 +73,19 @@ class NetworkApiService extends BaseApiServices {
 
     try {
       // Dio를 사용하여 리프레시 토큰으로 새 액세스 토큰 요청
-      var response = await Dio().post(
+      var responseJson = await Dio().post(
         '$_nestApiEndpoint/auth/refresh',
-        options: Options(headers: {"Authorization": 'Bearer $refreshToken'}),
+        options: Options(headers: {
+          "Authorization": 'Bearer $refreshToken',
+          'Content-Type': 'application/json'
+        }),
       );
-
-      if (response.statusCode == 200) {
-        var data = RefreshResponse.fromJson(response.data);
+      BaseApiResponse<RefreshResponse> response = BaseApiResponse.fromJson(
+        responseJson.data,
+        (json) => RefreshResponse.fromJson(json as Map<String, dynamic>),
+      );
+      var data = response.data;
+      if (data != null) {
         // 새 토큰 저장
         await storage.storeTokens(
           data.accessToken,
@@ -92,12 +98,12 @@ class NetworkApiService extends BaseApiServices {
         await storage.deleteAllData();
         return null;
       }
-    } catch (e) {
+    } on DioException catch (dioError) {
       // 네트워크 오류나 기타 예외 처리
       await storage.deleteAllData();
-      throw FetchDataException(
-          'Failed to refresh token. No Internet Connection or Server Error');
+      _handleDioError(dioError);
     }
+    return null;
   }
 
   void _handleDioError(DioException dioError) {

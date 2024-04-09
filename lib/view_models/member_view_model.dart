@@ -26,6 +26,7 @@ class MemberViewModel with ChangeNotifier {
   bool _isLoadingCharacterInventory = false;
   bool _isLoadingConsumeItem = false;
   bool _isLoadingMemberUpdate = false;
+  bool _isLoadingApplyTime = false;
 
   // 에러 메시지
   String? _memberError;
@@ -35,6 +36,7 @@ class MemberViewModel with ChangeNotifier {
   String? _characterInventoryError;
   String? _consumeItemError;
   String? _memberUpdateError;
+  String? _applyTimeError;
 
   MemberModel? get member => _member;
   PaletteModel? get palette => _palette;
@@ -49,6 +51,7 @@ class MemberViewModel with ChangeNotifier {
   bool get isLoadingCharacterInventory => _isLoadingCharacterInventory;
   bool get isLoadingConsumeItem => _isLoadingConsumeItem;
   bool get isLoadingMemberUpdate => _isLoadingMemberUpdate;
+  bool get isLoadingApplyTime => _isLoadingApplyTime;
 
   String? get memberError => _memberError;
   String? get paletteError => _paletteError;
@@ -57,6 +60,7 @@ class MemberViewModel with ChangeNotifier {
   String? get characterInventoryError => _characterInventoryError;
   String? get consumeItemError => _consumeItemError;
   String? get memberUpdateError => _memberUpdateError;
+  String? get applyTimeError => _applyTimeError;
 
   MemberViewModel({required this.repository});
 
@@ -156,6 +160,25 @@ class MemberViewModel with ChangeNotifier {
     }
   }
 
+  Future<void> applyTimeToItemInventory(int seconds) async {
+    if (member == null || _isLoadingMemberUpdate) return;
+    _setLoadingState('applyTime', isLoading: true);
+    try {
+      await repository.applyTimeToItemInventory(seconds);
+      await loadFoodInventory();
+
+      for (var item in _foodInventory) {
+        if (item.progress == 0) {
+          MessageUtil.showSuccessToast("부화 가능한 알이 존재합니다.");
+        }
+      }
+    } catch (e) {
+      _handleError("applyTime", e);
+    } finally {
+      _setLoadingState('applyTime', isLoading: false);
+    }
+  }
+
   // ConsumableItemAcquisition, CharacterAcquisition, PaletteAcuisition, PointAcquisition
   // 위 타입으로 캐스팅 해야함
   Future<dynamic> consumeItem(String inventoryId) async {
@@ -235,6 +258,9 @@ class MemberViewModel with ChangeNotifier {
       case 'memberUpdate':
         _isLoadingMemberUpdate = isLoading;
         break;
+      case 'applyTime':
+        _isLoadingApplyTime = isLoading;
+        break;
     }
     notifyListeners();
   }
@@ -261,6 +287,9 @@ class MemberViewModel with ChangeNotifier {
         break;
       case 'memberUpdate':
         _memberUpdateError = errorMessage;
+        break;
+      case 'applyTime':
+        _applyTimeError = errorMessage;
         break;
     }
     notifyListeners();

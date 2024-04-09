@@ -161,6 +161,21 @@ class MemberRepository {
     }
   }
 
+  // 타이머 기록 인벤토리(알)에 반영
+  Future<void> applyTimeToItemInventory(int seconds) async {
+    try {
+      var responseJson = await apiService.getPostApiResponse(
+        '$_springApiEndpoint/item-inventory/apply-time',
+        {
+          'seconds': seconds,
+        },
+      );
+      return responseJson;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<dynamic> consumeItem(String inventoryId) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getPostApiResponse(

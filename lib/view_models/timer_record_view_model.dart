@@ -61,6 +61,7 @@ class TimerRecordViewModel extends ChangeNotifier {
       isCompleted: isCompleted,
       category: category,
     );
+    memberViewModel.applyTimeToItemInventory(seconds);
 
     // 새로 저장되거나 업데이트된 기록을 캐시에 반영
     _updateCacheWithRecord(newOrUpdatedRecord);

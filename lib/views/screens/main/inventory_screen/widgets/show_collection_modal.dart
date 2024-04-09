@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_card.dart';
 import 'package:provider/provider.dart';
 
 void showCollectionModal(BuildContext context) {

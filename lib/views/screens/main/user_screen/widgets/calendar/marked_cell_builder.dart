@@ -10,6 +10,7 @@ Widget markedCellBuilder(
     return ListView.builder(
       shrinkWrap: true,
       itemCount: events.length,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Column(
           children: [

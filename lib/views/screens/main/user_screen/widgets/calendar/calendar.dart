@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/default_cell_builder.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/disabled_cell_builder.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/dow_builder.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/header_title_builder.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/calendar/marked_cell_builder.dart';
@@ -57,6 +58,9 @@ class _CalendarState extends State<Calendar> {
         },
         defaultBuilder: (context, day, focusedDay) {
           return defaultCellBuilder(context, day, focusedDay);
+        },
+        disabledBuilder: (context, day, focusedDay) {
+          return disabledCellBuilder(context, day, focusedDay);
         },
         headerTitleBuilder: (context, day) {
           return headerTitleBuilder(context, day);

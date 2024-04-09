@@ -3,6 +3,7 @@ import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_alarm_state.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_difference_handler.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_manager.dart';
 import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
@@ -20,10 +21,9 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerManager _timerManager = TimerManager();
   final TimerDifferenceHandler _timerDifferenceHandler =
       TimerDifferenceHandler.instance;
+  final TimerAlarmState _timerAlarmState = TimerAlarmState();
+
   int _sectionCounts = 0; // 섹션 수
-  bool _isTimerEnded = false;
-  AlarmType? _lastAlarmType;
-  int? _lastElaspedSeconds;
 
   // (백그라운드 전환 시 타이머가 실행중이었는지 기록하여 돌아왔을때 처리)
   bool _isBackgroundRunning = false;
@@ -33,9 +33,9 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   int get sectionCounts => _sectionCounts;
   bool get isRunning => _timerManager.isRunning;
   PomodoroMode get pomodoroMode => _pomodoroMode;
-  bool get isTimerEnded => _isTimerEnded;
-  AlarmType? get lastAlarmType => _lastAlarmType;
-  int? get lastElaspedSeconds => _lastElaspedSeconds;
+  bool get isTimerEnded => _timerAlarmState.isTimerEnded;
+  AlarmType? get lastAlarmType => _timerAlarmState.lastAlarmType;
+  int? get lastElaspedSeconds => _timerAlarmState.lastElapsedSeconds;
 
   TimerStateViewModel({
     required this.storage,
@@ -135,25 +135,25 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void normalEnd() {
-    _isTimerEnded = true;
-    _lastAlarmType = AlarmType.normal;
-    _lastElaspedSeconds = _timerManager.elapsedSeconds;
+    _timerAlarmState.reset();
     _recordTimerSession(time: _timerManager.elapsedSeconds, isCompleted: false);
     _timerManager.stop();
     notifyListeners();
   }
 
   void pomodoroEnd() {
-    _isTimerEnded = true;
-    _lastAlarmType = pomodoroMode == PomodoroMode.focus
-        ? _sectionCounts + 1 == timerOptionsViewModel.sections
-            ? AlarmType.finish
-            : AlarmType.work
-        : AlarmType.rest;
+    _timerAlarmState.setTimerAlarmState(
+      pomodoroMode == PomodoroMode.focus
+          ? _sectionCounts + 1 == timerOptionsViewModel.sections
+              ? AlarmType.finish
+              : AlarmType.work
+          : AlarmType.rest,
+      _getTargetSeconds(),
+    );
 
     if (pomodoroMode == PomodoroMode.focus) {
       _recordTimerSession(
-        time: timerOptionsViewModel.workTime * 60,
+        time: _getTargetSeconds(),
         isCompleted: true,
       );
     }
@@ -167,8 +167,11 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void pomodoroGiveUp() async {
-    _isTimerEnded = true;
-    _lastAlarmType = AlarmType.giveup;
+    _timerAlarmState.setTimerAlarmState(
+      AlarmType.giveup,
+      _timerManager.elapsedSeconds,
+    );
+
     if (pomodoroMode == PomodoroMode.focus) {
       _recordTimerSession(
         time: _timerManager.elapsedSeconds,
@@ -190,9 +193,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   // 알람 표시 후 타이머 종료 상태를 리셋하는 메서드
   void resetTimerEndStatus() {
-    _isTimerEnded = false;
-    _lastAlarmType = null;
-    _lastElaspedSeconds = null;
+    _timerAlarmState.reset();
     notifyListeners();
   }
 

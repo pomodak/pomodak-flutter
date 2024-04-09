@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pomodak/view_models/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
-import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 import 'package:provider/provider.dart';
 
 class TimerPage extends StatefulWidget {
@@ -26,19 +24,7 @@ class _TimerPageState extends State<TimerPage> {
   void _startTimer() {
     final timerStateViewModel =
         Provider.of<TimerStateViewModel>(context, listen: false);
-
-    // addPostFrameCallback이 실행될때 onTimerEnd함수가 생성 되어야 올바른 context를 참조 가능
-    void onTimerEnd(AlarmType alarmType, int time) {
-      context.go(
-        "/timer-alarm",
-        extra: AlarmInfo(
-          alarmType: alarmType,
-          time: time,
-        ),
-      );
-    }
-
-    timerStateViewModel.timerStart(onTimerEnd);
+    timerStateViewModel.timerStart();
   }
 
   @override

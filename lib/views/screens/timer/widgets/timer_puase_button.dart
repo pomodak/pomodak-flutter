@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/view_models/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TimerPauseButton extends StatelessWidget {

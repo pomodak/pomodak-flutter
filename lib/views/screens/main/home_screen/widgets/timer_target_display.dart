@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/show_timer_option_modal.dart';
 import 'package:provider/provider.dart';
 

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:provider/provider.dart';
 
 final List<String> focusMessages = [

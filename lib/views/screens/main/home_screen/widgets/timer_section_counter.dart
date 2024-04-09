@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart'; // 스탬프 이미지 URL이 포함된 설정 파일
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TimerSectionCounter extends StatelessWidget {

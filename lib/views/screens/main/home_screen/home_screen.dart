@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
@@ -24,47 +25,53 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
+          const Expanded(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  const Expanded(
+                  Expanded(
                     flex: 1,
                     child: MainCharacterDisplay(),
                   ),
-                  const TimerTargetDisplay(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  if (timerOptionsViewModel.isPomodoroMode)
-                    const TimerSectionCounter(),
+                  TimerTargetDisplay(),
                 ],
               ),
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ShowEggInventoryButton(onNavigateToShop: onNavigateToShop),
-                  const SizedBox(
-                    width: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (timerOptionsViewModel.isPomodoroMode)
+                  const TimerSectionCounter(),
+                Expanded(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ShowEggInventoryButton(
+                            onNavigateToShop: onNavigateToShop),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const TimerStartButton(),
+                        GestureDetector(
+                          onTap: () {
+                            LocalNotificationUtil.schedulePomodoroNotification(
+                              pomodoroMode: PomodoroMode.focus,
+                              seconds: 1,
+                            );
+                          },
+                          child: const Icon(Icons.notifications),
+                        ),
+                      ],
+                    ),
                   ),
-                  const TimerStartButton(),
-                  GestureDetector(
-                    onTap: () {
-                      LocalNotificationUtil.schedulePomodoroNotification(
-                        pomodoroMode: PomodoroMode.focus,
-                        seconds: 1,
-                      );
-                    },
-                    child: const Icon(Icons.notifications),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

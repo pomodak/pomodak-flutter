@@ -104,7 +104,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
           ),
           if (_showMessage)
             Positioned(
-              bottom: size.width / 2 - 20,
+              bottom: size.width / 2 - 30,
               left: 0,
               right: 0,
               child: Container(

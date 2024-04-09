@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// 타이머 이벤트, 상태 관리 클래스
 class TimerManager {
   Timer? _timer;
   bool isRunning = false;

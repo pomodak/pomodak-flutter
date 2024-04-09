@@ -2,6 +2,7 @@ import 'package:pomodak/data/storagies/timer_state_storage.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 
+// 뽀모도로 모드를 관리하는 클래스
 class PomodoroManager {
   final TimerStateStorage storage;
   PomodoroMode pomodoroMode = PomodoroMode.focus;

@@ -18,20 +18,19 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerOptionsViewModel timerOptionsViewModel;
   final PomodoroManager pomodoroManager;
 
-  // state
+  // State
   final TimerManager _timerManager = TimerManager();
   final TimerDifferenceHandler _timerDifferenceHandler =
       TimerDifferenceHandler.instance;
   final TimerEndState _timerEndState = TimerEndState();
+  bool _isBackgroundRunning = false; // 앱이 백그라운드에서 실행중인지 여부
 
-  // (백그라운드 전환 시 타이머가 실행중이었는지 기록하여 돌아왔을때 처리)
-  bool _isBackgroundRunning = false;
-
-  // 타이머 상태에 대한 Getter
+  // Getter
   int get elapsedSeconds => _timerManager.elapsedSeconds;
   bool get isRunning => _timerManager.isRunning;
   int get sectionCounts => pomodoroManager.sectionCounts;
   PomodoroMode get pomodoroMode => pomodoroManager.pomodoroMode;
+  // 아래 값이 true면 timerPage/timer_diaplay.dart에서 감지 후 알람 페이지로 이동
   bool get isTimerEnded => _timerEndState.isTimerEnded;
   AlarmType? get lastAlarmType => _timerEndState.lastAlarmType;
   int? get lastElaspedSeconds => _timerEndState.lastElapsedSeconds;
@@ -59,7 +58,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     super.dispose();
   }
 
-  //  timerOptions의 특정 값들의 변경 이벤트를 감지하여 타이머 상태 초기화
+  // timerOptions의 특정 값들의 변경 이벤트를 감지하여 타이머 상태 초기화
   void _onTimerOptionsChanged() {
     if (timerOptionsViewModel.lastEvent != null &&
         (timerOptionsViewModel.lastEvent!.isPomodoroModeChanged ||
@@ -73,34 +72,37 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    switch (state) {
-      case AppLifecycleState.paused:
-        // 앱이 백그라운드로 이동할 때
-        _handleAppPaused();
-      case AppLifecycleState.resumed:
-        // 앱이 다시 활성화될 때
-        _handleAppResumed();
-        break;
-      default:
-        break;
+    if (state == AppLifecycleState.paused) {
+      _handleAppPaused();
+    } else if (state == AppLifecycleState.resumed) {
+      _handleAppResumed();
     }
   }
 
+  /// 백그라운드 전환 시 타이머 일시정지 & 전환된 시간 저장
+  /// 뽀모도로 모드면 남은 시간을 계산하여 로컬 알람 스케줄링
   void _handleAppPaused() {
     _isBackgroundRunning = _timerManager.isRunning;
     if (_timerManager.isRunning) {
       _timerManager.pause();
-      int remainingTime =
-          pomodoroManager.getTargetSeconds() - _timerManager.elapsedSeconds;
-      LocalNotificationUtil.schedulePomodoroNotification(
-        seconds: remainingTime,
-        pomodoroMode: pomodoroManager.pomodoroMode,
-      );
+
+      if (timerOptionsViewModel.isPomodoroMode) {
+        int remainingTime =
+            pomodoroManager.getTargetSeconds() - _timerManager.elapsedSeconds;
+        LocalNotificationUtil.schedulePomodoroNotification(
+          seconds: remainingTime,
+          pomodoroMode: pomodoroManager.pomodoroMode,
+        );
+      }
+
       _timerDifferenceHandler.setPuasedAt();
       notifyListeners();
     }
   }
 
+  /// 포그라운드 전환 시 타이머 재개 & 스케줄링된 뽀모도로 알람 취소
+  /// 백그라운드에서 실행중이었던 경우 타이머에 백그라운드에서 경과한 시간 추가
+  /// 뽀모도로 모드 & 타이머 종료 시 pomodoroEnd() 호출
   void _handleAppResumed() {
     LocalNotificationUtil.canclePomodoroNotification();
     if (_isBackgroundRunning) {
@@ -128,6 +130,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
+  // 일반 타이머 종료
   void normalEnd() {
     _timerEndState.setTimerEndState(
       AlarmType.normal,
@@ -138,6 +141,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
+  // 뽀모도로 타이머 종료
   void pomodoroEnd() {
     _timerEndState.setTimerEndState(
       pomodoroMode == PomodoroMode.focus
@@ -158,11 +162,13 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     pomodoroManager.nextPhase();
   }
 
+  // 뽀모도로 타이머 생략(휴식 모드)
   void pomodoroPass() {
     _timerManager.stop();
     pomodoroManager.nextPhase();
   }
 
+  // 뽀모도로 타이머 포기(집중 모드)
   void pomodoroGiveUp() async {
     _timerEndState.setTimerEndState(
       AlarmType.giveup,
@@ -179,6 +185,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
+  // 타이머 일시정지
   void togglePause() {
     if (_timerManager.isRunning) {
       _timerManager.pause();
@@ -194,6 +201,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
+  // 뽀모도로 타이머가 종료되었는지 확인하고 pomodoroEnd() 호출
   void _checkAndHandleTargetReached(int seconds) {
     if (!timerOptionsViewModel.isPomodoroMode) return;
     final targetReached = seconds >= pomodoroManager.getTargetSeconds();
@@ -203,6 +211,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     }
   }
 
+  // 타이머 세션을 기록
   void _recordTimerSession(
       {required int time, required bool isCompleted}) async {
     await timerRecordViewModel.saveRecord(

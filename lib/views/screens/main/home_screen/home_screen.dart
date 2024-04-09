@@ -31,6 +31,9 @@ class HomeScreen extends StatelessWidget {
                     child: MainCharacterDisplay(),
                   ),
                   const TimerTargetDisplay(),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   if (timerOptionsViewModel.isPomodoroMode)
                     const TimerSectionCounter(),
                 ],

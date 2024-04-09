@@ -33,6 +33,12 @@ class TimerOptionsViewModel with ChangeNotifier {
   int get sections => _sections;
   bool get isFocusTogetherMode => _isFocusTogetherMode;
 
+  bool get tempIsPomodoroMode => _tempIsPomodoroMode;
+  int get tempWorkTime => _tempWorkTime;
+  int get tempRestTime => _tempRestTime;
+  int get tempSections => _tempSections;
+  bool get tempIsFocusTogetherMode => _tempIsFocusTogetherMode;
+
   // 최근 변경 된 옵션(타이머 초기화 여부 확인용)
   TimerOptionsChangedEvent? _lastEvent;
   TimerOptionsChangedEvent? get lastEvent => _lastEvent;

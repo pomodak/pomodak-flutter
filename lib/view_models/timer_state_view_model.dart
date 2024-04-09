@@ -138,19 +138,17 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   void normalEnd() {
-    if (!_isRunning) return;
     int time = _elapsedSeconds;
     _timerStop();
     _recordTimerSession(time: time, isCompleted: false);
     notifyListeners();
 
     if (_onTimerEnd != null) {
-      _onTimerEnd!(AlarmType.giveup, time);
+      _onTimerEnd!(AlarmType.normal, time);
     }
   }
 
   void pomodoroEnd() {
-    if (!_isRunning) return;
     _timerStop();
 
     if (pomodoroMode == PomodoroMode.focus) {

@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomBarDefault(

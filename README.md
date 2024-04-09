@@ -8,7 +8,7 @@
 #### Task
 
 - [x] 내정보 수정
+- [x] timer-options modal
 - [ ] 계정 삭제
 - [ ] local notification
-- [x] timer-options modal
 - [ ] together timer

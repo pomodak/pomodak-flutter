@@ -31,7 +31,10 @@ class ItemAcquisitionDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
-            _ItemDetails(item: result.item),
+            _ItemDetails(
+              item: result.item,
+              quantity: result.count,
+            ),
             _ConfirmButton(),
           ],
         ),
@@ -42,8 +45,9 @@ class ItemAcquisitionDialog extends StatelessWidget {
 
 class _ItemDetails extends StatelessWidget {
   final ItemModel item;
+  final int? quantity;
 
-  const _ItemDetails({required this.item});
+  const _ItemDetails({required this.item, this.quantity});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +59,7 @@ class _ItemDetails extends StatelessWidget {
         Image.network(item.imageUrl,
             height: MediaQuery.of(context).size.height * 0.3),
         const SizedBox(height: 20),
-        Text(item.name,
+        Text('${item.name}${quantity != null ? ' x $quantity' : ""}',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         Text(item.description,

@@ -9,8 +9,10 @@ part 'consume_item_response.g.dart';
 class ConsumableItemAcquisition {
   final String result;
   final ItemModel item;
+  final int? count;
 
-  ConsumableItemAcquisition({required this.result, required this.item});
+  ConsumableItemAcquisition(
+      {required this.result, required this.item, this.count});
 
   factory ConsumableItemAcquisition.fromJson(Map<String, dynamic> json) =>
       _$ConsumableItemAcquisitionFromJson(json);

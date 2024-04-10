@@ -11,6 +11,7 @@ ConsumableItemAcquisition _$ConsumableItemAcquisitionFromJson(
     ConsumableItemAcquisition(
       result: json['result'] as String,
       item: ItemModel.fromJson(json['item'] as Map<String, dynamic>),
+      count: json['count'] as int?,
     );
 
 Map<String, dynamic> _$ConsumableItemAcquisitionToJson(
@@ -18,6 +19,7 @@ Map<String, dynamic> _$ConsumableItemAcquisitionToJson(
     <String, dynamic>{
       'result': instance.result,
       'item': instance.item,
+      'count': instance.count,
     };
 
 CharacterAcquisition _$CharacterAcquisitionFromJson(

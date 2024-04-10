@@ -13,4 +13,7 @@
 - [x] local notification
 - [x] vibration alarm
 - [x] timerPage keep screen
+- [ ] confetti
+- [ ] streak grade tooltip
+- [ ] character collection
 - [ ] together timer

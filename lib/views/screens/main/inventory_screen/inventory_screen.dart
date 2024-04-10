@@ -13,7 +13,10 @@ class InventoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("인벤토리"),
+        title: const Text(
+          "인벤토리",
+          style: TextStyle(fontSize: 18),
+        ),
         surfaceTintColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -70,7 +73,7 @@ class InventoryScreen extends StatelessWidget {
                           padding:
                               EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                           child: Text(
-                            "📚도감 보기",
+                            "📚 도감 보기",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

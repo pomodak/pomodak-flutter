@@ -14,10 +14,11 @@ void showTermsModal(BuildContext context) {
               onTap: () => Navigator.pop(context),
               child: const Icon(Icons.chevron_left, size: 32),
             ),
+            centerTitle: true,
             title: const Text(
               "이용약관",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Noto_Serif_KR',
               ),

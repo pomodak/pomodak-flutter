@@ -37,7 +37,7 @@ class _UserScreenState extends State<UserScreen>
                   child: Text(
                     "내정보",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                     ),
                   ),
                 ),

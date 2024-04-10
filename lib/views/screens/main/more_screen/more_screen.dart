@@ -16,7 +16,10 @@ class MoreScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("설정"),
+        title: const Text(
+          "설정",
+          style: TextStyle(fontSize: 18),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

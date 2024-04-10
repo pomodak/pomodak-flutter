@@ -43,7 +43,10 @@ class ShopScreen extends StatelessWidget {
               ],
             ),
           ),
-          title: const Text("상점"),
+          title: const Text(
+            "상점",
+            style: TextStyle(fontSize: 18),
+          ),
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(

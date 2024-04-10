@@ -52,7 +52,7 @@ class MoreScreen extends StatelessWidget {
                   appViewModel.vibration = !appViewModel.vibration;
                   if (await Vibration.hasVibrator() == true &&
                       appViewModel.vibration) {
-                    Vibration.vibrate(duration: 1000);
+                    Vibration.vibrate(duration: 400);
                   }
                 },
               ),

@@ -16,14 +16,15 @@ class TimerDisplay extends StatelessWidget {
         Provider.of<TimerOptionsViewModel>(context, listen: false);
 
     String displayTime = _formatDisplayTime(timerState, timerOptions);
-
-    if (timerState.isTimerEnded) {
+    if (timerState.timerEndState.isTimerEnded) {
       Future.delayed(Duration.zero, () {
         context.go(
           "/timer-alarm",
           extra: AlarmInfo(
-            alarmType: timerState.lastAlarmType!, // 마지막 알람 타입
-            time: timerState.lastElaspedSeconds ?? 0, // 경과 시간
+            alarmType: timerState.timerEndState.lastAlarmType!, // 마지막 알람 타입
+            time: timerState.timerEndState.lastElapsedSeconds ?? 0, // 경과 시간
+            isEndedInBackground: timerState
+                .timerEndState.isEndedInBackground, // 백그라운드에서 종료됐는지 여부
           ),
         );
         timerState.resetTimerEndStatus(); // 타이머 종료 상태 리셋

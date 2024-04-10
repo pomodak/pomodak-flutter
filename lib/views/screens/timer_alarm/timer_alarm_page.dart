@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/utils/format_util.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
+import 'package:vibration/vibration.dart';
 
 class TimerAlarmPage extends StatelessWidget {
   const TimerAlarmPage({super.key});
@@ -12,6 +15,18 @@ class TimerAlarmPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final state = GoRouter.of(context).routerDelegate.currentConfiguration;
     final alarmInfo = state.extra as AlarmInfo;
+
+    void triggerVibration() async {
+      var appOptions = Provider.of<AppViewModel>(context, listen: false);
+      if (await Vibration.hasVibrator() == true && appOptions.vibration) {
+        Vibration.vibrate(duration: 1000);
+      }
+    }
+
+    // 백그라운드에서 온 경우 이미 푸시 알림으로 진동이 울림
+    if (!alarmInfo.isEndedInBackground) {
+      triggerVibration();
+    }
 
     final String imageUrl;
     final String message;
@@ -97,6 +112,11 @@ enum AlarmType { work, rest, finish, normal, giveup }
 class AlarmInfo {
   final AlarmType alarmType;
   final int time;
+  final bool isEndedInBackground;
 
-  AlarmInfo({required this.alarmType, required this.time});
+  AlarmInfo({
+    required this.alarmType,
+    required this.time,
+    required this.isEndedInBackground,
+  });
 }

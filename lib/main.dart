@@ -9,6 +9,7 @@ import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
+import 'package:pomodak/data/storagies/app_options_storage.dart';
 import 'package:pomodak/data/storagies/timer_record_storage.dart';
 import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/data/storagies/timer_options_storage.dart';
@@ -76,6 +77,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late AuthStorage authStorage;
+  late AppOptionStorage appOptionsStorage;
   late TimerOptionsStorage timerOptionsStorage;
   late TimerStateStorage timerStateStorage;
   late TimerRecordStorage timerRecordStorage;
@@ -102,6 +104,7 @@ class _MyAppState extends State<MyApp> {
     // sharedPreferences
     timerOptionsStorage = TimerOptionsStorage(widget.sharedPreferences);
     timerStateStorage = TimerStateStorage(widget.sharedPreferences);
+    appOptionsStorage = AppOptionStorage(widget.sharedPreferences);
     // hive
     timerRecordStorage = TimerRecordStorage();
     //network
@@ -112,7 +115,7 @@ class _MyAppState extends State<MyApp> {
     shopRepository = ShopRepository(apiService: apiService);
 
     // ViewModel
-    appViewModel = AppViewModel();
+    appViewModel = AppViewModel(storage: appOptionsStorage);
     memberViewModel = MemberViewModel(repository: memberRepository);
     authViewModel = AuthViewModel(
       repository: authRepository,

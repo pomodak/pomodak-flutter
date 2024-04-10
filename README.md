@@ -11,4 +11,6 @@
 - [x] timer-options modal
 - [ ] 계정 삭제
 - [x] local notification
+- [x] vibration alarm
+- [ ] timerPage keep screen
 - [ ] together timer

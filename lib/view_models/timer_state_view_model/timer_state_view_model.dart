@@ -31,9 +31,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   int get sectionCounts => pomodoroManager.sectionCounts;
   PomodoroMode get pomodoroMode => pomodoroManager.pomodoroMode;
   // 아래 값이 true면 timerPage/timer_diaplay.dart에서 감지 후 알람 페이지로 이동
-  bool get isTimerEnded => _timerEndState.isTimerEnded;
-  AlarmType? get lastAlarmType => _timerEndState.lastAlarmType;
-  int? get lastElaspedSeconds => _timerEndState.lastElapsedSeconds;
+  TimerEndState get timerEndState => _timerEndState;
 
   TimerStateViewModel({
     required this.storage,
@@ -113,7 +111,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
         final targetReached =
             _timerManager.elapsedSeconds >= pomodoroManager.getTargetSeconds();
         if (targetReached) {
-          pomodoroEnd();
+          pomodoroEnd(isEndedInBackground: true);
           return;
         }
       }
@@ -135,14 +133,14 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     _timerEndState.setTimerEndState(
       AlarmType.normal,
       pomodoroManager.getTargetSeconds(),
+      false,
     );
     _recordTimerSession(time: _timerManager.elapsedSeconds, isCompleted: false);
     _timerManager.stop();
-    notifyListeners();
   }
 
   // 뽀모도로 타이머 종료
-  void pomodoroEnd() {
+  void pomodoroEnd({required bool isEndedInBackground}) {
     _timerEndState.setTimerEndState(
       pomodoroMode == PomodoroMode.focus
           ? pomodoroManager.sectionCounts + 1 == timerOptionsViewModel.sections
@@ -150,6 +148,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
               : AlarmType.work
           : AlarmType.rest,
       pomodoroManager.getTargetSeconds(),
+      isEndedInBackground,
     );
 
     if (pomodoroMode == PomodoroMode.focus) {
@@ -173,6 +172,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     _timerEndState.setTimerEndState(
       AlarmType.giveup,
       _timerManager.elapsedSeconds,
+      false,
     );
 
     if (pomodoroMode == PomodoroMode.focus) {
@@ -207,7 +207,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     final targetReached = seconds >= pomodoroManager.getTargetSeconds();
 
     if (targetReached) {
-      pomodoroEnd();
+      pomodoroEnd(isEndedInBackground: false);
     }
   }
 

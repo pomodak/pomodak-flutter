@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
 import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
+import 'package:vibration/vibration.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -10,6 +12,7 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authViewModel = Provider.of<AuthViewModel>(context);
+    var appViewModel = Provider.of<AppViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -35,9 +38,17 @@ class MoreScreen extends StatelessWidget {
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Icons.vibration),
+                leading: Icon(
+                  appViewModel.vibration ? Icons.vibration : Icons.close,
+                ),
                 title: const Text('진동'),
-                onTap: () {},
+                onTap: () async {
+                  appViewModel.vibration = !appViewModel.vibration;
+                  if (await Vibration.hasVibrator() == true &&
+                      appViewModel.vibration) {
+                    Vibration.vibrate(duration: 1000);
+                  }
+                },
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),

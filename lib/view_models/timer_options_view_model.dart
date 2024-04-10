@@ -107,7 +107,7 @@ class TimerOptionsViewModel with ChangeNotifier {
     _sections = _tempSections;
     _isFocusTogetherMode = _tempIsFocusTogetherMode;
 
-    await storage.saveTimerOptions(
+    storage.saveTimerOptions(
       isPomodoroMode: _isPomodoroMode,
       isFocusTogetherMode: _isFocusTogetherMode,
       workTime: _workTime,

@@ -64,6 +64,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
             timerOptionsViewModel.lastEvent!.restTimeChanged ||
             timerOptionsViewModel.lastEvent!.sectionsChanged)) {
       pomodoroManager.reset();
+      notifyListeners();
     }
   }
 

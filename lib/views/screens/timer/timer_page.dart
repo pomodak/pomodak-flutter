@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -18,13 +20,29 @@ class _TimerPageState extends State<TimerPage> {
   void initState() {
     super.initState();
     // 위젯이 완전히 빌드된 뒤 실행함
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startTimer();
+      _maybeEnableWakeLock();
+    });
   }
 
   void _startTimer() {
     final timerStateViewModel =
         Provider.of<TimerStateViewModel>(context, listen: false);
     timerStateViewModel.timerStart();
+  }
+
+  void _maybeEnableWakeLock() {
+    final appViewModel = Provider.of<AppViewModel>(context, listen: false);
+    if (appViewModel.keepScreenOn) {
+      WakelockPlus.enable();
+    }
+  }
+
+  @override
+  void dispose() {
+    WakelockPlus.disable();
+    super.dispose();
   }
 
   @override

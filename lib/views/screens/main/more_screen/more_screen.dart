@@ -50,6 +50,18 @@ class MoreScreen extends StatelessWidget {
                   }
                 },
               ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: Icon(
+                  appViewModel.keepScreenOn
+                      ? Icons.remove_red_eye_outlined
+                      : Icons.close,
+                ),
+                title: const Text('화면 꺼짐 방지'),
+                onTap: () async {
+                  appViewModel.keepScreenOn = !appViewModel.keepScreenOn;
+                },
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 child: Text(

@@ -12,5 +12,5 @@
 - [ ] 계정 삭제
 - [x] local notification
 - [x] vibration alarm
-- [ ] timerPage keep screen
+- [x] timerPage keep screen
 - [ ] together timer

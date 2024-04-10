@@ -20,7 +20,7 @@ class EggCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var isActive = itemInventory.progress == 0;
+    var isActive = itemInventory.progress <= 0;
 
     return Material(
       child: InkWell(
@@ -41,11 +41,11 @@ class EggCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                isActive == true ? const Text("open") : const Text(""),
+                isActive ? const Text("open") : const Text(""),
                 Image.network(itemInventory.item.imageUrl),
                 Text(
                   FormatUtil.formatSeconds(
-                    itemInventory.progress,
+                    0 < itemInventory.progress ? itemInventory.progress : 0,
                   ),
                 ),
               ],
@@ -57,7 +57,7 @@ class EggCard extends StatelessWidget {
   }
 
   Future<void> _handleConsumeItem(BuildContext context) async {
-    if (itemInventory.progress != 0) {
+    if (0 < itemInventory.progress) {
       MessageUtil.showErrorToast('아직 아이템을 사용할 수 없습니다.');
       return;
     }

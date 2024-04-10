@@ -37,7 +37,7 @@ class UserProfile extends StatelessWidget {
         Text(
           nickname,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             letterSpacing: 1.2,
           ),
         ),
@@ -45,7 +45,7 @@ class UserProfile extends StatelessWidget {
         Text(
           statusMessage,
           style: const TextStyle(
-              fontSize: 16, letterSpacing: 1.2, color: Colors.black54),
+              fontSize: 14, letterSpacing: 1.2, color: Colors.black54),
         )
       ],
     );

@@ -110,6 +110,7 @@ class _UserEditModalState extends State<UserEditModal> {
                 width: 100,
                 height: 100,
               ),
+              const SizedBox(height: 28),
               const Row(
                 children: [
                   Text(
@@ -141,7 +142,7 @@ class _UserEditModalState extends State<UserEditModal> {
                   },
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               CustomTextField(
                 labelText: '닉네임',
                 controller: _nicknameController,
@@ -149,7 +150,7 @@ class _UserEditModalState extends State<UserEditModal> {
                 onSaved: (value) => _nicknameController.text = value!,
                 keyboardType: TextInputType.text,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               CustomTextField(
                 labelText: '상태메세지',
                 controller: _statusMessageController,

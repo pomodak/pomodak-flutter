@@ -50,7 +50,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("타이머 설정",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 2),
             TimerOptionAdjuster(
               label: "집중 시간",
@@ -93,7 +93,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               (newValue) => setState(
                   () => timerOptionsViewModel.isFocusTogetherMode = newValue),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 12),
             _buildActionButtons(context),
           ],
         ),
@@ -106,9 +106,9 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
+        Text(label, style: const TextStyle(fontSize: 14)),
         SizedBox(
-          width: 132,
+          width: 150,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -194,7 +194,7 @@ class TimerOptionAdjuster extends StatelessWidget {
         Expanded(
             child: Text(
           label,
-          style: TextStyle(fontSize: 16, color: isEnabled ? null : Colors.grey),
+          style: TextStyle(fontSize: 14, color: isEnabled ? null : Colors.grey),
         )),
         Row(
           children: [
@@ -208,12 +208,12 @@ class TimerOptionAdjuster extends StatelessWidget {
                   : null,
             ),
             SizedBox(
-              width: 40,
+              width: 50,
               child: Text(
                 "$currentValue$postFix",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 16, color: isEnabled ? null : Colors.grey),
+                    fontSize: 14, color: isEnabled ? null : Colors.grey),
               ),
             ),
             IconButton(

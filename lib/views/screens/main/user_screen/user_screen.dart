@@ -59,7 +59,7 @@ class _UserScreenState extends State<UserScreen>
                     children: [
                       UserProfile(),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.symmetric(vertical: 28),
                         child: UserFocusSummary(),
                       ),
                     ],
@@ -69,9 +69,13 @@ class _UserScreenState extends State<UserScreen>
               SliverPersistentHeader(
                 delegate: _SliverAppBarDelegate(
                   TabBar(
+                    splashBorderRadius: BorderRadius.circular(10),
+                    indicatorSize: TabBarIndicatorSize.label,
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: "🗓️ 캘린더"),
+                      Tab(
+                        text: "🗓️ 캘린더",
+                      ),
                       Tab(text: "🌿 잔디"),
                     ],
                   ),

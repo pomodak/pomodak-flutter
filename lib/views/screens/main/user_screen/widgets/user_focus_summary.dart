@@ -65,14 +65,14 @@ class SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: isInversed
                     ? Theme.of(context).colorScheme.onPrimary
@@ -82,7 +82,7 @@ class SummaryCard extends StatelessWidget {
             Text(
               "$focusCount",
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: isInversed
                     ? Theme.of(context).colorScheme.onPrimary
@@ -92,7 +92,7 @@ class SummaryCard extends StatelessWidget {
             Text(
               "$focusMinutes min",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: isInversed
                     ? Theme.of(context).colorScheme.onPrimary

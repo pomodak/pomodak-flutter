@@ -12,8 +12,7 @@ class TimerTargetDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     String displayTime;
     final timerState = Provider.of<TimerStateViewModel>(context);
-    final timerOptions =
-        Provider.of<TimerOptionsViewModel>(context, listen: false);
+    final timerOptions = Provider.of<TimerOptionsViewModel>(context);
     if (timerOptions.isPomodoroMode) {
       int targetSeconds = (timerState.pomodoroMode == PomodoroMode.focus)
           ? timerOptions.workTime * 60

@@ -30,15 +30,21 @@ class MoreScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 child: Text(
                   '시스템',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                 leading: Icon(
                   appViewModel.vibration ? Icons.vibration : Icons.close,
+                  size: 20,
                 ),
-                title: const Text('진동'),
+                title: const Text(
+                  '진동',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () async {
                   appViewModel.vibration = !appViewModel.vibration;
                   if (await Vibration.hasVibrator() == true &&
@@ -53,8 +59,14 @@ class MoreScreen extends StatelessWidget {
                   appViewModel.keepScreenOn
                       ? Icons.remove_red_eye_outlined
                       : Icons.close,
+                  size: 20,
                 ),
-                title: const Text('화면 꺼짐 방지'),
+                title: const Text(
+                  '화면 꺼짐 방지',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () async {
                   appViewModel.keepScreenOn = !appViewModel.keepScreenOn;
                 },
@@ -63,19 +75,35 @@ class MoreScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 child: Text(
                   '계정',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Icons.delete_outline),
-                title: const Text('계정 삭제'),
+                leading: const Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                ),
+                title: const Text(
+                  '계정 삭제',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () {},
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Icons.logout_outlined),
-                title: const Text('로그아웃'),
+                leading: const Icon(
+                  Icons.logout_outlined,
+                  size: 20,
+                ),
+                title: const Text(
+                  '로그아웃',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () async {
                   await authViewModel.logOut();
                 },
@@ -84,30 +112,54 @@ class MoreScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 child: Text(
                   '앱 정보',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               const ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                leading: Icon(Icons.info_outline),
-                title: Text('앱 버전'),
+                leading: Icon(
+                  Icons.info_outline,
+                  size: 20,
+                ),
+                title: Text(
+                  '앱 버전',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 trailing: Text(
                   "1.0.21",
-                  style: TextStyle(fontSize: 16, letterSpacing: 1.2),
+                  style: TextStyle(fontSize: 14, letterSpacing: 1.2),
                 ),
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Icons.document_scanner_outlined),
-                title: const Text('이용약관'),
+                leading: const Icon(
+                  Icons.document_scanner_outlined,
+                  size: 20,
+                ),
+                title: const Text(
+                  '이용약관',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () {
                   showTermsModal(context);
                 },
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Icon(Icons.shield_outlined),
-                title: const Text('개인정보처리방침'),
+                leading: const Icon(
+                  Icons.shield_outlined,
+                  size: 20,
+                ),
+                title: const Text(
+                  '개인정보처리방침',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onTap: () {
                   showPrivacyPolicyModal(context);
                 },

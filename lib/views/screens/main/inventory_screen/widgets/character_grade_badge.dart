@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-enum CharacterGrade { common, rare, epic, legendary }
+import 'package:pomodak/models/domain/character_model.dart';
 
 class CharacterGradeBadge extends StatelessWidget {
   final CharacterGrade grade;

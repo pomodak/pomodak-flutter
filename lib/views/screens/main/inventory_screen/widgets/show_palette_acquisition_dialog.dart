@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
@@ -40,12 +41,29 @@ class PaletteAcquisitionDialog extends StatefulWidget {
 class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
   late int localQuantity;
   late PaletteModel newPalette;
+  Key _confettiKey = UniqueKey(); // 재뽑기 시 confetti widget 초기화를 위한 키
+  late ConfettiController confettiController;
+  late int confettiduration;
+  late double emissionFrequency;
+  late double minBlastForce;
+  late double maxBlastForce;
 
   @override
   void initState() {
     super.initState();
     localQuantity = widget.inventory.quantity - 1;
     newPalette = widget.initialPalette;
+    setConfettiProperties(newPalette);
+    confettiController = ConfettiController(
+      duration: Duration(seconds: confettiduration),
+    );
+    confettiController.play();
+  }
+
+  @override
+  void dispose() {
+    confettiController.dispose();
+    super.dispose();
   }
 
   void handleConfirm() => Navigator.of(context).pop();
@@ -66,51 +84,101 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
       setState(() {
         localQuantity -= 1;
         newPalette = data.palette;
+        _confettiKey = UniqueKey();
       });
+      setConfettiProperties(newPalette);
+      confettiController = ConfettiController(
+        duration: Duration(seconds: confettiduration),
+      );
+      confettiController.play();
+    }
+  }
+
+  void setConfettiProperties(PaletteModel palette) {
+    switch (palette.grade) {
+      case PaletteGrade.rare:
+        emissionFrequency = 0.02;
+        minBlastForce = 2;
+        maxBlastForce = 2.1;
+        confettiduration = 1;
+        break;
+      case PaletteGrade.epic:
+        emissionFrequency = 0.03;
+        minBlastForce = 6;
+        maxBlastForce = 10;
+        confettiduration = 3;
+        break;
+      case PaletteGrade.legendary:
+        emissionFrequency = 0.04;
+        minBlastForce = 6;
+        maxBlastForce = 20;
+        confettiduration = 8;
+        break;
+      default:
+        emissionFrequency = 0.01;
+        minBlastForce = 1;
+        maxBlastForce = 1.1;
+        confettiduration = 1;
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '팔레트 변경',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Dialog(
+          surfaceTintColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '팔레트 변경',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _PaletteDisplay(palette: newPalette),
+                const SizedBox(height: 16),
+                Text(
+                  '${newPalette.grade} 등급',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(newPalette.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 16),
+                _ActionButtons(
+                  localQuantity: localQuantity,
+                  onReConsume: handleReConsume,
+                  onConfirm: handleConfirm,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            _PaletteDisplay(palette: newPalette),
-            const SizedBox(height: 16),
-            Text(
-              '${newPalette.grade} 등급',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(newPalette.name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            _ActionButtons(
-              localQuantity: localQuantity,
-              onReConsume: handleReConsume,
-              onConfirm: handleConfirm,
-            ),
-          ],
+          ),
         ),
-      ),
+        ConfettiWidget(
+          key: _confettiKey, // 재생성을 위해 새로운 키 사용
+          confettiController: confettiController,
+          shouldLoop: false,
+          blastDirectionality: BlastDirectionality.explosive,
+          emissionFrequency: emissionFrequency,
+          minBlastForce: minBlastForce,
+          maxBlastForce: maxBlastForce,
+        )
+      ],
     );
   }
 }

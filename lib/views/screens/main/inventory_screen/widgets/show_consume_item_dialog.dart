@@ -78,7 +78,6 @@ Widget _buildActionButtons(BuildContext context, ItemInventoryModel inventory) {
 
       void handleConsumeItem() async {
         var data = await memberViewModel.consumeItem(inventory.itemInventoryId);
-
         if (data.result != null) {
           handleConsumeItemResult(data);
         }

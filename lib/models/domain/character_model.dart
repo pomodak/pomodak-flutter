@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_grade_badge.dart';
 
 part 'character_model.g.dart';
+
+enum CharacterGrade { common, rare, epic, legendary }
 
 @JsonSerializable()
 class CharacterModel {

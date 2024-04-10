@@ -182,7 +182,6 @@ class MemberRepository {
         '$_springApiEndpoint/v2/item-inventory/$inventoryId',
         {},
       );
-
       final String result = responseJson["data"]["result"];
       late final BaseApiResponse<dynamic> response;
       switch (result) {

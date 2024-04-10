@@ -187,7 +187,6 @@ class MemberViewModel with ChangeNotifier {
     try {
       _setError('consumeItem');
       var result = await repository.consumeItem(inventoryId);
-
       if (result.result == acquisitionResults['consumableItem']) {
         // loadConsumableInventory();
       } else if (result.result == acquisitionResults['character']) {

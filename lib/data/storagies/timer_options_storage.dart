@@ -32,48 +32,73 @@ class TimerOptionsStorage {
   }
 
   bool getIsPomodoroMode() {
-    bool? value = storage.getBool(isPomodoroModeKey);
+    try {
+      bool? value = storage.getBool(isPomodoroModeKey);
 
-    if (value == null) {
-      storage.setBool(isPomodoroModeKey, defaultIsPomodoroMode);
-      value = defaultIsPomodoroMode;
+      if (value == null) {
+        storage.setBool(isPomodoroModeKey, defaultIsPomodoroMode);
+        value = defaultIsPomodoroMode;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(isPomodoroModeKey);
+      return defaultIsPomodoroMode;
     }
-    return value;
   }
 
   bool getIsFocusTogetherMode() {
-    bool? value = storage.getBool(isFocusTogetherModeKey);
-    if (value == null) {
-      storage.setBool(isFocusTogetherModeKey, defaultIsFocusTogetherModeKey);
-      value = defaultIsFocusTogetherModeKey;
+    try {
+      bool? value = storage.getBool(isFocusTogetherModeKey);
+      if (value == null) {
+        storage.setBool(isFocusTogetherModeKey, defaultIsFocusTogetherModeKey);
+        value = defaultIsFocusTogetherModeKey;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(isFocusTogetherModeKey);
+      return defaultIsFocusTogetherModeKey;
     }
-    return value;
   }
 
   int getTargetWorkTime() {
-    int? value = storage.getInt(targetWorkTimeKey);
-    if (value == null) {
-      storage.setInt(targetWorkTimeKey, defaultTargetWorkTime);
-      value = defaultTargetWorkTime;
+    try {
+      int? value = storage.getInt(targetWorkTimeKey);
+      if (value == null) {
+        storage.setInt(targetWorkTimeKey, defaultTargetWorkTime);
+        value = defaultTargetWorkTime;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(targetWorkTimeKey);
+      return defaultTargetWorkTime;
     }
-    return value;
   }
 
   int getTargetRestTime() {
-    int? value = storage.getInt(targetRestTimeKey);
-    if (value == null) {
-      storage.setInt(targetRestTimeKey, defaultTargetRestTime);
-      value = defaultTargetRestTime;
+    try {
+      int? value = storage.getInt(targetRestTimeKey);
+      if (value == null) {
+        storage.setInt(targetRestTimeKey, defaultTargetRestTime);
+        value = defaultTargetRestTime;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(targetRestTimeKey);
+      return defaultTargetRestTime;
     }
-    return value;
   }
 
   int getTargetSections() {
-    int? value = storage.getInt(targetSectionsKey);
-    if (value == null) {
-      storage.setInt(targetSectionsKey, defaultTargetSections);
-      value = defaultTargetSections;
+    try {
+      int? value = storage.getInt(targetSectionsKey);
+      if (value == null) {
+        storage.setInt(targetSectionsKey, defaultTargetSections);
+        value = defaultTargetSections;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(targetSectionsKey);
+      return defaultTargetSections;
     }
-    return value;
   }
 }

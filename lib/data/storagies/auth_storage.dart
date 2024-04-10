@@ -23,11 +23,23 @@ class AuthStorage {
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: accessTokenKey, aOptions: _androidOptions);
+    try {
+      return await _storage.read(
+          key: accessTokenKey, aOptions: _androidOptions);
+    } catch (e) {
+      _storage.delete(key: accessTokenKey, aOptions: _androidOptions);
+      return null;
+    }
   }
 
   Future<String?> getRefreshToken() async {
-    return await _storage.read(key: refreshTokenKey, aOptions: _androidOptions);
+    try {
+      return await _storage.read(
+          key: refreshTokenKey, aOptions: _androidOptions);
+    } catch (e) {
+      _storage.delete(key: refreshTokenKey, aOptions: _androidOptions);
+      return null;
+    }
   }
 
   Future<void> deleteAllData() async {
@@ -37,13 +49,18 @@ class AuthStorage {
   }
 
   Future<AccountModel?> getAccount() async {
-    var account =
-        await _storage.read(key: accountKey, aOptions: _androidOptions);
+    try {
+      var account =
+          await _storage.read(key: accountKey, aOptions: _androidOptions);
 
-    if (account != null) {
-      return AccountModel.fromJson(jsonDecode(account));
+      if (account != null) {
+        return AccountModel.fromJson(jsonDecode(account));
+      }
+      return null;
+    } catch (e) {
+      _storage.delete(key: accountKey, aOptions: _androidOptions);
+      return null;
     }
-    return null;
   }
 
   Future<void> storeAccount(AccountModel account) async {

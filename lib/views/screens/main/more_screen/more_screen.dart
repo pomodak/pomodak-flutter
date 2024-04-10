@@ -15,11 +15,8 @@ class MoreScreen extends StatelessWidget {
     var appViewModel = Provider.of<AppViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [Text("설정")],
-        ),
+        centerTitle: true,
+        title: const Text("설정"),
       ),
       body: SingleChildScrollView(
         child: Padding(

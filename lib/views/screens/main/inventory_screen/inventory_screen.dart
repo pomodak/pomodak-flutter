@@ -12,11 +12,8 @@ class InventoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [Text("인벤토리")],
-        ),
+        centerTitle: true,
+        title: const Text("인벤토리"),
         surfaceTintColor: Colors.white,
       ),
       body: SingleChildScrollView(

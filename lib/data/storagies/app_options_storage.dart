@@ -11,20 +11,22 @@ class AppOptionStorage {
 
   AppOptionStorage(this.storage);
 
-  Future<void> saveTimerOptions({
-    required bool vibration,
-    required bool keepScreenOn,
-  }) async {
-    await storage.setBool(vibrationKey, defaultVibration);
-    await storage.setBool(keepScreenOnKey, defaultKeepScreenOn);
-  }
-
   bool getVibration() {
-    return storage.getBool(vibrationKey) ?? defaultVibration;
+    try {
+      return storage.getBool(vibrationKey) ?? defaultVibration;
+    } catch (e) {
+      storage.remove(vibrationKey);
+      return defaultVibration;
+    }
   }
 
   bool getKeepScreenOn() {
-    return storage.getBool(keepScreenOnKey) ?? defaultKeepScreenOn;
+    try {
+      return storage.getBool(keepScreenOnKey) ?? defaultKeepScreenOn;
+    } catch (e) {
+      storage.remove(keepScreenOnKey);
+      return defaultKeepScreenOn;
+    }
   }
 
   Future<void> saveAppOption({

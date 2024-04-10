@@ -21,25 +21,34 @@ class TimerStateStorage {
   }
 
   int getCurSections() {
-    int? value = storage.getInt(curSectionsKey);
-
-    if (value == null) {
-      storage.setInt(curSectionsKey, defaultCurSections);
-      value = defaultCurSections;
+    try {
+      int? value = storage.getInt(curSectionsKey);
+      if (value == null) {
+        storage.setInt(curSectionsKey, defaultCurSections);
+        value = defaultCurSections;
+      }
+      return value;
+    } catch (e) {
+      storage.remove(curSectionsKey);
+      return defaultCurSections;
     }
-    return value;
   }
 
   PomodoroMode getCurPomodoroMode() {
-    String? value = storage.getString(curPomodoroModeKey);
+    try {
+      String? value = storage.getString(curPomodoroModeKey);
 
-    if (value == null) {
-      storage.setString(curSectionsKey, defaultCurPomodoroMode.toString());
-      value = defaultCurPomodoroMode.toString();
+      if (value == null) {
+        storage.setString(curSectionsKey, defaultCurPomodoroMode.toString());
+        value = defaultCurPomodoroMode.toString();
+      }
+
+      return value == PomodoroMode.focus.toString()
+          ? PomodoroMode.focus
+          : PomodoroMode.rest;
+    } catch (e) {
+      storage.remove(curPomodoroModeKey);
+      return defaultCurPomodoroMode;
     }
-
-    return value == PomodoroMode.focus.toString()
-        ? PomodoroMode.focus
-        : PomodoroMode.rest;
   }
 }

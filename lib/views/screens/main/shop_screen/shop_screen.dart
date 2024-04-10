@@ -18,6 +18,7 @@ class ShopScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leadingWidth: 120,
+          centerTitle: true,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -42,11 +43,7 @@ class ShopScreen extends StatelessWidget {
               ],
             ),
           ),
-          title: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [Text("상점")],
-          ),
+          title: const Text("상점"),
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(

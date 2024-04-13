@@ -4,6 +4,7 @@ import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_palette_tip.dart';
 import 'package:provider/provider.dart';
 
 class UserHeatMap extends StatelessWidget {
@@ -27,6 +28,8 @@ class UserHeatMap extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
+        const SizedBox(height: 20),
+        HeatMapPaletteTip(palette: palette),
         const SizedBox(height: 20),
         HeatMap(
           datasets: datasets,

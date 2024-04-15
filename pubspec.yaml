@@ -59,6 +59,7 @@ dependencies:
   vibration: ^1.8.4
   wakelock_plus: ^1.2.4
   confetti: ^0.7.0
+  socket_io_client: ^2.0.3+1
 
 dev_dependencies:
   flutter_test:

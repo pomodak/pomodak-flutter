@@ -217,4 +217,8 @@ class AuthRepository {
   Future<void> logOut() async {
     await storage.deleteAllData();
   }
+
+  Future<String?> getAccessToken() async {
+    return storage.getAccessToken();
+  }
 }

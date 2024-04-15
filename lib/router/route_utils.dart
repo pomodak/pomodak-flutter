@@ -6,6 +6,7 @@ enum AppPage {
   home,
   error,
   timer,
+  groupTimer,
   timerAlarm
 }
 
@@ -26,6 +27,8 @@ extension AppPageExtension on AppPage {
         return "/error";
       case AppPage.timer:
         return "/timer";
+      case AppPage.groupTimer:
+        return "/group-timer";
       case AppPage.timerAlarm:
         return "/timer-alarm";
       default:
@@ -49,6 +52,8 @@ extension AppPageExtension on AppPage {
         return "ERROR";
       case AppPage.timer:
         return "TIMER";
+      case AppPage.groupTimer:
+        return "GROUP_TIMER";
       case AppPage.timerAlarm:
         return "TIMER_ALARM";
       default:

@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
@@ -93,6 +94,7 @@ class _MyAppState extends State<MyApp> {
   late TimerOptionsViewModel timerOptionsViewModel;
   late TimerRecordViewModel timerRecordViewModel;
   late TimerStateViewModel timerStateViewModel;
+  late GroupTimerViewModel groupTimerViewModel;
   late ShopViewModel shopViewModel;
 
   @override
@@ -131,6 +133,7 @@ class _MyAppState extends State<MyApp> {
       timerRecordViewModel: timerRecordViewModel,
       timerOptionsViewModel: timerOptionsViewModel,
     );
+    groupTimerViewModel = GroupTimerViewModel();
 
     shopViewModel = ShopViewModel(
       repository: shopRepository,
@@ -158,6 +161,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<TimerRecordViewModel>(
           create: (_) => timerRecordViewModel,
+        ),
+        ChangeNotifierProvider<GroupTimerViewModel>(
+          create: (_) => groupTimerViewModel,
         ),
 
         // 상점

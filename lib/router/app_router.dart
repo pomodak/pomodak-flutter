@@ -4,6 +4,7 @@ import 'package:pomodak/router/route_utils.dart';
 import 'package:pomodak/views/screens/error_page.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/views/screens/group_timer/group_timer_page.dart';
 import 'package:pomodak/views/screens/login/login_page.dart';
 import 'package:pomodak/views/screens/main/main_page.dart';
 import 'package:pomodak/views/screens/splash_page.dart';
@@ -35,6 +36,11 @@ class AppRouter {
         path: AppPage.timer.toPath,
         name: AppPage.timer.toName,
         builder: (context, state) => const TimerPage(),
+      ),
+      GoRoute(
+        path: AppPage.groupTimer.toPath,
+        name: AppPage.groupTimer.toName,
+        builder: (context, state) => const GroupTimerPage(),
       ),
       GoRoute(
         path: AppPage.timerAlarm.toPath,

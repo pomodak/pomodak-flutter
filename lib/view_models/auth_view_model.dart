@@ -158,6 +158,10 @@ class AuthViewModel with ChangeNotifier {
     await loadAccount();
   }
 
+  Future<String?> getAccessToken() async {
+    return await repository.getAccessToken();
+  }
+
   Future<String> _signInWithKakao() async {
     OAuthToken result;
     if (await isKakaoTalkInstalled()) {

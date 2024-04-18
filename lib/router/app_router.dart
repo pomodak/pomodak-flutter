@@ -14,11 +14,11 @@ import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 import 'package:pomodak/views/screens/welcome_page.dart';
 
 class AppRouter {
-  late final AppViewModel appViewModel;
-  late final AuthViewModel authViewModel;
+  final AppViewModel appViewModel;
+  final AuthViewModel authViewModel;
   GoRouter get router => _goRouter;
 
-  AppRouter(this.appViewModel, this.authViewModel);
+  AppRouter({required this.appViewModel, required this.authViewModel});
 
   late final GoRouter _goRouter = GoRouter(
     // 앱의 로그인 상태와 초기화 상태 변경을 리스닝하여 리프레시

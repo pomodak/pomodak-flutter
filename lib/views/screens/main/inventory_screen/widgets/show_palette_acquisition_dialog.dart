@@ -1,6 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/repositories/member_repository.dart';
+import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/models/domain/palette_model.dart';

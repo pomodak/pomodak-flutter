@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/repositories/member_repository.dart';
+import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/utils/message_util.dart';

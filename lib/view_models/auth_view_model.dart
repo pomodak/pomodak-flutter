@@ -149,7 +149,7 @@ class AuthViewModel with ChangeNotifier {
     _isLoggedIn = false;
     _account = null;
 
-    await memberViewModel.remove();
+    await memberViewModel.clearMemberData();
     notifyListeners();
   }
 
@@ -198,7 +198,7 @@ class AuthViewModel with ChangeNotifier {
 
   Future<void> _loginSuccess() async {
     await loadAccount(); // 계정 정보 갱신
-    await memberViewModel.loadMemberRelatedData(); // 회원 정보 갱신
+    await memberViewModel.loadMember(forceUpdate: true); // 회원 정보 갱신
     MessageUtil.showSuccessToast("로그인 성공");
   }
 

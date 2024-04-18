@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
@@ -64,15 +65,15 @@ class MemberViewModel with ChangeNotifier {
 
   MemberViewModel({required this.repository});
 
-  Future<void> loadMember({bool? refresh}) async {
+  Future<void> loadMember({bool? forceUpdate}) async {
     if (_isLoadingMember) return;
     _setLoadingState('member', isLoading: true);
     try {
       _setError("member");
-      if (refresh != null && refresh) {
-        _member = await repository.fetchMemberFromApi(); // 새로 요청
+      if (forceUpdate != null && forceUpdate) {
+        _member = await repository.getMember(forceUpdate: true); // 새로 요청
       } else {
-        _member = await repository.fetchMemberData();
+        _member = await repository.getMember();
       }
     } catch (e) {
       _handleError("member", e);
@@ -85,8 +86,7 @@ class MemberViewModel with ChangeNotifier {
     if (_isLoadingPalette) return;
     _setLoadingState('palette', isLoading: true);
     try {
-      _palette =
-          await repository.fetchMemberPalette(member?.memberId as String);
+      _palette = await repository.getMemberPalette(member?.memberId as String);
       _setError('palette');
     } catch (e) {
       _handleError("palette", e);
@@ -99,7 +99,7 @@ class MemberViewModel with ChangeNotifier {
     if (_isLoadingFoodInventory) return;
     _setLoadingState('foodInventory', isLoading: true);
     try {
-      _foodInventory = await repository.fetchMemberItemInventory(
+      _foodInventory = await repository.getMemberItemInventory(
           member?.memberId as String, ItemType.food);
       _setError('foodInventory');
     } catch (e) {
@@ -113,7 +113,7 @@ class MemberViewModel with ChangeNotifier {
     if (_isLoadingConsumableInventory) return;
     _setLoadingState('consumableInventory', isLoading: true);
     try {
-      _consumableInventory = await repository.fetchMemberItemInventory(
+      _consumableInventory = await repository.getMemberItemInventory(
           member?.memberId as String, ItemType.consumable);
       _setError('consumableInventory');
     } catch (e) {
@@ -128,7 +128,7 @@ class MemberViewModel with ChangeNotifier {
     _setLoadingState('characterInventory', isLoading: true);
     try {
       _characterInventory = await repository
-          .fetchMemberCharacterInventory(member?.memberId as String);
+          .getMemberCharacterInventory(member?.memberId as String);
       _setError('characterInventory');
     } catch (e) {
       _handleError("characterInventory", e);
@@ -145,13 +145,13 @@ class MemberViewModel with ChangeNotifier {
     if (member == null || _isLoadingMemberUpdate) return;
     _setLoadingState('memberUpdate', isLoading: true);
     try {
-      await repository.updateMember(
+      await repository.updateMemberInfo(
         member?.memberId ?? "",
-        nickname: nickname,
-        imageUrl: imageUrl,
-        statusMessage: statusMessage,
+        nickname,
+        imageUrl,
+        statusMessage,
       );
-      await loadMember(refresh: true);
+      await loadMember(forceUpdate: true);
       MessageUtil.showSuccessToast("성공적으로 업데이트 되었습니다.");
     } catch (e) {
       _handleError("memberUpdate", e);
@@ -194,7 +194,7 @@ class MemberViewModel with ChangeNotifier {
       } else if (result.result == acquisitionResults['palette']) {
         loadPalette();
       } else if (result.result == acquisitionResults['point']) {
-        loadMember(refresh: true);
+        loadMember(forceUpdate: true);
       }
 
       loadConsumableInventory();
@@ -207,10 +207,6 @@ class MemberViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> remove() async {
-    return repository.clearMemberData();
-  }
-
   // 로그인 후 초기데이터 조회 후 캐싱
   // 이후 데이터 변경작업 발생 시 개별 load 함수 호출로 캐시 업데이트
   Future<void> loadMemberRelatedData() async {
@@ -221,6 +217,16 @@ class MemberViewModel with ChangeNotifier {
       loadConsumableInventory();
       loadCharacterInventory();
     }
+    notifyListeners();
+  }
+
+  Future<void> clearMemberData() async {
+    _member = null;
+    _palette = null;
+    _foodInventory = [];
+    _consumableInventory = [];
+    _characterInventory = [];
+    await repository.clearMemberData();
     notifyListeners();
   }
 

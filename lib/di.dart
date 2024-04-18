@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pomodak/data/datasources/local/member_local_datasource.dart';
+import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
@@ -40,6 +42,16 @@ void registerDataSource() {
       () => AuthStorage(getIt<FlutterSecureStorage>()));
   getIt.registerLazySingleton<AppOptionStorage>(
       () => AppOptionStorage(getIt<SharedPreferences>()));
+  getIt.registerLazySingleton<NetworkApiService>(
+      () => NetworkApiService(storage: getIt<AuthStorage>()));
+
+  // Member
+  getIt.registerLazySingleton<MemberLocalDataSource>(
+      () => MemberLocalDataSourceImpl(getIt<SharedPreferences>()));
+  getIt.registerLazySingleton<MemberRemoteDataSource>(
+      () => MemberRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+
+  // Timer
   getIt.registerLazySingleton<TimerOptionsStorage>(
       () => TimerOptionsStorage(getIt<SharedPreferences>()));
   getIt.registerLazySingleton<TimerStateStorage>(
@@ -49,16 +61,18 @@ void registerDataSource() {
 
 // Repository
 void registerRepository() {
-  // Api Service
-  getIt.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(storage: getIt<AuthStorage>()));
-
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepository(
       apiService: getIt<NetworkApiService>(), storage: getIt<AuthStorage>()));
-  getIt.registerLazySingleton<MemberRepository>(
-      () => MemberRepository(apiService: getIt<NetworkApiService>()));
+
   getIt.registerLazySingleton<ShopRepository>(
       () => ShopRepository(apiService: getIt<NetworkApiService>()));
+
+  getIt.registerLazySingleton<MemberRepository>(
+    () => MemberRepository(
+      localDataSource: getIt<MemberLocalDataSource>(),
+      remoteDataSource: getIt<MemberRemoteDataSource>(),
+    ),
+  );
 }
 
 // View Model

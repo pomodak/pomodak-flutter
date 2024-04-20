@@ -133,11 +133,12 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   void normalEnd() {
     _timerEndState.setTimerEndState(
       AlarmType.normal,
-      pomodoroManager.getTargetSeconds(),
+      _timerManager.elapsedSeconds,
       false,
     );
     _recordTimerSession(time: _timerManager.elapsedSeconds, isCompleted: false);
     _timerManager.stop();
+    notifyListeners();
   }
 
   // 뽀모도로 타이머 종료

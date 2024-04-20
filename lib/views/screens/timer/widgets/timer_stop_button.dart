@@ -10,8 +10,7 @@ class TimerStopButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String text;
-    final timerOptions =
-        Provider.of<TimerOptionsViewModel>(context, listen: false);
+    final timerOptions = Provider.of<TimerOptionsViewModel>(context);
     final timerState = Provider.of<TimerStateViewModel>(context, listen: false);
 
     if (!timerOptions.isPomodoroMode) {

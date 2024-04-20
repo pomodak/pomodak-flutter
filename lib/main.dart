@@ -19,6 +19,7 @@ import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
 
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<AuthViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<MemberViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<ShopViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<TransactionViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<TimerOptionsViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<TimerRecordViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<TimerStateViewModel>()),

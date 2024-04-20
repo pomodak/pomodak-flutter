@@ -1,19 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 
-part 'purchase_item_response.g.dart';
+part 'transaction_response.g.dart';
 
 @JsonSerializable()
-class PurchaseItemResponse {
+class TransactionResponse {
   @JsonKey(name: 'transaction_record')
   final TransactionRecordModel transactionRecord;
 
-  PurchaseItemResponse({
+  TransactionResponse({
     required this.transactionRecord,
   });
 
-  factory PurchaseItemResponse.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseItemResponseFromJson(json);
+  factory TransactionResponse.fromJson(Map<String, dynamic> json) =>
+      _$TransactionResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PurchaseItemResponseToJson(this);
+  Map<String, dynamic> toJson() => _$TransactionResponseToJson(this);
 }

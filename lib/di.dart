@@ -4,10 +4,13 @@ import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/data/datasources/local/member_local_datasource.dart';
 import 'package:pomodak/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
+import 'package:pomodak/data/datasources/remote/shop_remote_datasource.dart';
+import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
+import 'package:pomodak/data/repositories/transaction_repository.dart';
 import 'package:pomodak/data/storagies/app_options_storage.dart';
 import 'package:pomodak/data/storagies/timer_options_storage.dart';
 import 'package:pomodak/data/storagies/timer_record_storage.dart';
@@ -20,6 +23,7 @@ import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -57,6 +61,10 @@ void registerDataSource() {
       () => MemberRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
   getIt.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  getIt.registerLazySingleton<ShopRemoteDataSource>(
+      () => ShopRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  getIt.registerLazySingleton<TransactionRemoteDataSource>(() =>
+      TransactionRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
 
   // Timer
   getIt.registerLazySingleton<TimerOptionsStorage>(
@@ -69,8 +77,15 @@ void registerDataSource() {
 // Repository
 void registerRepository() {
   getIt.registerLazySingleton<ShopRepository>(
-      () => ShopRepository(apiService: getIt<NetworkApiService>()));
-
+    () => ShopRepository(
+      remoteDataSource: getIt<ShopRemoteDataSource>(),
+    ),
+  );
+  getIt.registerLazySingleton<TransactionRepository>(
+    () => TransactionRepository(
+      remoteDataSource: getIt<TransactionRemoteDataSource>(),
+    ),
+  );
   getIt.registerLazySingleton<MemberRepository>(
     () => MemberRepository(
       localDataSource: getIt<MemberLocalDataSource>(),
@@ -88,26 +103,45 @@ void registerRepository() {
 // View Model
 void registerViewModel() {
   getIt.registerLazySingleton<AppViewModel>(
-      () => AppViewModel(storage: getIt<AppOptionStorage>()));
+    () => AppViewModel(storage: getIt<AppOptionStorage>()),
+  );
   getIt.registerLazySingleton<MemberViewModel>(
-      () => MemberViewModel(repository: getIt<MemberRepository>()));
-  getIt.registerLazySingleton<AuthViewModel>(() => AuthViewModel(
-        repository: getIt<AuthRepository>(),
-        memberViewModel: getIt<MemberViewModel>(),
-      ));
-  getIt.registerLazySingleton<ShopViewModel>(() => ShopViewModel(
-        repository: getIt<ShopRepository>(),
-        memberViewModel: getIt<MemberViewModel>(),
-      ));
+    () => MemberViewModel(repository: getIt<MemberRepository>()),
+  );
+  getIt.registerLazySingleton<AuthViewModel>(
+    () => AuthViewModel(
+      repository: getIt<AuthRepository>(),
+      memberViewModel: getIt<MemberViewModel>(),
+    ),
+  );
+  getIt.registerLazySingleton<ShopViewModel>(
+    () => ShopViewModel(
+      repository: getIt<ShopRepository>(),
+      memberViewModel: getIt<MemberViewModel>(),
+    ),
+  );
+  getIt.registerLazySingleton<TransactionViewModel>(
+    () => TransactionViewModel(
+      repository: getIt<TransactionRepository>(),
+      memberViewModel: getIt<MemberViewModel>(),
+    ),
+  );
   getIt.registerLazySingleton<TimerOptionsViewModel>(
-      () => TimerOptionsViewModel(storage: getIt<TimerOptionsStorage>()));
-  getIt.registerLazySingleton<TimerRecordViewModel>(() => TimerRecordViewModel(
-        storage: getIt<TimerRecordStorage>(),
-        memberViewModel: getIt<MemberViewModel>(),
-      ));
-  getIt.registerLazySingleton<TimerStateViewModel>(() => TimerStateViewModel(
+    () => TimerOptionsViewModel(storage: getIt<TimerOptionsStorage>()),
+  );
+  getIt.registerLazySingleton<TimerRecordViewModel>(
+    () => TimerRecordViewModel(
+      storage: getIt<TimerRecordStorage>(),
+      memberViewModel: getIt<MemberViewModel>(),
+      transactionViewModel: getIt<TransactionViewModel>(),
+    ),
+  );
+  getIt.registerLazySingleton<TimerStateViewModel>(
+    () => TimerStateViewModel(
       storage: getIt<TimerStateStorage>(),
       timerOptionsViewModel: getIt<TimerOptionsViewModel>(),
-      timerRecordViewModel: getIt<TimerRecordViewModel>()));
+      timerRecordViewModel: getIt<TimerRecordViewModel>(),
+    ),
+  );
   getIt.registerLazySingleton<GroupTimerViewModel>(() => GroupTimerViewModel());
 }

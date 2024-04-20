@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
+import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/utils/message_util.dart';
-import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_character_acquisition_dialog.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_item_acquisition_dialog.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_palette_acquisition_dialog.dart';
@@ -62,13 +62,15 @@ class EggCard extends StatelessWidget {
       return;
     }
 
-    final memberViewModel =
-        Provider.of<MemberViewModel>(context, listen: false);
-    var data = await memberViewModel.consumeItem(itemInventory.itemInventoryId);
+    final transactionViewModel =
+        Provider.of<TransactionViewModel>(context, listen: false);
+    var data = await transactionViewModel.consumeItem(
+      inventoryId: itemInventory.itemInventoryId,
+      isFood: true,
+    );
 
     if (data.result != null) {
       if (context.mounted) _handleConsumeItemResult(context, data);
-      await memberViewModel.loadFoodInventory();
     }
   }
 

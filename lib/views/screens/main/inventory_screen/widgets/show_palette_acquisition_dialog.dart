@@ -1,12 +1,12 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
+import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/utils/color_util.dart';
 import 'package:pomodak/utils/message_util.dart';
-import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:provider/provider.dart';
 
 void showPaletteAcquisitionDialog(
@@ -74,10 +74,10 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
       return;
     }
 
-    final memberViewModel =
-        Provider.of<MemberViewModel>(context, listen: false);
-    var data = await memberViewModel.consumeItem(
-      widget.inventory.itemInventoryId,
+    final transactionViewModel =
+        Provider.of<TransactionViewModel>(context, listen: false);
+    var data = await transactionViewModel.consumeItem(
+      inventoryId: widget.inventory.itemInventoryId,
     );
 
     if (data?.result == acquisitionResults['palette']) {

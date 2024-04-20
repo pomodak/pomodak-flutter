@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
-import 'package:pomodak/view_models/shop_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:provider/provider.dart';
 
 void showSellCharacterDialog(
@@ -102,7 +102,8 @@ Widget _buildActionButtons(
     BuildContext context, CharacterInventoryModel inventory, int count) {
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
-      final shopViewModel = Provider.of<ShopViewModel>(context, listen: false);
+      final transactionViewModel =
+          Provider.of<TransactionViewModel>(context, listen: false);
 
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,7 +132,7 @@ Widget _buildActionButtons(
                 ),
               ),
               onPressed: () {
-                shopViewModel.sellCharacter(
+                transactionViewModel.sellCharacter(
                     inventory.characterInventoryId, count);
                 Navigator.of(context).pop();
               },

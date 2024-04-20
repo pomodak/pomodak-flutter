@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/item_model.dart';
-import 'package:pomodak/view_models/shop_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:provider/provider.dart';
 
 void showBuyItemDialog(BuildContext context, ItemModel item, int maxCount) {
@@ -91,7 +91,8 @@ Widget _buildQuantitySelector(BuildContext context, int count, int maxCount,
 Widget _buildActionButtons(BuildContext context, ItemModel item, int count) {
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
-      final shopViewModel = Provider.of<ShopViewModel>(context, listen: false);
+      final transactionViewModel =
+          Provider.of<TransactionViewModel>(context, listen: false);
 
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,7 +121,7 @@ Widget _buildActionButtons(BuildContext context, ItemModel item, int count) {
                 ),
               ),
               onPressed: () {
-                shopViewModel.buyItem(item.itemId, count);
+                transactionViewModel.buyItem(item.itemId, count);
                 Navigator.of(context).pop();
               },
               child: const Text(

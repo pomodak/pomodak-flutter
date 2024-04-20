@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
-import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 import 'package:pomodak/models/domain/item_model.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -69,48 +68,6 @@ class ShopViewModel with ChangeNotifier {
     } finally {
       _setLoadingState('consumableItems', isLoading: false);
     }
-  }
-
-  Future<TransactionRecordModel?> buyItem(int itemId, int count) async {
-    if (_isLoadingbuyItem) return null;
-    _setLoadingState('buyItem', isLoading: true);
-    try {
-      _setError("buyItem");
-      var result = await repository.buyItem(itemId, count);
-
-      memberViewModel.loadFoodInventory();
-      memberViewModel.loadConsumableInventory();
-      memberViewModel.loadMember(forceUpdate: true);
-
-      MessageUtil.showSuccessToast(result?.notes ?? '구매가 완료되었습니다.');
-      return result;
-    } catch (e) {
-      _handleError('buyItem', e);
-    } finally {
-      _setLoadingState('buyItem', isLoading: false);
-    }
-    return null;
-  }
-
-  Future<TransactionRecordModel?> sellCharacter(
-      String characterInventoryId, int count) async {
-    if (_isLoadingbuyItem) return null;
-    _setLoadingState('sellCharacter', isLoading: true);
-    try {
-      _setError("sellCharacter");
-      var result = await repository.sellCharacter(characterInventoryId, count);
-
-      memberViewModel.loadCharacterInventory();
-      memberViewModel.loadMember(forceUpdate: true);
-
-      MessageUtil.showSuccessToast(result?.notes ?? '판매가 완료되었습니다.');
-      return result;
-    } catch (e) {
-      _handleError('sellCharacter', e);
-    } finally {
-      _setLoadingState('sellCharacter', isLoading: false);
-    }
-    return null;
   }
 
   // 첫 로드만 실행

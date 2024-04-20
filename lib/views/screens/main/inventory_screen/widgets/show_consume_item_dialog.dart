@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
+import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
-import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_character_acquisition_dialog.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_item_acquisition_dialog.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_palette_acquisition_dialog.dart';
@@ -54,8 +54,8 @@ Widget _buildDialogTitle(String name) {
 Widget _buildActionButtons(BuildContext context, ItemInventoryModel inventory) {
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
-      final memberViewModel =
-          Provider.of<MemberViewModel>(context, listen: false);
+      final transactionViewModel =
+          Provider.of<TransactionViewModel>(context, listen: false);
 
       void handleConsumeItemResult(dynamic data) {
         Navigator.of(context).pop(); // 현재 대화상자를 닫음
@@ -77,7 +77,9 @@ Widget _buildActionButtons(BuildContext context, ItemInventoryModel inventory) {
       }
 
       void handleConsumeItem() async {
-        var data = await memberViewModel.consumeItem(inventory.itemInventoryId);
+        var data = await transactionViewModel.consumeItem(
+          inventoryId: inventory.itemInventoryId,
+        );
         if (data.result != null) {
           handleConsumeItemResult(data);
         }

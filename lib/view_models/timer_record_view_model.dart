@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/data/storagies/timer_record_storage.dart';
 import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 
 class TimerRecordViewModel extends ChangeNotifier {
   final TimerRecordStorage storage;
   late final MemberViewModel memberViewModel;
+  late final TransactionViewModel transactionViewModel;
   // 캐시로 사용될 타이머 기록 리스트
   List<TimerRecordModel> records = [];
 
@@ -18,6 +20,7 @@ class TimerRecordViewModel extends ChangeNotifier {
   TimerRecordViewModel({
     required this.storage,
     required this.memberViewModel,
+    required this.transactionViewModel,
   }) {
     memberViewModel.addListener(_updateOnMemberChange);
     _initRecords();
@@ -61,7 +64,7 @@ class TimerRecordViewModel extends ChangeNotifier {
       isCompleted: isCompleted,
       category: category,
     );
-    memberViewModel.applyTimeToItemInventory(seconds);
+    transactionViewModel.applyTimeToItemInventory(seconds);
 
     // 새로 저장되거나 업데이트된 기록을 캐시에 반영
     _updateCacheWithRecord(newOrUpdatedRecord);

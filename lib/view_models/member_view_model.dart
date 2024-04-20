@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
@@ -25,9 +24,7 @@ class MemberViewModel with ChangeNotifier {
   bool _isLoadingFoodInventory = false;
   bool _isLoadingConsumableInventory = false;
   bool _isLoadingCharacterInventory = false;
-  bool _isLoadingConsumeItem = false;
   bool _isLoadingMemberUpdate = false;
-  bool _isLoadingApplyTime = false;
 
   // 에러 메시지
   String? _memberError;
@@ -35,9 +32,7 @@ class MemberViewModel with ChangeNotifier {
   String? _foodInventoryError;
   String? _consumableInventoryError;
   String? _characterInventoryError;
-  String? _consumeItemError;
   String? _memberUpdateError;
-  String? _applyTimeError;
 
   MemberModel? get member => _member;
   PaletteModel? get palette => _palette;
@@ -50,18 +45,14 @@ class MemberViewModel with ChangeNotifier {
   bool get isLoadingFoodInventory => _isLoadingFoodInventory;
   bool get isLoadingConsumableInventory => _isLoadingConsumableInventory;
   bool get isLoadingCharacterInventory => _isLoadingCharacterInventory;
-  bool get isLoadingConsumeItem => _isLoadingConsumeItem;
   bool get isLoadingMemberUpdate => _isLoadingMemberUpdate;
-  bool get isLoadingApplyTime => _isLoadingApplyTime;
 
   String? get memberError => _memberError;
   String? get paletteError => _paletteError;
   String? get foodInventoryError => _foodInventoryError;
   String? get consumableInventoryError => _consumableInventoryError;
   String? get characterInventoryError => _characterInventoryError;
-  String? get consumeItemError => _consumeItemError;
   String? get memberUpdateError => _memberUpdateError;
-  String? get applyTimeError => _applyTimeError;
 
   MemberViewModel({required this.repository});
 
@@ -160,53 +151,6 @@ class MemberViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> applyTimeToItemInventory(int seconds) async {
-    if (member == null || _isLoadingMemberUpdate) return;
-    _setLoadingState('applyTime', isLoading: true);
-    try {
-      await repository.applyTimeToItemInventory(seconds);
-      await loadFoodInventory();
-
-      for (var item in _foodInventory) {
-        if (item.progress == 0) {
-          MessageUtil.showSuccessToast("부화 가능한 알이 존재합니다.");
-        }
-      }
-    } catch (e) {
-      _handleError("applyTime", e);
-    } finally {
-      _setLoadingState('applyTime', isLoading: false);
-    }
-  }
-
-  // ConsumableItemAcquisition, CharacterAcquisition, PaletteAcuisition, PointAcquisition
-  // 위 타입으로 캐스팅 해야함
-  Future<dynamic> consumeItem(String inventoryId) async {
-    if (_isLoadingConsumeItem) return;
-    _setLoadingState('consumeItem', isLoading: true);
-    try {
-      _setError('consumeItem');
-      var result = await repository.consumeItem(inventoryId);
-      if (result.result == acquisitionResults['consumableItem']) {
-        // loadConsumableInventory();
-      } else if (result.result == acquisitionResults['character']) {
-        loadCharacterInventory();
-      } else if (result.result == acquisitionResults['palette']) {
-        loadPalette();
-      } else if (result.result == acquisitionResults['point']) {
-        loadMember(forceUpdate: true);
-      }
-
-      loadConsumableInventory();
-
-      return result;
-    } catch (e) {
-      _handleError('consumeItem', e);
-    } finally {
-      _setLoadingState('consumeItem', isLoading: false);
-    }
-  }
-
   // 로그인 후 초기데이터 조회 후 캐싱
   // 이후 데이터 변경작업 발생 시 개별 load 함수 호출로 캐시 업데이트
   Future<void> loadMemberRelatedData() async {
@@ -257,14 +201,8 @@ class MemberViewModel with ChangeNotifier {
       case "characterInventory":
         _isLoadingCharacterInventory = isLoading;
         break;
-      case "consumeItem":
-        _isLoadingConsumeItem = isLoading;
-        break;
       case 'memberUpdate':
         _isLoadingMemberUpdate = isLoading;
-        break;
-      case 'applyTime':
-        _isLoadingApplyTime = isLoading;
         break;
     }
     notifyListeners();
@@ -287,14 +225,8 @@ class MemberViewModel with ChangeNotifier {
       case "characterInventory":
         _characterInventoryError = errorMessage;
         break;
-      case "consumeItem":
-        _consumeItemError = errorMessage;
-        break;
       case 'memberUpdate':
         _memberUpdateError = errorMessage;
-        break;
-      case 'applyTime':
-        _applyTimeError = errorMessage;
         break;
     }
     notifyListeners();

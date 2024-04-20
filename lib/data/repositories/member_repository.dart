@@ -73,23 +73,6 @@ class MemberRepository {
     }
   }
 
-// 타이머 기록 인벤토리(알)에 반영
-  Future<void> applyTimeToItemInventory(int seconds) async {
-    try {
-      return await remoteDataSource.applyTimeToItemInventory(seconds);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<dynamic> consumeItem(String inventoryId) async {
-    try {
-      return await remoteDataSource.consumeItem(inventoryId);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<void> clearMemberData() async {
     await localDataSource.deleteMember();
   }

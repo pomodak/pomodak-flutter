@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:pomodak/models/domain/group_timer_member_model.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 class GroupTimerViewModel with ChangeNotifier {
   final String _nestSocketEndpoint = dotenv.env['NEST_SOCKET_ENDPOINT']!;
   late socket_io.Socket socket;
-  List<MemberInfo> members = [];
+  List<GroupTimerMemberModel> members = [];
 
   void connectAndListen({required String accessToken}) {
     socket = socket_io.io('$_nestSocketEndpoint/study-group', <String, dynamic>{
@@ -34,8 +35,8 @@ class GroupTimerViewModel with ChangeNotifier {
     });
 
     socket.on('groupInfo', (data) {
-      members = List<MemberInfo>.from(
-          data['members'].map((x) => MemberInfo.fromMap(x)));
+      members = List<GroupTimerMemberModel>.from(
+          data['members'].map((x) => GroupTimerMemberModel.fromJson(x)));
 
       if (kDebugMode) {
         print("groupInfo: ${members.length} members");
@@ -45,7 +46,7 @@ class GroupTimerViewModel with ChangeNotifier {
     });
 
     socket.on('newMember', (data) {
-      var newMember = MemberInfo.fromMap(data);
+      var newMember = GroupTimerMemberModel.fromJson(data);
       if (kDebugMode) {
         print("newMember: ${newMember.memberId}");
       }
@@ -73,28 +74,5 @@ class GroupTimerViewModel with ChangeNotifier {
 
   void disconnect() {
     socket.disconnect();
-  }
-}
-
-class MemberInfo {
-  final String memberId;
-  final String nickname;
-  final String imageUrl;
-  final String joinedAtUTC;
-
-  MemberInfo({
-    required this.memberId,
-    required this.nickname,
-    required this.imageUrl,
-    required this.joinedAtUTC,
-  });
-
-  factory MemberInfo.fromMap(Map<String, dynamic> data) {
-    return MemberInfo(
-      memberId: data['member_id'],
-      nickname: data['nickname'],
-      imageUrl: data['image_url'],
-      joinedAtUTC: data['joinedAtUTC'],
-    );
   }
 }

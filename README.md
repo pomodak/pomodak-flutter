@@ -16,4 +16,4 @@
 - [x] confetti
 - [x] streak grade tooltip
 - [ ] character collection
-- [ ] together timer
+- [x] together timer

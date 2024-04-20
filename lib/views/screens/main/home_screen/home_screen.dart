@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/show_user_guide_button.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/main_character_display.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/show_egg_inventory_button.dart';
@@ -58,15 +55,6 @@ class HomeScreen extends StatelessWidget {
                           width: 10,
                         ),
                         const TimerStartButton(),
-                        GestureDetector(
-                          onTap: () {
-                            LocalNotificationUtil.schedulePomodoroNotification(
-                              pomodoroMode: PomodoroMode.focus,
-                              seconds: 1,
-                            );
-                          },
-                          child: const Icon(Icons.notifications),
-                        ),
                       ],
                     ),
                   ),

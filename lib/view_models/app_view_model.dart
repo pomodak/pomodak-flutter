@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:pomodak/data/storagies/app_options_storage.dart';
+import 'package:pomodak/data/repositories/app_options_repository.dart';
 
 // 앱 설정 & 앱 초기화 여부 확인
 class AppViewModel with ChangeNotifier {
-  AppOptionStorage storage;
+  AppOptionsRepository repository;
   bool _initialized = false;
   bool _vibration = false;
   bool _keepScreenOn = false;
@@ -12,11 +12,11 @@ class AppViewModel with ChangeNotifier {
   bool get vibration => _vibration;
   bool get keepScreenOn => _keepScreenOn;
 
-  AppViewModel({required this.storage});
+  AppViewModel({required this.repository});
 
   set vibration(bool value) {
     _vibration = value;
-    storage.saveAppOption(
+    repository.saveAppOptions(
       vibration: _vibration,
       keepScreenOn: _keepScreenOn,
     );
@@ -25,7 +25,7 @@ class AppViewModel with ChangeNotifier {
 
   set keepScreenOn(bool value) {
     _keepScreenOn = value;
-    storage.saveAppOption(
+    repository.saveAppOptions(
       vibration: _vibration,
       keepScreenOn: _keepScreenOn,
     );
@@ -39,9 +39,9 @@ class AppViewModel with ChangeNotifier {
   }
 
   // 앱 시작 시 실행하는 로직
-  void onAppStart() {
+  void onAppStart() async {
     _initialized = true;
-    _vibration = storage.getVibration();
-    _keepScreenOn = storage.getKeepScreenOn();
+    _vibration = await repository.getVibration();
+    _keepScreenOn = await repository.getKeepScreenOn();
   }
 }

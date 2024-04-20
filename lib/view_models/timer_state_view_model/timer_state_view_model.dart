@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/storagies/timer_state_storage.dart';
+import 'package:pomodak/data/repositories/timer_state_repository.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
@@ -13,7 +13,7 @@ enum PomodoroMode { focus, rest }
 
 class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   // DI
-  final TimerStateStorage storage;
+  final TimerStateRepository repository;
   final TimerRecordViewModel timerRecordViewModel;
   final TimerOptionsViewModel timerOptionsViewModel;
   final PomodoroManager pomodoroManager;
@@ -34,12 +34,12 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   TimerEndState get timerEndState => _timerEndState;
 
   TimerStateViewModel({
-    required this.storage,
+    required this.repository,
     required this.timerRecordViewModel,
     required this.timerOptionsViewModel,
   }) : pomodoroManager = PomodoroManager(
           timerOptionsViewModel: timerOptionsViewModel,
-          storage: storage,
+          repository: repository,
         ) {
     _init();
   }

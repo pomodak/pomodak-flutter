@@ -30,7 +30,10 @@ class _SplashPageState extends State<SplashPage> {
   void onStartUp() async {
     _appViewModel.onAppStart(); // 앱 설정 로드
     await _authViewModel.onAppStart(); // 로그인 정보(토큰, 계정) 로드
-    await _memberViewModel.onAppStart(); // 유저 정보 로드 (토큰 사용)
+
+    if (_authViewModel.account != null) {
+      await _memberViewModel.onAppStart(); // 유저 정보 로드 (토큰 사용)
+    }
   }
 
   @override

@@ -18,15 +18,20 @@ class MemberRepository {
   });
 
   Future<MemberModel?> getMember({bool forceUpdate = false}) async {
-    if (!forceUpdate) {
-      final localData = localDataSource.getMember();
-      if (localData != null) return localData;
+    try {
+      if (!forceUpdate) {
+        final localData = localDataSource.getMember();
+        if (localData != null) return localData;
+      }
+      final remoteData = await remoteDataSource.fetchMember();
+      if (remoteData != null) {
+        await localDataSource.saveMember(remoteData);
+      }
+      return remoteData;
+    } catch (e) {
+      localDataSource.deleteMember();
+      rethrow;
     }
-    final remoteData = await remoteDataSource.fetchMember();
-    if (remoteData != null) {
-      await localDataSource.saveMember(remoteData);
-    }
-    return remoteData;
   }
 
   Future<PaletteModel?> getMemberPalette(String memberId) async {

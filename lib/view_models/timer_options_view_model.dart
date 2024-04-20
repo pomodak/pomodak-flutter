@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/storagies/timer_options_storage.dart';
-
-const defaultPomodoroMode = true;
-const defaultWorkTime = 25;
-const defaultRestTime = 5;
-const defaultSections = 4;
+import 'package:pomodak/data/repositories/timer_options_repository.dart';
 
 class TimerOptionsViewModel with ChangeNotifier {
-  TimerOptionsStorage storage;
+  TimerOptionsRepository repository;
   // 변경 시 타이머 초기화
   late bool _isPomodoroMode;
   late int _workTime;
@@ -43,17 +38,17 @@ class TimerOptionsViewModel with ChangeNotifier {
   TimerOptionsChangedEvent? _lastEvent;
   TimerOptionsChangedEvent? get lastEvent => _lastEvent;
 
-  TimerOptionsViewModel({required this.storage}) {
+  TimerOptionsViewModel({required this.repository}) {
     loadOptions();
   }
 
   void loadOptions() {
-    _isPomodoroMode = _tempIsPomodoroMode = storage.getIsPomodoroMode();
-    _workTime = _tempWorkTime = storage.getTargetWorkTime();
-    _restTime = _tempRestTime = storage.getTargetRestTime();
-    _sections = _tempSections = storage.getTargetSections();
+    _isPomodoroMode = _tempIsPomodoroMode = repository.getIsPomodoroMode();
+    _workTime = _tempWorkTime = repository.getTargetWorkTime();
+    _restTime = _tempRestTime = repository.getTargetRestTime();
+    _sections = _tempSections = repository.getTargetSections();
     _isFocusTogetherMode =
-        _tempIsFocusTogetherMode = storage.getIsFocusTogetherMode();
+        _tempIsFocusTogetherMode = repository.getIsFocusTogetherMode();
 
     notifyListeners();
   }
@@ -107,7 +102,7 @@ class TimerOptionsViewModel with ChangeNotifier {
     _sections = _tempSections;
     _isFocusTogetherMode = _tempIsFocusTogetherMode;
 
-    storage.saveTimerOptions(
+    repository.saveTimerOptions(
       isPomodoroMode: _isPomodoroMode,
       isFocusTogetherMode: _isFocusTogetherMode,
       workTime: _workTime,

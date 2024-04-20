@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/di.dart';
-import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
 import 'package:flutter/services.dart';
@@ -42,11 +40,6 @@ Future<void> main() async {
     nativeAppKey: dotenv.env['KAKAO_NATIVE_KEY']!,
     javaScriptAppKey: dotenv.env['KAKAO_JS_APP_KEY']!,
   );
-
-  // timerRecords 기록
-  await Hive.initFlutter();
-  Hive.registerAdapter(TimerRecordModelAdapter());
-  await Hive.openBox<TimerRecordModel>('timerRecords');
 
   // 권한 허용
   LocalNotificationUtil.initialization();

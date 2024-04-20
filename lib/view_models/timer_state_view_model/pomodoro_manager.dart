@@ -1,20 +1,20 @@
-import 'package:pomodak/data/storagies/timer_state_storage.dart';
+import 'package:pomodak/data/repositories/timer_state_repository.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 
 // 뽀모도로 모드를 관리하는 클래스
 class PomodoroManager {
-  final TimerStateStorage storage;
+  final TimerStateRepository repository;
   PomodoroMode pomodoroMode = PomodoroMode.focus;
   int sectionCounts = 0;
   final TimerOptionsViewModel timerOptionsViewModel;
 
   PomodoroManager({
     required this.timerOptionsViewModel,
-    required this.storage,
+    required this.repository,
   }) {
-    pomodoroMode = storage.getCurPomodoroMode();
-    sectionCounts = storage.getCurSections();
+    pomodoroMode = repository.getCurrentPomodoroMode();
+    sectionCounts = repository.getCurrentSections();
   }
 
   void nextPhase() {
@@ -28,7 +28,7 @@ class PomodoroManager {
     } else {
       pomodoroMode = PomodoroMode.focus;
     }
-    storage.saveTimerState(
+    repository.saveTimerState(
       curSections: sectionCounts,
       curPomodoroMode: pomodoroMode,
     );
@@ -43,7 +43,7 @@ class PomodoroManager {
   void reset() {
     pomodoroMode = PomodoroMode.focus;
     sectionCounts = 0;
-    storage.saveTimerState(
+    repository.saveTimerState(
       curPomodoroMode: pomodoroMode,
       curSections: sectionCounts,
     );

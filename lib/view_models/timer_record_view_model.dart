@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/storagies/timer_record_storage.dart';
+import 'package:pomodak/data/repositories/timer_record_repository.dart';
 import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
 
 class TimerRecordViewModel extends ChangeNotifier {
-  final TimerRecordStorage storage;
+  final TimerRecordRepository repository;
   late final MemberViewModel memberViewModel;
   late final TransactionViewModel transactionViewModel;
   // 캐시로 사용될 타이머 기록 리스트
@@ -18,7 +18,7 @@ class TimerRecordViewModel extends ChangeNotifier {
       };
 
   TimerRecordViewModel({
-    required this.storage,
+    required this.repository,
     required this.memberViewModel,
     required this.transactionViewModel,
   }) {
@@ -37,7 +37,7 @@ class TimerRecordViewModel extends ChangeNotifier {
   Future<void> _initRecords() async {
     var memberId = memberViewModel.member?.memberId ?? '';
     if (memberId.isNotEmpty) {
-      records = storage.getTimerRecordModelsByMemberId(memberId);
+      records = repository.getRecordsByMemberId(memberId);
       notifyListeners();
     }
   }
@@ -57,7 +57,7 @@ class TimerRecordViewModel extends ChangeNotifier {
     String? memberId = memberViewModel.member?.memberId;
     if (memberId == null) return;
 
-    final newOrUpdatedRecord = await storage.saveOrUpdateRecord(
+    final newOrUpdatedRecord = await repository.saveOrUpdateRecord(
       memberId: memberId,
       date: DateTime(date.year, date.month, date.day),
       seconds: seconds,
@@ -117,7 +117,7 @@ class TimerRecordViewModel extends ChangeNotifier {
   }
 
   TimerRecordModel? getTimerRecordByDate(int year, int month, int day) {
-    return storage.getTimerRecordByMemberIdAndDate(
+    return repository.getRecordByMemberIdAndDate(
       memberViewModel.member?.memberId ?? "",
       DateTime(year, month, day),
     );

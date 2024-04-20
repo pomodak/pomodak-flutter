@@ -32,7 +32,7 @@ class AuthRepository {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         );
-        _saveLoginData(tokens: tokens, account: data.account);
+        await _saveLoginData(tokens: tokens, account: data.account);
       }
 
       return response;
@@ -63,7 +63,7 @@ class AuthRepository {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         );
-        _saveLoginData(tokens: tokens, account: data.account);
+        await _saveLoginData(tokens: tokens, account: data.account);
       }
 
       return response;
@@ -99,7 +99,7 @@ class AuthRepository {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         );
-        _saveLoginData(tokens: tokens, account: data.account);
+        await _saveLoginData(tokens: tokens, account: data.account);
       }
 
       return response;
@@ -123,7 +123,7 @@ class AuthRepository {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         );
-        _saveLoginData(tokens: tokens, account: data.account);
+        await _saveLoginData(tokens: tokens, account: data.account);
       }
 
       return response;
@@ -153,8 +153,9 @@ class AuthRepository {
     return await localDataSource.getTokens();
   }
 
-  void _saveLoginData({required AuthTokens tokens, AccountModel? account}) {
-    localDataSource.saveTokens(tokens);
-    if (account != null) localDataSource.saveAccount(account);
+  Future<void> _saveLoginData(
+      {required AuthTokens tokens, AccountModel? account}) async {
+    await localDataSource.saveTokens(tokens);
+    if (account != null) await localDataSource.saveAccount(account);
   }
 }

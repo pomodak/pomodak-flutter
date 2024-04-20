@@ -153,8 +153,8 @@ class MemberViewModel with ChangeNotifier {
 
   // 로그인 후 초기데이터 조회 후 캐싱
   // 이후 데이터 변경작업 발생 시 개별 load 함수 호출로 캐시 업데이트
-  Future<void> loadMemberRelatedData() async {
-    await loadMember();
+  Future<void> loadMemberRelatedData({bool? forceUpdate = false}) async {
+    await loadMember(forceUpdate: forceUpdate);
     if (_member != null) {
       loadPalette();
       loadFoodInventory();

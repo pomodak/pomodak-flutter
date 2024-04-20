@@ -1,9 +1,24 @@
 import 'package:hive/hive.dart';
-import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:intl/intl.dart';
+import 'package:pomodak/models/domain/timer_record_model.dart';
 
-class TimerRecordStorage {
-  final Box<TimerRecordModel> _box = Hive.box<TimerRecordModel>('timerRecords');
+abstract class TimerRecordLocalDataSource {
+  Future<TimerRecordModel> saveOrUpdateRecord({
+    required String memberId,
+    required DateTime date,
+    required int seconds,
+    required bool isCompleted,
+    String category = 'default',
+  });
+
+  List<TimerRecordModel> getRecordsByMemberId(String memberId);
+  TimerRecordModel? getRecordByMemberIdAndDate(String memberId, DateTime date);
+}
+
+class TimerRecordLocalDataSourceImpl implements TimerRecordLocalDataSource {
+  final Box<TimerRecordModel> _box;
+
+  TimerRecordLocalDataSourceImpl(this._box);
 
   String _formatDate(DateTime dateTime) {
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -14,6 +29,7 @@ class TimerRecordStorage {
     return '${memberId}_${_formatDate(dateTime)}';
   }
 
+  @override
   Future<TimerRecordModel> saveOrUpdateRecord({
     required String memberId,
     required DateTime date,
@@ -24,8 +40,6 @@ class TimerRecordStorage {
     final String recordKey = _generateKey(memberId, date);
 
     final TimerRecordModel? existingRecord = _box.get(recordKey);
-
-    late final TimerRecordModel resultRecord;
 
     if (existingRecord != null) {
       final updatedDetails = Map<String, int>.from(existingRecord.details);
@@ -44,8 +58,9 @@ class TimerRecordStorage {
             : existingRecord.totalCompleted,
         details: updatedDetails,
       );
-      resultRecord = updatedRecord;
+
       await _box.put(recordKey, updatedRecord);
+      return updatedRecord;
     } else {
       final newRecord = TimerRecordModel(
         memberId: memberId,
@@ -54,18 +69,19 @@ class TimerRecordStorage {
         totalCompleted: isCompleted ? 1 : 0,
         details: {category: seconds},
       );
-      resultRecord = newRecord;
+
       await _box.put(recordKey, newRecord);
+      return newRecord;
     }
-    return resultRecord;
   }
 
-  List<TimerRecordModel> getTimerRecordModelsByMemberId(String memberId) {
+  @override
+  List<TimerRecordModel> getRecordsByMemberId(String memberId) {
     return _box.values.where((record) => record.memberId == memberId).toList();
   }
 
-  TimerRecordModel? getTimerRecordByMemberIdAndDate(
-      String memberId, DateTime date) {
+  @override
+  TimerRecordModel? getRecordByMemberIdAndDate(String memberId, DateTime date) {
     final String recordKey = _generateKey(memberId, date);
     return _box.get(recordKey);
   }

@@ -199,8 +199,9 @@ class AuthViewModel with ChangeNotifier {
 
   Future<void> _loginSuccess() async {
     await loadAccount(); // 계정 정보 갱신
-    await memberViewModel.loadMember(forceUpdate: true); // 회원 정보 갱신
+    await memberViewModel.loadMemberRelatedData(forceUpdate: true); // 회원 정보 갱신
     MessageUtil.showSuccessToast("로그인 성공");
+    notifyListeners();
   }
 
   void _handleError(String field, Object e) {

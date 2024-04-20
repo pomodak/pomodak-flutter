@@ -16,17 +16,27 @@ import 'package:pomodak/views/screens/welcome_page.dart';
 class AppRouter {
   final AppViewModel appViewModel;
   final AuthViewModel authViewModel;
+  late final GoRouter _goRouter;
+
+  AppRouter({required this.appViewModel, required this.authViewModel}) {
+    _goRouter = _initGoRouter();
+  }
+
   GoRouter get router => _goRouter;
 
-  AppRouter({required this.appViewModel, required this.authViewModel});
+  GoRouter _initGoRouter() {
+    return GoRouter(
+      refreshListenable: Listenable.merge([appViewModel, authViewModel]),
+      initialLocation: AppPage.splash.toPath,
+      routes: _getRoutes(),
+      errorBuilder: (context, state) =>
+          ErrorPage(error: state.error.toString()),
+      redirect: _redirectLogic,
+    );
+  }
 
-  late final GoRouter _goRouter = GoRouter(
-    // 앱의 로그인 상태와 초기화 상태 변경을 리스닝하여 리프레시
-    refreshListenable: Listenable.merge([appViewModel, authViewModel]),
-    // 초기 페이지
-    initialLocation: AppPage.splash.toPath,
-    // 앱의 모든 라우트
-    routes: <GoRoute>[
+  List<GoRoute> _getRoutes() {
+    return [
       GoRoute(
         path: AppPage.home.toPath,
         name: AppPage.home.toName,
@@ -72,53 +82,44 @@ class AppRouter {
         name: AppPage.error.toName,
         builder: (context, state) => ErrorPage(error: state.extra.toString()),
       ),
-    ],
-    // 에러 발생 시
-    errorBuilder: (context, state) => ErrorPage(error: state.error.toString()),
-    // 앱의 상태에 따라 적절한 페이지로 리다이렉팅
-    redirect: (_, state) {
-      // 전체 라우트 파악
-      final welcomeLocation = state.namedLocation(AppPage.welcome.toName);
-      final timerLocation = state.namedLocation(AppPage.timer.toName);
-      final timerAlarmLocation = state.namedLocation(AppPage.timerAlarm.toName);
-      final loginLocation = state.namedLocation(AppPage.login.toName);
-      final registerLocation = state.namedLocation(AppPage.register.toName);
-      final homeLocation = state.namedLocation(AppPage.home.toName);
-      final splashLocation = state.namedLocation(AppPage.splash.toName);
+    ];
+  }
 
-      final isLogedIn = authViewModel.isLoggedIn; // 로그인 상태
-      final isInitialized = appViewModel.initialized; // 초기화 상태
+  String? _redirectLogic(BuildContext context, GoRouterState state) {
+    final isLoggedIn = authViewModel.isLoggedIn;
+    final isInitialized = appViewModel.initialized;
 
-      // 이동중인 라우트 파악
-      final isGoingToWelcome = state.matchedLocation == welcomeLocation;
-      final isGoingToLogin = state.matchedLocation == loginLocation;
-      final isGoingToRegister = state.matchedLocation == registerLocation;
-      final isGoingToHome = state.matchedLocation == homeLocation;
-      final isGoingToTimer = state.matchedLocation == timerLocation;
-      final isGoingToTimerAlarm = state.matchedLocation == timerAlarmLocation;
-      final isGoingToInit = state.matchedLocation == splashLocation;
+    final locations = {
+      'welcome': state.namedLocation(AppPage.welcome.toName),
+      'login': state.namedLocation(AppPage.login.toName),
+      'register': state.namedLocation(AppPage.register.toName),
+      'home': state.namedLocation(AppPage.home.toName),
+      'timer': state.namedLocation(AppPage.timer.toName),
+      'timerAlarm': state.namedLocation(AppPage.timerAlarm.toName),
+      'splash': state.namedLocation(AppPage.splash.toName),
+    };
 
-      // 앱이 아직 초기화되지 않았고 스플래시 페이지로 가지 않는 경우, 스플래시 페이지
-      if (!isInitialized && !isGoingToInit) {
-        return splashLocation;
-      }
-      // 앱이 초기화되었지만 사용자가 로그인하지 않고 홈으로 이동할 경우, 웰컴 페이지
-      else if (isInitialized &&
-          ((!isLogedIn && isGoingToHome) ||
-              (!isLogedIn && isGoingToTimer) ||
-              (!isLogedIn && isGoingToTimerAlarm))) {
-        return welcomeLocation;
-      }
-      // 사용자가 로그인한 상태에서 로그인 페이지로 가려고 하거나,
-      // 앱이 이미 초기화된 상태에서 스플래시 페이지로 가려고 하는 경우, 홈 페이지
-      else if ((isLogedIn && isGoingToLogin) ||
-          (isLogedIn && isGoingToWelcome) ||
-          (isLogedIn && isGoingToRegister) ||
-          (isInitialized && isGoingToInit)) {
-        return homeLocation;
-      } else {
-        return null;
-      }
-    },
-  );
+    if (!isInitialized && state.matchedLocation != locations['splash']) {
+      return locations['splash'];
+    }
+
+    if (isInitialized &&
+        !isLoggedIn &&
+        state.matchedLocation != locations['welcome'] &&
+        (state.matchedLocation == locations['home'] ||
+            state.matchedLocation == locations['timer'] ||
+            state.matchedLocation == locations['timerAlarm'])) {
+      return locations['welcome'];
+    }
+
+    if ((isLoggedIn &&
+            (state.matchedLocation == locations['login'] ||
+                state.matchedLocation == locations['welcome'] ||
+                state.matchedLocation == locations['register'])) ||
+        (isInitialized && state.matchedLocation == locations['splash'])) {
+      return locations['home'];
+    }
+
+    return null;
+  }
 }

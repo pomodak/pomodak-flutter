@@ -56,8 +56,10 @@ Future<void> setupLocator() async {
 // local 저장소 등록
 Future<void> registerLocalStoragies() async {
   // SharedPreferences (간단한 설정 같은 key-value 쌍을 저장하는 용도)
-  getIt.registerLazySingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
+  final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
   // FlutterSecureStorage (보안이 필요한 데이터 (토큰, 계정 정보 등)를 저장하는 용도)
   getIt.registerLazySingleton<FlutterSecureStorage>(
       () => const FlutterSecureStorage());
@@ -66,8 +68,9 @@ Future<void> registerLocalStoragies() async {
   // Hive를 초기화하고, 모델의 어댑터 등록, 필요한 Box를 열어 getIt에 등록
   await Hive.initFlutter();
   Hive.registerAdapter(TimerRecordModelAdapter());
-  getIt.registerLazySingletonAsync<Box<TimerRecordModel>>(
-      () async => await Hive.openBox<TimerRecordModel>('timerRecords'));
+  final Box<TimerRecordModel> timerRecordBox =
+      await Hive.openBox<TimerRecordModel>('timerRecords');
+  getIt.registerLazySingleton<Box<TimerRecordModel>>(() => timerRecordBox);
 }
 
 // LocalDataSource

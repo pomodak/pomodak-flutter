@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/domain/account_model.dart';
@@ -55,7 +56,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoadingState('login', isLoading: true);
     try {
       _setError("login");
-      await repository.emailLoginApi(email: email, password: password);
+      await repository.emailLogin(email: email, password: password);
       await _loginSuccess();
     } catch (e) {
       _handleError("login", e);
@@ -74,7 +75,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoadingState('register', isLoading: true);
     try {
       _setError("register");
-      await repository.emailRegisterApi(
+      await repository.emailRegister(
         email: email,
         password: password,
         code: code,
@@ -97,7 +98,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoadingState('checkEmail', isLoading: true);
     try {
       _setError("checkEmail");
-      await repository.checkEmailApi(
+      await repository.checkEmail(
         email: email,
       );
 
@@ -118,7 +119,7 @@ class AuthViewModel with ChangeNotifier {
       _setError("login");
       GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       var authentication = await googleUser?.authentication;
-      await repository.googleLoginApi(idToken: authentication?.idToken ?? "");
+      await repository.googleLogin(idToken: authentication?.idToken ?? "");
       await _loginSuccess();
     } catch (e) {
       _handleError('login', e);
@@ -134,7 +135,7 @@ class AuthViewModel with ChangeNotifier {
     try {
       _setError("login");
       String accessToken = await _signInWithKakao();
-      await repository.kakaoLoginApi(accessToken: accessToken);
+      await repository.kakaoLogin(accessToken: accessToken);
       await _loginSuccess();
     } catch (e) {
       _handleError('login', e);
@@ -158,8 +159,8 @@ class AuthViewModel with ChangeNotifier {
     await loadAccount();
   }
 
-  Future<String?> getAccessToken() async {
-    return await repository.getAccessToken();
+  Future<AuthTokens?> getTokens() async {
+    return await repository.getTokens();
   }
 
   Future<String> _signInWithKakao() async {

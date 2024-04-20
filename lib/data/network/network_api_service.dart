@@ -5,20 +5,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/app_exceptions.dart';
+import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/data/network/auth_interceptor.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
-import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/refresh_response.dart';
 
 class NetworkApiService extends BaseApiServices {
   final Dio _dio = Dio();
   final String _nestApiEndpoint = dotenv.env['NEST_API_ENDPOINT']!;
-  final AuthStorage storage;
+  final AuthLocalDataSource authLocalDataSource;
 
-  NetworkApiService({required this.storage}) {
+  NetworkApiService({required this.authLocalDataSource}) {
     _dio.interceptors.add(AuthInterceptor(
-      storage: storage,
+      authLocalDataSource: authLocalDataSource,
       refreshToken: refreshToken,
     ));
   }
@@ -63,20 +63,13 @@ class NetworkApiService extends BaseApiServices {
     }
   }
 
-  Future<String?> refreshToken() async {
-    final refreshToken = await storage.getRefreshToken();
-    if (refreshToken == null) {
-      // 리프레시 토큰이 없다면 로그아웃 처리
-      await storage.deleteAllData();
-      return null;
-    }
-
+  Future<AuthTokens> refreshToken(String rToken) async {
     try {
       // Dio를 사용하여 리프레시 토큰으로 새 액세스 토큰 요청
       var responseJson = await Dio().post(
         '$_nestApiEndpoint/auth/refresh',
         options: Options(headers: {
-          "Authorization": 'Bearer $refreshToken',
+          "Authorization": 'Bearer $rToken',
           'Content-Type': 'application/json'
         }),
       );
@@ -87,23 +80,22 @@ class NetworkApiService extends BaseApiServices {
       var data = response.data;
       if (data != null) {
         // 새 토큰 저장
-        await storage.storeTokens(
-          data.accessToken,
+        AuthTokens tokens = AuthTokens(
+          accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         );
 
-        return data.accessToken;
+        await authLocalDataSource.saveTokens(tokens);
+
+        return tokens;
       } else {
-        // 토큰 갱신 실패 시 로그아웃 처리
-        await storage.deleteAllData();
-        return null;
+        throw Exception();
       }
-    } on DioException catch (dioError) {
-      // 네트워크 오류나 기타 예외 처리
-      await storage.deleteAllData();
-      _handleDioError(dioError);
+    } catch (e) {
+      await authLocalDataSource.deleteTokens();
+      await authLocalDataSource.deleteAccount();
+      throw FetchCustomException('Session expired. Please login again.');
     }
-    return null;
   }
 
   void _handleDioError(DioException dioError) {

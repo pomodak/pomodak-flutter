@@ -1,13 +1,14 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/data/datasources/local/member_local_datasource.dart';
+import 'package:pomodak/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:pomodak/data/datasources/remote/member_remote_datasource.dart';
 import 'package:pomodak/data/network/network_api_service.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/data/storagies/app_options_storage.dart';
-import 'package:pomodak/data/storagies/auth_storage.dart';
 import 'package:pomodak/data/storagies/timer_options_storage.dart';
 import 'package:pomodak/data/storagies/timer_record_storage.dart';
 import 'package:pomodak/data/storagies/timer_state_storage.dart';
@@ -38,18 +39,24 @@ Future<void> setupLocator() async {
 
 // DataSource
 void registerDataSource() {
-  getIt.registerLazySingleton<AuthStorage>(
-      () => AuthStorage(getIt<FlutterSecureStorage>()));
   getIt.registerLazySingleton<AppOptionStorage>(
       () => AppOptionStorage(getIt<SharedPreferences>()));
-  getIt.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(storage: getIt<AuthStorage>()));
 
-  // Member
+  // LocalDataSource
   getIt.registerLazySingleton<MemberLocalDataSource>(
       () => MemberLocalDataSourceImpl(getIt<SharedPreferences>()));
+  getIt.registerLazySingleton<AuthLocalDataSource>(
+      () => AuthLocalDataSourceImpl(getIt<FlutterSecureStorage>()));
+
+  // ApiService
+  getIt.registerLazySingleton<NetworkApiService>(() =>
+      NetworkApiService(authLocalDataSource: getIt<AuthLocalDataSource>()));
+
+  // RemoteDataSource
   getIt.registerLazySingleton<MemberRemoteDataSource>(
       () => MemberRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
 
   // Timer
   getIt.registerLazySingleton<TimerOptionsStorage>(
@@ -61,9 +68,6 @@ void registerDataSource() {
 
 // Repository
 void registerRepository() {
-  getIt.registerLazySingleton<AuthRepository>(() => AuthRepository(
-      apiService: getIt<NetworkApiService>(), storage: getIt<AuthStorage>()));
-
   getIt.registerLazySingleton<ShopRepository>(
       () => ShopRepository(apiService: getIt<NetworkApiService>()));
 
@@ -71,6 +75,12 @@ void registerRepository() {
     () => MemberRepository(
       localDataSource: getIt<MemberLocalDataSource>(),
       remoteDataSource: getIt<MemberRemoteDataSource>(),
+    ),
+  );
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepository(
+      localDataSource: getIt<AuthLocalDataSource>(),
+      remoteDataSource: getIt<AuthRemoteDataSource>(),
     ),
   );
 }

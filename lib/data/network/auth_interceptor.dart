@@ -1,20 +1,23 @@
 import 'package:dio/dio.dart';
-import 'package:pomodak/data/storagies/auth_storage.dart';
+import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 
 class AuthInterceptor extends Interceptor {
-  final AuthStorage storage;
-  final Future<String?> Function() refreshToken;
+  final AuthLocalDataSource authLocalDataSource;
+  final Future<AuthTokens> Function(String rToken) refreshToken;
 
   AuthInterceptor({
-    required this.storage,
+    required this.authLocalDataSource,
     required this.refreshToken,
   });
 
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final accessToken = await storage.getAccessToken();
-    options.headers['Authorization'] = 'Bearer $accessToken';
+    final tokens = await authLocalDataSource.getTokens();
+
+    if (tokens != null) {
+      options.headers['Authorization'] = 'Bearer ${tokens.accessToken}';
+    }
     super.onRequest(options, handler);
   }
 
@@ -22,25 +25,25 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       if (err.requestOptions.extra['retry'] == true) {
-        // 이미 재요청한 경우는 더 이상 처리하지 않음
+        // 이미 재요청한 경우 더 이상 처리하지 않음
         return handler.next(err);
       }
 
-      RequestOptions options = err.requestOptions;
-      final accessToken = await refreshToken();
-
-      // 토큰이 없어도 더 이상 처리하지 않음
-      if (accessToken == null) {
+      AuthTokens? tokens = await authLocalDataSource.getTokens();
+      String? rToken = tokens?.refreshToken;
+      if (rToken == null) {
+        // refreshToken이 없는 경우 더 이상 처리하지 않음
         return handler.next(err);
       }
 
-      options.headers['Authorization'] = 'Bearer $accessToken';
-      options.extra['retry'] = true; // 재시도 플래그 설정
+      final AuthTokens newTokens = await refreshToken(rToken);
+
       // 요청 재시도
       RequestOptions updatedOptions = err.requestOptions.copyWith(
         headers: {
           ...err.requestOptions.headers,
-          'Authorization': 'Bearer $accessToken',
+          'Authorization': 'Bearer ${newTokens.accessToken}',
+          "retry": true,
         },
       );
       try {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
+import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,9 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
   }
 
   void _connectToSocket() async {
-    final accessToken = await Provider.of<AuthViewModel>(context, listen: false)
-        .getAccessToken();
+    final AuthTokens? tokens =
+        await Provider.of<AuthViewModel>(context, listen: false).getTokens();
+    String? accessToken = tokens?.accessToken;
     if (accessToken != null && mounted) {
       _viewModel?.connectAndListen(accessToken: accessToken);
     }

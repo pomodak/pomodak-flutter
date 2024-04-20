@@ -6,11 +6,11 @@ class AppOptionsRepository {
   AppOptionsRepository({required this.localDataSource});
 
   Future<bool> getVibration() async {
-    return await localDataSource.getVibration();
+    return localDataSource.getVibration();
   }
 
   Future<bool> getKeepScreenOn() async {
-    return await localDataSource.getKeepScreenOn();
+    return localDataSource.getKeepScreenOn();
   }
 
   Future<void> saveAppOptions({

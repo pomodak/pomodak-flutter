@@ -35,88 +35,116 @@ import 'package:hive_flutter/hive_flutter.dart';
 final getIt = GetIt.instance;
 
 Future<void> setupLocator() async {
-  final SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
-  const flutterSecureStorage = FlutterSecureStorage();
+  // local 저장소 (Hive, SharedPreferences, FlutterSecureStorage 등)
+  await registerLocalStoragies();
 
-  // timerRecords 기록
-  await Hive.initFlutter();
-  Hive.registerAdapter(TimerRecordModelAdapter());
-  final Box<TimerRecordModel> timerRecordBox =
-      await Hive.openBox<TimerRecordModel>('timerRecords');
+  // (local)DataSource (local 저장소를 주입받아 데이터를 처리)
+  registerLocalDataSource();
+  // NetworkApiService (외부 서버와 통신 - authLocalDataSource가 필요하기 때문에 localDataSource를 먼저 등록)
+  getIt.registerLazySingleton<NetworkApiService>(() =>
+      NetworkApiService(authLocalDataSource: getIt<AuthLocalDataSource>()));
+  // (remote)DataSource (apiServices를 주입받아 외부 서버에서 데이터를 처리)
+  registerRemoteDataSource();
 
-  getIt.registerLazySingleton<FlutterSecureStorage>(() => flutterSecureStorage);
-  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  getIt.registerLazySingleton<Box<TimerRecordModel>>(() => timerRecordBox);
-
-  registerDataSource();
+  // Repository (dataSources를 이용하여 데이터를 처리)
   registerRepository();
-  registerViewModel();
+
+  // ViewModel (repositories를 주입받아 view에서 사용할 데이터를 처리)
+  registerViewModels();
 }
 
-// DataSource
-void registerDataSource() {
-  // LocalDataSource
-  getIt.registerLazySingleton<MemberLocalDataSource>(
-      () => MemberLocalDataSourceImpl(getIt<SharedPreferences>()));
+// local 저장소 등록
+Future<void> registerLocalStoragies() async {
+  // SharedPreferences (간단한 설정 같은 key-value 쌍을 저장하는 용도)
+  getIt.registerLazySingletonAsync<SharedPreferences>(
+      () => SharedPreferences.getInstance());
+  // FlutterSecureStorage (보안이 필요한 데이터 (토큰, 계정 정보 등)를 저장하는 용도)
+  getIt.registerLazySingleton<FlutterSecureStorage>(
+      () => const FlutterSecureStorage());
+
+  // Hive (구조화된 데이터를 저장하는 용도 - 타이머 기록, 통계 등)
+  // Hive를 초기화하고, 모델의 어댑터 등록, 필요한 Box를 열어 getIt에 등록
+  await Hive.initFlutter();
+  Hive.registerAdapter(TimerRecordModelAdapter());
+  getIt.registerLazySingletonAsync<Box<TimerRecordModel>>(
+      () async => await Hive.openBox<TimerRecordModel>('timerRecords'));
+}
+
+// LocalDataSource
+void registerLocalDataSource() {
+  // Auth
   getIt.registerLazySingleton<AuthLocalDataSource>(
       () => AuthLocalDataSourceImpl(getIt<FlutterSecureStorage>()));
+  // Member
+  getIt.registerLazySingleton<MemberLocalDataSource>(
+      () => MemberLocalDataSourceImpl(getIt<SharedPreferences>()));
+  // AppOptions
   getIt.registerLazySingleton<AppOptionsLocalDataSource>(
       () => AppOptionsLocalDataSourceImpl(getIt<SharedPreferences>()));
+  // Timer 관련
   getIt.registerLazySingleton<TimerOptionsLocalDataSource>(
       () => TimerOptionsLocalDataSourceImpl(getIt<SharedPreferences>()));
   getIt.registerLazySingleton<TimerStateLocalDataSource>(
       () => TimerStateLocalDataSourceImpl(getIt<SharedPreferences>()));
   getIt.registerLazySingleton<TimerRecordLocalDataSource>(
       () => TimerRecordLocalDataSourceImpl(getIt<Box<TimerRecordModel>>()));
+}
 
-  // ApiService
-  getIt.registerLazySingleton<NetworkApiService>(() =>
-      NetworkApiService(authLocalDataSource: getIt<AuthLocalDataSource>()));
-
-  // RemoteDataSource
-  getIt.registerLazySingleton<MemberRemoteDataSource>(
-      () => MemberRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+// RemoteDataSource
+void registerRemoteDataSource() {
+  // Auth
   getIt.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  // Member
+  getIt.registerLazySingleton<MemberRemoteDataSource>(
+      () => MemberRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  // Shop
   getIt.registerLazySingleton<ShopRemoteDataSource>(
       () => ShopRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
+  // Transaction(상점 구매/판매, 아이템 사용, 알 시간 적용 등)
   getIt.registerLazySingleton<TransactionRemoteDataSource>(() =>
       TransactionRemoteDataSourceImpl(apiService: getIt<NetworkApiService>()));
 }
 
 // Repository
 void registerRepository() {
-  getIt.registerLazySingleton<ShopRepository>(
-    () => ShopRepository(
-      remoteDataSource: getIt<ShopRemoteDataSource>(),
-    ),
-  );
-  getIt.registerLazySingleton<TransactionRepository>(
-    () => TransactionRepository(
-      remoteDataSource: getIt<TransactionRemoteDataSource>(),
-    ),
-  );
-  getIt.registerLazySingleton<MemberRepository>(
-    () => MemberRepository(
-      localDataSource: getIt<MemberLocalDataSource>(),
-      remoteDataSource: getIt<MemberRemoteDataSource>(),
-    ),
-  );
+  // Auth
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(
       localDataSource: getIt<AuthLocalDataSource>(),
       remoteDataSource: getIt<AuthRemoteDataSource>(),
     ),
   );
-  getIt.registerLazySingleton<TimerRecordRepository>(
-    () => TimerRecordRepository(
-      localDataSource: getIt<TimerRecordLocalDataSource>(),
+  // Member
+  getIt.registerLazySingleton<MemberRepository>(
+    () => MemberRepository(
+      localDataSource: getIt<MemberLocalDataSource>(),
+      remoteDataSource: getIt<MemberRemoteDataSource>(),
     ),
   );
+
+  // Shop
+  getIt.registerLazySingleton<ShopRepository>(
+    () => ShopRepository(
+      remoteDataSource: getIt<ShopRemoteDataSource>(),
+    ),
+  );
+  // Transaction(상점 구매/판매, 아이템 사용, 알 시간 적용 등)
+  getIt.registerLazySingleton<TransactionRepository>(
+    () => TransactionRepository(
+      remoteDataSource: getIt<TransactionRemoteDataSource>(),
+    ),
+  );
+  // AppOptions
   getIt.registerLazySingleton<AppOptionsRepository>(
     () => AppOptionsRepository(
       localDataSource: getIt<AppOptionsLocalDataSource>(),
+    ),
+  );
+  // Timer 관련
+  getIt.registerLazySingleton<TimerRecordRepository>(
+    () => TimerRecordRepository(
+      localDataSource: getIt<TimerRecordLocalDataSource>(),
     ),
   );
   getIt.registerLazySingleton<TimerOptionsRepository>(
@@ -132,31 +160,42 @@ void registerRepository() {
 }
 
 // View Model
-void registerViewModel() {
+void registerViewModels() {
+  // AppOptions
   getIt.registerLazySingleton<AppViewModel>(
     () => AppViewModel(repository: getIt<AppOptionsRepository>()),
   );
-  getIt.registerLazySingleton<MemberViewModel>(
-    () => MemberViewModel(repository: getIt<MemberRepository>()),
-  );
+
+  // Auth
   getIt.registerLazySingleton<AuthViewModel>(
     () => AuthViewModel(
       repository: getIt<AuthRepository>(),
       memberViewModel: getIt<MemberViewModel>(),
     ),
   );
+
+  // Member
+  getIt.registerLazySingleton<MemberViewModel>(
+    () => MemberViewModel(repository: getIt<MemberRepository>()),
+  );
+
+  // Shop
   getIt.registerLazySingleton<ShopViewModel>(
     () => ShopViewModel(
       repository: getIt<ShopRepository>(),
       memberViewModel: getIt<MemberViewModel>(),
     ),
   );
+
+  // Transaction(상점 구매/판매, 아이템 사용, 알 시간 적용 등)
   getIt.registerLazySingleton<TransactionViewModel>(
     () => TransactionViewModel(
       repository: getIt<TransactionRepository>(),
       memberViewModel: getIt<MemberViewModel>(),
     ),
   );
+
+  // Timer 관련
   getIt.registerLazySingleton<TimerOptionsViewModel>(
     () => TimerOptionsViewModel(repository: getIt<TimerOptionsRepository>()),
   );

@@ -22,12 +22,14 @@ import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
+  // 환경 변수 로드
   await dotenv.load(fileName: ".env");
 
-  // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
+  // Flutter 엔진과 위젯 트리 바인딩
+  // https://stackoverflow.com/questions/63873338/what-does-widgetsflutterbinding-ensureinitialized-do
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 세로모드 고정
+  // 디바이스 오리엔테이션 설정(세로모드 고정)
   SystemChrome.setPreferredOrientations(
     [
       DeviceOrientation.portraitUp,
@@ -35,17 +37,19 @@ Future<void> main() async {
     ],
   );
 
-  // runApp() 호출 전 Flutter SDK 초기화
+  // 카카오 SDK 초기화
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_KEY']!,
     javaScriptAppKey: dotenv.env['KAKAO_JS_APP_KEY']!,
   );
 
-  // 권한 허용
+  // 로컬 알림 초기화
   LocalNotificationUtil.initialization();
   LocalNotificationUtil.permissionWithNotification();
 
+  // DI 설정
   await setupLocator();
+
   runApp(
     const MyApp(),
   );

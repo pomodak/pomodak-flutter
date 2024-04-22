@@ -9,11 +9,16 @@
 
 - [x] 내정보 수정
 - [x] timer-options modal
-- [ ] 계정 삭제
 - [x] local notification
 - [x] vibration alarm
 - [x] timerPage keep screen
 - [x] confetti
 - [x] streak grade tooltip
-- [ ] character collection
 - [x] together timer
+
+- [ ] feature: 계정 삭제
+- [ ] feature: character collection
+- [ ] enhancement: improve heatmap tip
+- [ ] feature: allow users to change system settings, such as vibration, on timer-page
+- [ ] feature: character inventory sorting
+- [ ] feature: check for app updates available in market & display alert dialog

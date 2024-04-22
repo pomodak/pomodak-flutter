@@ -22,3 +22,4 @@
 - [ ] feature: allow users to change system settings, such as vibration, on timer-page
 - [ ] feature: character inventory sorting
 - [ ] feature: check for app updates available in market & display alert dialog
+- [ ] feature: add Google AdMob

@@ -3,10 +3,10 @@ import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.da
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_character_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_item_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_palette_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_point_acquisition_dialog.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_character_acquisition_dialog.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_item_acquisition_dialog.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_palette_acquisition_dialog.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_point_acquisition_dialog.dart';
 import 'package:provider/provider.dart';
 
 void showConsumeItemDialog(

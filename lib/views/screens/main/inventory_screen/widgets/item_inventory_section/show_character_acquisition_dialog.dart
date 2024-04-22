@@ -2,7 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/character_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_grade_badge.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/character_grade_badge.dart';
 
 void showCharacterAcquisitionDialog(
   BuildContext context,

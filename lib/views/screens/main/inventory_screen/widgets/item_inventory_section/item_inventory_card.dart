@@ -1,35 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/models/domain/character_inventory_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_grade_badge.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/show_sell_character_dialog.dart';
+import 'package:pomodak/models/domain/item_inventory_model.dart';
+import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_consume_item_dialog.dart';
 
-class CharacterCard extends StatelessWidget {
-  final CharacterInventoryModel characterInventory;
+class ItemInventoryCard extends StatelessWidget {
+  final ItemInventoryModel itemInventory;
 
-  const CharacterCard({super.key, required this.characterInventory});
+  const ItemInventoryCard({super.key, required this.itemInventory});
+
   @override
   Widget build(BuildContext context) {
-    var character = characterInventory.character;
+    var character = itemInventory.item;
+
+    void handleConsumeItem() {
+      showConsumeItemDialog(context, itemInventory);
+    }
+
     return Material(
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
-        onTap: () {
-          showSellCharacterDialog(
-            context,
-            characterInventory,
-            characterInventory.quantity,
-          );
-        },
+        onTap: handleConsumeItem,
         borderRadius: BorderRadius.circular(10),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(4),
           alignment: Alignment.center,
           child: AspectRatio(
-            aspectRatio: 3 / 5,
+            aspectRatio: 3 / 4,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CharacterGradeBadge(grade: character.grade),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
@@ -38,10 +36,10 @@ class CharacterCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                CharacterInfo(
+                ItemInventoryInfo(
                   name: character.name,
-                  sellPrice: character.sellPrice,
-                  quantity: characterInventory.quantity,
+                  cost: character.cost,
+                  quantity: itemInventory.quantity,
                 ),
               ],
             ),
@@ -52,15 +50,15 @@ class CharacterCard extends StatelessWidget {
   }
 }
 
-class CharacterInfo extends StatelessWidget {
+class ItemInventoryInfo extends StatelessWidget {
   final String name;
-  final int sellPrice;
+  final int cost;
   final int quantity;
 
-  const CharacterInfo({
+  const ItemInventoryInfo({
     super.key,
     required this.name,
-    required this.sellPrice,
+    required this.cost,
     required this.quantity,
   });
 
@@ -78,7 +76,7 @@ class CharacterInfo extends StatelessWidget {
           ),
         ),
         Text(
-          '$sellPrice원 | $quantity개',
+          '$quantity개',
           style: const TextStyle(
             fontSize: 13,
           ),

@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pomodak/config/constants/heatmap_color.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/utils/color_util.dart';
+import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_grade_badge.dart';
 
 class HeatMapPaletteTip extends StatelessWidget {
   final PaletteModel? palette;
@@ -13,23 +16,28 @@ class HeatMapPaletteTip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(width: 32),
-        Text(
-          '${palette?.grade ?? "common"}',
-          style: const TextStyle(
-            fontSize: 14,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HeatMapGradeBadge(grade: palette?.grade ?? PaletteGrade.common),
+              const SizedBox(height: 6),
+              palette != null
+                  ? Text(
+                      '${palette?.name} 팔레트',
+                      style: const TextStyle(fontSize: 12),
+                    )
+                  : const Text("기본 팔레트"),
+            ],
           ),
-        ),
-        const SizedBox(width: 8),
-        palette != null ? Text('${palette?.name} 팔레트') : const Text("기본 팔레트"),
-        const SizedBox(width: 8),
-        _PaletteDisplay(
-          palette: palette,
-        ),
-      ],
+          _PaletteDisplay(palette: palette),
+        ],
+      ),
     );
   }
 }
@@ -43,25 +51,54 @@ class _PaletteDisplay extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        for (var color in [
-          palette?.lightColor != null
-              ? Color(HexColor.fromHex(palette?.lightColor as String))
-              : Colors.green.shade100,
-          palette?.normalColor != null
-              ? Color(HexColor.fromHex(palette?.normalColor as String))
-              : Colors.green.shade300,
-          palette?.darkColor != null
-              ? Color(HexColor.fromHex(palette?.darkColor as String))
-              : Colors.green.shade500,
-          palette?.darkerColor != null
-              ? Color(HexColor.fromHex(palette?.darkerColor as String))
-              : Colors.green.shade700,
+        for (var item in [
+          HeatMapPaletteTipItem(
+            color: palette?.lightColor != null
+                ? Color(HexColor.fromHex(palette?.lightColor as String))
+                : HeatMapColor.defaultLightColor,
+            text: "0~2",
+          ),
+          HeatMapPaletteTipItem(
+            color: palette?.normalColor != null
+                ? Color(HexColor.fromHex(palette?.normalColor as String))
+                : HeatMapColor.defaultNormalColor,
+            text: "2~4",
+          ),
+          HeatMapPaletteTipItem(
+            color: palette?.darkColor != null
+                ? Color(HexColor.fromHex(palette?.darkColor as String))
+                : HeatMapColor.defaultDarkColor,
+            text: "4~6",
+          ),
+          HeatMapPaletteTipItem(
+            color: palette?.darkerColor != null
+                ? Color(HexColor.fromHex(palette?.darkerColor as String))
+                : HeatMapColor.defaultDarkerColor,
+            text: "6~",
+          ),
         ])
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Container(color: color, width: 20, height: 20),
+            child: Column(
+              children: [
+                Container(color: item.color, width: 20, height: 20),
+                item.text != null
+                    ? Text(
+                        item.text!,
+                        style: const TextStyle(fontSize: 12),
+                      )
+                    : const SizedBox()
+              ],
+            ),
           ),
       ],
     );
   }
+}
+
+class HeatMapPaletteTipItem {
+  final Color color;
+  final String? text;
+
+  const HeatMapPaletteTipItem({required this.color, this.text});
 }

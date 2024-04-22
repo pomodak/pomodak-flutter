@@ -36,16 +36,16 @@ class UserHeatMap extends StatelessWidget {
           size: 32,
           colorsets: {
             1: palette != null
-                ? Color(HexColor.fromHex(palette.lightColor))
+                ? Color(HexColor.fromHex(palette.lightColor)) // 0 ~ 2 시간
                 : Colors.green.shade100,
-            3600: palette != null
-                ? Color(HexColor.fromHex(palette.normalColor))
+            7200: palette != null
+                ? Color(HexColor.fromHex(palette.normalColor)) // 2 ~ 4 시간
                 : Colors.green.shade300,
-            10800: palette != null
-                ? Color(HexColor.fromHex(palette.darkColor))
+            14400: palette != null
+                ? Color(HexColor.fromHex(palette.darkColor)) // 4 ~ 6 시간
                 : Colors.green.shade500,
-            18000: palette != null
-                ? Color(HexColor.fromHex(palette.darkerColor))
+            21600: palette != null
+                ? Color(HexColor.fromHex(palette.darkerColor)) // 6 ~ 8 시간
                 : Colors.green.shade700,
           },
           onClick: (value) {

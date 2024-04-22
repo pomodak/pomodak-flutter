@@ -18,7 +18,7 @@
 
 - [x] feature: 계정 삭제
 - [ ] feature: character collection
-- [ ] enhancement: improve heatmap tip
+- [x] enhancement: improve heatmap tip
 - [ ] feature: allow users to change system settings, such as vibration, on timer-page
 - [ ] feature: character inventory sorting
 - [ ] feature: check for app updates available in market & display alert dialog

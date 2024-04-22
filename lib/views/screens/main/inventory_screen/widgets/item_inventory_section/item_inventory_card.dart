@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_consume_item_dialog.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 
 class ItemInventoryCard extends StatelessWidget {
   final ItemInventoryModel itemInventory;
@@ -12,7 +12,7 @@ class ItemInventoryCard extends StatelessWidget {
     var character = itemInventory.item;
 
     void handleConsumeItem() {
-      showConsumeItemDialog(context, itemInventory);
+      TransactionDialogManager.showConsumeItemDialog(context, itemInventory);
     }
 
     return Material(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
-import 'package:pomodak/views/screens/main/more_screen/widgets/show_delete_account_dialog.dart';
-import 'package:pomodak/views/screens/main/more_screen/widgets/show_logout_dialog.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
 import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +93,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  showDeleteAccountDialog(context);
+                  TransactionDialogManager.showDeleteAccountDialog(context);
                 },
               ),
               ListTile(
@@ -110,7 +109,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  showLogoutDialog(context);
+                  TransactionDialogManager.showLogoutDialog(context);
                 },
               ),
               const Padding(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/character_grade_badge.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/show_sell_character_dialog.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterInventoryModel characterInventory;
@@ -14,7 +14,7 @@ class CharacterCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: () {
-          showSellCharacterDialog(
+          TransactionDialogManager.showSellCharacterDialog(
             context,
             characterInventory,
             characterInventory.quantity,

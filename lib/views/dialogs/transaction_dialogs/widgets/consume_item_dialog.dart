@@ -4,39 +4,38 @@ import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:pomodak/views/dialogs/acquisition_dialogs/acquisition_dialog_manager.dart';
 import 'package:provider/provider.dart';
 
-void showConsumeItemDialog(
-  BuildContext context,
-  ItemInventoryModel inventory,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDialogTitle(inventory.item.name),
-                  const SizedBox(height: 4),
-                  Text(inventory.item.description,
-                      style: const TextStyle(fontSize: 14)),
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context, inventory),
-                ],
-              );
-            })),
-      );
-    },
-  );
+class ConsumeItemDialog extends StatelessWidget {
+  final ItemInventoryModel inventory;
+
+  const ConsumeItemDialog({super.key, required this.inventory});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDialogTitle(inventory.item.name),
+                const SizedBox(height: 4),
+                Text(inventory.item.description,
+                    style: const TextStyle(fontSize: 14)),
+                const SizedBox(height: 16),
+                _buildActionButtons(context, inventory),
+              ],
+            );
+          })),
+    );
+  }
 }
 
 Widget _buildDialogTitle(String name) {

@@ -3,41 +3,43 @@ import 'package:pomodak/models/domain/item_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:provider/provider.dart';
 
-void showBuyItemDialog(BuildContext context, ItemModel item, int maxCount) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      int count = 1;
+class BuyItemDialog extends StatelessWidget {
+  final ItemModel item;
+  final int maxCount;
 
-      return Dialog(
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDialogTitle(item.name),
-                  const SizedBox(height: 4),
-                  Text(item.description, style: const TextStyle(fontSize: 14)),
-                  const SizedBox(height: 16),
-                  _buildQuantitySelector(context, count, maxCount, item.cost,
-                      (newCount) => count = newCount, setState),
-                  _buildTotalCost(item.cost * count),
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context, item, count),
-                ],
-              );
-            })),
-      );
-    },
-  );
+  const BuyItemDialog({super.key, required this.item, required this.maxCount});
+
+  @override
+  Widget build(BuildContext context) {
+    int count = 1;
+    return Dialog(
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDialogTitle(item.name),
+                const SizedBox(height: 4),
+                Text(item.description, style: const TextStyle(fontSize: 14)),
+                const SizedBox(height: 16),
+                _buildQuantitySelector(context, count, maxCount, item.cost,
+                    (newCount) => count = newCount, setState),
+                _buildTotalCost(item.cost * count),
+                const SizedBox(height: 16),
+                _buildActionButtons(context, item, count),
+              ],
+            );
+          })),
+    );
+  }
 }
 
 Widget _buildDialogTitle(String name) {

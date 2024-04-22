@@ -132,7 +132,7 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                PaletteDisplay(palette: newPalette),
+                _PaletteDisplay(palette: newPalette),
                 const SizedBox(height: 16),
                 PaletteGradeBadge(grade: newPalette.grade),
                 const SizedBox(height: 8),
@@ -140,7 +140,7 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
-                ActionButtons(
+                _ActionButtons(
                   quantityLeft: quantityLeft,
                   onReConsume: handleReConsume,
                   onConfirm: handleConfirm,
@@ -163,10 +163,10 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
   }
 }
 
-class PaletteDisplay extends StatelessWidget {
+class _PaletteDisplay extends StatelessWidget {
   final PaletteModel palette;
 
-  const PaletteDisplay({super.key, required this.palette});
+  const _PaletteDisplay({required this.palette});
 
   @override
   Widget build(BuildContext context) {
@@ -189,13 +189,12 @@ class PaletteDisplay extends StatelessWidget {
   }
 }
 
-class ActionButtons extends StatelessWidget {
+class _ActionButtons extends StatelessWidget {
   final int quantityLeft;
   final VoidCallback onReConsume;
   final VoidCallback onConfirm;
 
-  const ActionButtons({
-    super.key,
+  const _ActionButtons({
     required this.quantityLeft,
     required this.onReConsume,
     required this.onConfirm,

@@ -2,38 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
-void showLogoutDialog(
-  BuildContext context,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "로그아웃 하시겠습니까?",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context),
-                ],
-              );
-            })),
-      );
-    },
-  );
+class DeleteAccountDialog extends StatelessWidget {
+  const DeleteAccountDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "정말 계정을 삭제하시겠습니까?",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  "서버에 저장된 모든 데이터가 삭제되며 데이터를 복구할 수 없습니다.",
+                  style: TextStyle(fontSize: 14, color: Colors.red),
+                ),
+                const SizedBox(height: 16),
+                _buildActionButtons(context),
+              ],
+            );
+          })),
+    );
+  }
 }
 
 Widget _buildActionButtons(BuildContext context) {
@@ -41,8 +43,8 @@ Widget _buildActionButtons(BuildContext context) {
     builder: (BuildContext context, StateSetter setState) {
       final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
 
-      void handleLogout() async {
-        await authViewModel.logOut();
+      void handleDeleteAccount() async {
+        await authViewModel.deleteAccount();
         (mounted) {
           Navigator.of(context).pop(); // 현재 대화상자를 닫음
         };
@@ -74,7 +76,7 @@ Widget _buildActionButtons(BuildContext context) {
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              onPressed: handleLogout,
+              onPressed: handleDeleteAccount,
               child: const Text(
                 "확인",
                 style: TextStyle(color: Colors.white),

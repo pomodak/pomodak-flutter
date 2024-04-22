@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/item_model.dart';
-import 'package:pomodak/views/screens/main/shop_screen/widgets/show_buy_item_dialog.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 
 class ShopListItem extends StatelessWidget {
   final ItemModel item;
@@ -16,7 +16,8 @@ class ShopListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: InkWell(
         onTap: () {
-          showBuyItemDialog(context, item, item.itemType == "Food" ? 4 : 20);
+          TransactionDialogManager.showBuyItemDialog(
+              context, item, item.itemType == "Food" ? 4 : 20);
         },
         borderRadius: BorderRadius.circular(10),
         child: Padding(

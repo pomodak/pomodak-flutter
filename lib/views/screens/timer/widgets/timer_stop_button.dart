@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
+import 'package:pomodak/views/dialogs/transaction_dialogs/widgets/stop_timer_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TimerStopButton extends StatelessWidget {
@@ -13,22 +14,24 @@ class TimerStopButton extends StatelessWidget {
     final timerOptions = Provider.of<TimerOptionsViewModel>(context);
     final timerState = Provider.of<TimerStateViewModel>(context, listen: false);
 
+    final StopTimerDialogType dialogType;
     if (!timerOptions.isPomodoroMode) {
+      dialogType = StopTimerDialogType.stop;
       text = "Stop";
     } else {
       if (timerState.pomodoroMode == PomodoroMode.focus) {
+        dialogType = StopTimerDialogType.giveUp;
         text = "Give up";
       } else {
+        dialogType = StopTimerDialogType.pass;
         text = "Pass";
       }
     }
 
     return ElevatedButton(
-      onPressed: () => _showConfirmationDialog(
+      onPressed: () => TransactionDialogManager.showStopTimerDialog(
         context,
-        text,
-        timerOptions,
-        timerState,
+        dialogType,
       ),
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 48),
@@ -43,56 +46,6 @@ class TimerStopButton extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
-
-  void _showConfirmationDialog(BuildContext context, String text,
-      TimerOptionsViewModel timerOptions, TimerStateViewModel timerState) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            "정말 멈추시겠습니까?",
-            style: TextStyle(fontSize: 24),
-          ),
-          surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("취소"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              onPressed: () {
-                if (timerOptions.isPomodoroMode) {
-                  if (timerState.pomodoroMode == PomodoroMode.focus) {
-                    timerState.pomodoroGiveUp();
-                  } else {
-                    timerState.pomodoroPass();
-                    context.go("/");
-                  }
-                } else {
-                  timerState.normalEnd();
-                }
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                "확인",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

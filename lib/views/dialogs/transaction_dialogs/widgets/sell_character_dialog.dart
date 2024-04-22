@@ -3,51 +3,50 @@ import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:provider/provider.dart';
 
-void showSellCharacterDialog(
-  BuildContext context,
-  CharacterInventoryModel inventory,
-  int maxCount,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      int count = 1;
+class SellCharacterDialog extends StatelessWidget {
+  final CharacterInventoryModel inventory;
+  final int maxCount;
 
-      return Dialog(
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDialogTitle(inventory.character.name),
-                  const SizedBox(height: 4),
-                  Text(inventory.character.description,
-                      style: const TextStyle(fontSize: 14)),
-                  const SizedBox(height: 16),
-                  _buildQuantitySelector(
-                      context,
-                      count,
-                      maxCount,
-                      inventory.character.sellPrice,
-                      (newCount) => count = newCount,
-                      setState),
-                  _buildTotalCost(inventory.character.sellPrice * count),
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context, inventory, count),
-                ],
-              );
-            })),
-      );
-    },
-  );
+  const SellCharacterDialog(
+      {super.key, required this.inventory, required this.maxCount});
+
+  @override
+  Widget build(BuildContext context) {
+    int count = 1;
+    return Dialog(
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDialogTitle(inventory.character.name),
+                const SizedBox(height: 4),
+                Text(inventory.character.description,
+                    style: const TextStyle(fontSize: 14)),
+                const SizedBox(height: 16),
+                _buildQuantitySelector(
+                    context,
+                    count,
+                    maxCount,
+                    inventory.character.sellPrice,
+                    (newCount) => count = newCount,
+                    setState),
+                _buildTotalCost(inventory.character.sellPrice * count),
+                const SizedBox(height: 16),
+                _buildActionButtons(context, inventory, count),
+              ],
+            );
+          })),
+    );
+  }
 }
 
 Widget _buildDialogTitle(String name) {

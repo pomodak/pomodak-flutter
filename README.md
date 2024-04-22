@@ -16,7 +16,7 @@
 - [x] streak grade tooltip
 - [x] together timer
 
-- [ ] feature: 계정 삭제
+- [x] feature: 계정 삭제
 - [ ] feature: character collection
 - [ ] enhancement: improve heatmap tip
 - [ ] feature: allow users to change system settings, such as vibration, on timer-page

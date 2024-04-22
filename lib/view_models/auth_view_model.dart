@@ -154,6 +154,15 @@ class AuthViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteAccount() async {
+    await repository.deleteAccount();
+    _isLoggedIn = false;
+    _account = null;
+
+    await memberViewModel.clearMemberData();
+    notifyListeners();
+  }
+
   // 앱 시작 시 실행하는 로직
   Future<void> onAppStart() async {
     await loadAccount();

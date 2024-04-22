@@ -33,6 +33,9 @@ abstract class AuthRemoteDataSource {
   Future<BaseApiResponse<LoginResponse>> kakaoLoginApi({
     required String accessToken,
   });
+
+  // 계정 탈퇴
+  Future<void> deleteAccountApi();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -151,6 +154,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteAccountApi() async {
+    try {
+      await apiService.getDeleteApiResponse('$_nestApiEndpoint/auth/me', {});
     } catch (e) {
       rethrow;
     }

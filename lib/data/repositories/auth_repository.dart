@@ -133,6 +133,17 @@ class AuthRepository {
     }
   }
 
+  // 계정 삭제
+  Future<void> deleteAccount() async {
+    try {
+      await remoteDataSource.deleteAccountApi();
+      await localDataSource.deleteAccount();
+    } catch (e) {
+      logOut();
+      rethrow;
+    }
+  }
+
   // 저장소를 확인하여 계정 반환 (에러 발생시 저장소 초기화)
   Future<AccountModel?> getAccount() async {
     try {

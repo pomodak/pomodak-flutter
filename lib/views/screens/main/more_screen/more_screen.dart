@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
-import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/views/screens/main/more_screen/widgets/show_delete_account_dialog.dart';
+import 'package:pomodak/views/screens/main/more_screen/widgets/show_logout_dialog.dart';
 import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
 import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,6 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var authViewModel = Provider.of<AuthViewModel>(context);
     var appViewModel = Provider.of<AppViewModel>(context);
     return Scaffold(
       appBar: AppBar(
@@ -93,7 +93,9 @@ class MoreScreen extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  showDeleteAccountDialog(context);
+                },
               ),
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -107,8 +109,8 @@ class MoreScreen extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                onTap: () async {
-                  await authViewModel.logOut();
+                onTap: () {
+                  showLogoutDialog(context);
                 },
               ),
               const Padding(

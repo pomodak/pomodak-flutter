@@ -2,20 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_model.dart';
 
-void showItemAcquisitionDialog(
-  BuildContext context,
-  ConsumableItemAcquisition result,
-) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    barrierColor: Colors.white,
-    builder: (BuildContext context) => ItemAcquisitionDialog(
-      result: result,
-    ),
-  );
-}
-
 class ItemAcquisitionDialog extends StatelessWidget {
   final ConsumableItemAcquisition result;
 

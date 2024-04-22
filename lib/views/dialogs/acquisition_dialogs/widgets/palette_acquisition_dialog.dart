@@ -1,27 +1,13 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
-import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/utils/color_util.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
+import 'package:pomodak/views/widgets/palette_grade_badge.dart';
 import 'package:provider/provider.dart';
-
-void showPaletteAcquisitionDialog(
-  BuildContext context,
-  PaletteAcquisition result,
-  ItemInventoryModel inventory,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => PaletteAcquisitionDialog(
-      inventory: inventory,
-      initialPalette: result.palette,
-    ),
-  );
-}
 
 class PaletteAcquisitionDialog extends StatefulWidget {
   final ItemInventoryModel inventory;
@@ -39,7 +25,7 @@ class PaletteAcquisitionDialog extends StatefulWidget {
 }
 
 class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
-  late int localQuantity;
+  late int quantityLeft;
   late PaletteModel newPalette;
   Key _confettiKey = UniqueKey(); // 재뽑기 시 confetti widget 초기화를 위한 키
   late ConfettiController confettiController;
@@ -51,7 +37,7 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
   @override
   void initState() {
     super.initState();
-    localQuantity = widget.inventory.quantity - 1;
+    quantityLeft = widget.inventory.quantity - 1;
     newPalette = widget.initialPalette;
     setConfettiProperties(newPalette);
     confettiController = ConfettiController(
@@ -69,7 +55,7 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
   void handleConfirm() => Navigator.of(context).pop();
 
   void handleReConsume() async {
-    if (localQuantity < 1) {
+    if (quantityLeft < 1) {
       MessageUtil.showErrorToast("개수가 부족합니다.");
       return;
     }
@@ -82,7 +68,7 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
 
     if (data?.result == acquisitionResults['palette']) {
       setState(() {
-        localQuantity -= 1;
+        quantityLeft -= 1;
         newPalette = data.palette;
         _confettiKey = UniqueKey();
       });
@@ -146,22 +132,16 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _PaletteDisplay(palette: newPalette),
+                PaletteDisplay(palette: newPalette),
                 const SizedBox(height: 16),
-                Text(
-                  '${newPalette.grade} 등급',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                PaletteGradeBadge(grade: newPalette.grade),
                 const SizedBox(height: 8),
                 Text(newPalette.name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
-                _ActionButtons(
-                  localQuantity: localQuantity,
+                ActionButtons(
+                  quantityLeft: quantityLeft,
                   onReConsume: handleReConsume,
                   onConfirm: handleConfirm,
                 ),
@@ -183,10 +163,10 @@ class _PaletteAcquisitionDialogState extends State<PaletteAcquisitionDialog> {
   }
 }
 
-class _PaletteDisplay extends StatelessWidget {
+class PaletteDisplay extends StatelessWidget {
   final PaletteModel palette;
 
-  const _PaletteDisplay({required this.palette});
+  const PaletteDisplay({super.key, required this.palette});
 
   @override
   Widget build(BuildContext context) {
@@ -209,13 +189,14 @@ class _PaletteDisplay extends StatelessWidget {
   }
 }
 
-class _ActionButtons extends StatelessWidget {
-  final int localQuantity;
+class ActionButtons extends StatelessWidget {
+  final int quantityLeft;
   final VoidCallback onReConsume;
   final VoidCallback onConfirm;
 
-  const _ActionButtons({
-    required this.localQuantity,
+  const ActionButtons({
+    super.key,
+    required this.quantityLeft,
     required this.onReConsume,
     required this.onConfirm,
   });
@@ -231,7 +212,7 @@ class _ActionButtons extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6))),
             onPressed: onReConsume,
-            child: Text("다시뽑기 x $localQuantity"),
+            child: Text("다시뽑기 x $quantityLeft"),
           ),
         ),
         const SizedBox(width: 8),

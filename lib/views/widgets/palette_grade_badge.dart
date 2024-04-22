@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 
-class HeatMapGradeBadge extends StatelessWidget {
+class PaletteGradeBadge extends StatelessWidget {
   final PaletteGrade grade;
 
-  const HeatMapGradeBadge({
+  const PaletteGradeBadge({
     super.key,
     required this.grade,
   });

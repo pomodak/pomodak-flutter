@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
-import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_character_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_item_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_palette_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_point_acquisition_dialog.dart';
+import 'package:pomodak/views/dialogs/acquisition_dialogs/acquisition_dialog_manager.dart';
 import 'package:provider/provider.dart';
 
 void showConsumeItemDialog(
@@ -60,20 +55,11 @@ Widget _buildActionButtons(BuildContext context, ItemInventoryModel inventory) {
       void handleConsumeItemResult(dynamic data) {
         Navigator.of(context).pop(); // 현재 대화상자를 닫음
 
-        // 결과에 따라 적절한 모달 열기
-        if (data.result == acquisitionResults['consumableItem']) {
-          var result = (data as ConsumableItemAcquisition);
-          showItemAcquisitionDialog(context, result);
-        } else if (data.result == acquisitionResults['character']) {
-          var result = (data as CharacterAcquisition);
-          showCharacterAcquisitionDialog(context, result);
-        } else if (data.result == acquisitionResults['palette']) {
-          var result = (data as PaletteAcquisition);
-          showPaletteAcquisitionDialog(context, result, inventory);
-        } else if (data.result == acquisitionResults['point']) {
-          var result = (data as PointAcquisition);
-          showPointAcquisitionDialog(context, result);
-        }
+        AcquisitionDialogManager.showAcquisitionDialog(
+          context,
+          data,
+          inventory,
+        );
       }
 
       void handleConsumeItem() async {

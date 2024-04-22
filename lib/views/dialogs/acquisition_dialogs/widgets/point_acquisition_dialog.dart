@@ -1,18 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 
-void showPointAcquisitionDialog(
-  BuildContext context,
-  PointAcquisition result,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => PointAcquisitionDialog(
-      result: result,
-    ),
-  );
-}
-
 class PointAcquisitionDialog extends StatelessWidget {
   final PointAcquisition result;
 

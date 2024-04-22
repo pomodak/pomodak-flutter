@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pomodak/config/constants/heatmap_color.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/utils/color_util.dart';
-import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap_grade_badge.dart';
+import 'package:pomodak/views/widgets/palette_grade_badge.dart';
 
 class HeatMapPaletteTip extends StatelessWidget {
   final PaletteModel? palette;
@@ -25,7 +25,7 @@ class HeatMapPaletteTip extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeatMapGradeBadge(grade: palette?.grade ?? PaletteGrade.common),
+              PaletteGradeBadge(grade: palette?.grade ?? PaletteGrade.common),
               const SizedBox(height: 6),
               palette != null
                   ? Text(

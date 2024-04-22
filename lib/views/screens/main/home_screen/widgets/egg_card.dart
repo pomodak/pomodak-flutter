@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_character_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_item_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_palette_acquisition_dialog.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/item_inventory_section/show_point_acquisition_dialog.dart';
+import 'package:pomodak/views/dialogs/acquisition_dialogs/acquisition_dialog_manager.dart';
 import 'package:provider/provider.dart';
 
 class EggCard extends StatelessWidget {
@@ -75,14 +71,10 @@ class EggCard extends StatelessWidget {
   }
 
   void _handleConsumeItemResult(BuildContext context, dynamic data) {
-    if (data.result == acquisitionResults['consumableItem']) {
-      showItemAcquisitionDialog(context, data);
-    } else if (data.result == acquisitionResults['character']) {
-      showCharacterAcquisitionDialog(context, data);
-    } else if (data.result == acquisitionResults['palette']) {
-      showPaletteAcquisitionDialog(context, data, itemInventory);
-    } else if (data.result == acquisitionResults['point']) {
-      showPointAcquisitionDialog(context, data);
-    }
+    AcquisitionDialogManager.showAcquisitionDialog(
+      context,
+      data,
+      itemInventory,
+    );
   }
 }

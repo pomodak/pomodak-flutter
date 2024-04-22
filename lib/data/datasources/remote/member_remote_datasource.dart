@@ -14,16 +14,16 @@ import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/models/domain/streak_model.dart';
 
 abstract class MemberRemoteDataSource {
-  Future<MemberModel?> fetchMember();
-  Future<PaletteModel?> fetchMemberPalette(String memberId);
-  Future<List<CharacterInventoryModel>> fetchMemberCharacterInventory(
+  Future<MemberModel?> fetchMemberApi();
+  Future<PaletteModel?> fetchMemberPaletteApi(String memberId);
+  Future<List<CharacterInventoryModel>> fetchMemberCharacterInventoryApi(
     String memberId,
   );
-  Future<List<ItemInventoryModel>> fetchMemberItemInventory(
+  Future<List<ItemInventoryModel>> fetchMemberItemInventoryApi(
     String memberId,
     ItemType itemType,
   );
-  Future<void> updateMember(
+  Future<void> updateMemberApi(
     String memberId,
     String nickname,
     String imageUrl,
@@ -38,7 +38,7 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
   MemberRemoteDataSourceImpl({required this.apiService});
 
   @override
-  Future<MemberModel?> fetchMember() async {
+  Future<MemberModel?> fetchMemberApi() async {
     try {
       Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
         '$_nestApiEndpoint/members/me',
@@ -56,7 +56,7 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
   }
 
   @override
-  Future<PaletteModel?> fetchMemberPalette(String memberId) async {
+  Future<PaletteModel?> fetchMemberPaletteApi(String memberId) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
         '$_nestApiEndpoint/members/$memberId/study-streak',
@@ -73,7 +73,7 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
   }
 
   @override
-  Future<List<CharacterInventoryModel>> fetchMemberCharacterInventory(
+  Future<List<CharacterInventoryModel>> fetchMemberCharacterInventoryApi(
       String memberId) async {
     try {
       Map<String, dynamic> responseJson = await apiService.getGetApiResponse(
@@ -93,7 +93,7 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
   }
 
   @override
-  Future<List<ItemInventoryModel>> fetchMemberItemInventory(
+  Future<List<ItemInventoryModel>> fetchMemberItemInventoryApi(
     String memberId,
     ItemType itemType,
   ) async {
@@ -114,7 +114,7 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
   }
 
   @override
-  Future<void> updateMember(
+  Future<void> updateMemberApi(
     String memberId,
     String nickname,
     String imageUrl,

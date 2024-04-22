@@ -23,7 +23,7 @@ class MemberRepository {
         final localData = localDataSource.getMember();
         if (localData != null) return localData;
       }
-      final remoteData = await remoteDataSource.fetchMember();
+      final remoteData = await remoteDataSource.fetchMemberApi();
       if (remoteData != null) {
         await localDataSource.saveMember(remoteData);
       }
@@ -36,7 +36,7 @@ class MemberRepository {
 
   Future<PaletteModel?> getMemberPalette(String memberId) async {
     try {
-      return await remoteDataSource.fetchMemberPalette(memberId);
+      return await remoteDataSource.fetchMemberPaletteApi(memberId);
     } catch (e) {
       rethrow;
     }
@@ -46,7 +46,7 @@ class MemberRepository {
     String memberId,
   ) async {
     try {
-      return await remoteDataSource.fetchMemberCharacterInventory(memberId);
+      return await remoteDataSource.fetchMemberCharacterInventoryApi(memberId);
     } catch (e) {
       rethrow;
     }
@@ -57,7 +57,7 @@ class MemberRepository {
     ItemType itemType,
   ) async {
     try {
-      return await remoteDataSource.fetchMemberItemInventory(
+      return await remoteDataSource.fetchMemberItemInventoryApi(
         memberId,
         itemType,
       );
@@ -69,7 +69,7 @@ class MemberRepository {
   Future<void> updateMemberInfo(String memberId, String nickname,
       String imageUrl, String statusMessage) async {
     try {
-      await remoteDataSource.updateMember(
+      await remoteDataSource.updateMemberApi(
           memberId, nickname, imageUrl, statusMessage);
 
       await getMember(forceUpdate: true);

@@ -26,3 +26,4 @@
 
 - [ ] feature: character collection
 - [ ] feature: add Google AdMob
+- [ ] feature: user guide

@@ -13,7 +13,7 @@ class FirebaseUtil {
     /* ##### 파이어베이스 매개변수 값 호출 ##### */
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 2),
+      minimumFetchInterval: const Duration(hours: 1),
     ));
     await remoteConfig.fetchAndActivate();
 

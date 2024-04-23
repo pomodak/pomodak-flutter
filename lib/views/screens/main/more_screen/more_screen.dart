@@ -4,6 +4,7 @@ import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_man
 import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
 import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
+import 'package:store_redirect/store_redirect.dart';
 import 'package:vibration/vibration.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -166,6 +167,23 @@ class MoreScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   showPrivacyPolicyModal(context);
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(
+                  Icons.star_outline,
+                  size: 20,
+                ),
+                title: const Text(
+                  '리뷰 작성하기',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                onTap: () {
+                  StoreRedirect.redirect(
+                      androidAppId: 'com.pomodak.twa', iOSAppId: 'none');
                 },
               ),
             ],

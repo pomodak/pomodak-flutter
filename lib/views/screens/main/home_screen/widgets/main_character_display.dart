@@ -6,20 +6,33 @@ import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:provider/provider.dart';
 
+final List<String> commonMessages = [
+  '저를 클릭해보세요!',
+  '날씨가 좋네요~',
+  '오늘도 화이팅!',
+  '다양한 캐릭터를 수집해보세요!',
+  '함께 공부할까요?',
+  '알을 구매하고 키워보세요!',
+];
+
 final List<String> focusMessages = [
-  "뽀모도로 집중 모드 메세지 1",
-  "뽀모도로 집중 모드 메세지 2",
-  "뽀모도로 집중 모드 메세지 3",
+  ...commonMessages,
+  '준비되셨나요?',
+  '집중력을 보여 주세요!',
+  '딴 짓 하지 마세요!',
+  '집중하면 뭐든 할 수 있어요!',
 ];
 final List<String> restMessages = [
-  "뽀모도로 휴식 모드 메세지 1",
-  "뽀모도로 휴식 모드 메세지 2",
-  "뽀모도로 휴식 모드 메세지 3",
+  ...commonMessages,
+  '쉬는 시간이에요!',
+  '조금만 쉬어요~~',
+  '잠깐 쉴래요 ㅜㅜ',
+  '지쳤어요 ㅜㅜ',
+  '윽!! 쓰러졌다!',
+  '조금만 쉬고 다시 화이팅해요!',
 ];
 final List<String> normalMessages = [
-  "일반 모드 메세지 1",
-  "일반 모드 메세지 2",
-  "일반 모드 메세지 3",
+  ...focusMessages,
 ];
 
 class MainCharacterDisplay extends StatefulWidget {

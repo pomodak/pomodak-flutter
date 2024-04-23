@@ -21,19 +21,26 @@ import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_mode
 import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:pomodak/views/widgets/bouncing_loading_icon.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   // 환경 변수 로드
   await dotenv.load(fileName: ".env");
 
+  // Flutter 엔진과 위젯 트리 바인딩
+  // https://stackoverflow.com/questions/63873338/what-does-widgetsflutterbinding-ensureinitialized-do
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // firebase 연동
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   String appVersion = packageInfo.version;
 
   print("### App Version : $appVersion");
-
-  // Flutter 엔진과 위젯 트리 바인딩
-  // https://stackoverflow.com/questions/63873338/what-does-widgetsflutterbinding-ensureinitialized-do
-  WidgetsFlutterBinding.ensureInitialized();
 
   // 디바이스 오리엔테이션 설정(세로모드 고정)
   SystemChrome.setPreferredOrientations(

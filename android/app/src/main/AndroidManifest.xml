@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.pomodak.twa">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- 재부팅 시 앱 실행 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- 진동 허용 -->
@@ -11,6 +12,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
     <application
         android:label="pomodak"
         android:name="${applicationName}"

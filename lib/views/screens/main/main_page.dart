@@ -27,8 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _pageController = PageController();
     _widgetOptions = [
-      HomeScreen(
-          onNavigateToShop: navigateToShop), // Now 'this' can be accessed
+      HomeScreen(onNavigateToShop: navigateToShop),
       const UserScreen(),
       const ShopScreen(),
       const InventoryScreen(),

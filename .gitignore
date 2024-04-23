@@ -44,3 +44,5 @@ app.*.map.json
 
 *.env
 signing.keystore
+GoogleService-Info.plist
+firebase.json

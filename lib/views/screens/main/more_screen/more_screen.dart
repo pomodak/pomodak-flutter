@@ -132,7 +132,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 trailing: Text(
-                  "1.0.21",
+                  "1.1.0",
                   style: TextStyle(fontSize: 14, letterSpacing: 1.2),
                 ),
               ),

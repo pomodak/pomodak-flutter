@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pomodak/di.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
@@ -24,6 +25,11 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   // 환경 변수 로드
   await dotenv.load(fileName: ".env");
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  String appVersion = packageInfo.version;
+
+  print("### App Version : $appVersion");
 
   // Flutter 엔진과 위젯 트리 바인딩
   // https://stackoverflow.com/questions/63873338/what-does-widgetsflutterbinding-ensureinitialized-do

@@ -24,6 +24,8 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
       TimerDifferenceHandler.instance;
   final TimerEndState _timerEndState = TimerEndState();
   bool _isBackgroundRunning = false; // 앱이 백그라운드에서 실행중인지 여부
+  AppLifecycleState?
+      _lastLifecycleState; // 직전 lifecycle 상태 (상단바를 내리고 다시 올릴 때 resume이 호출되는 문제 해결용)
 
   // Getter
   int get elapsedSeconds => _timerManager.elapsedSeconds;
@@ -71,10 +73,21 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused) {
-      _handleAppPaused();
-    } else if (state == AppLifecycleState.resumed) {
+
+    // 모바일 상다바를 내리고 다시 올릴 때 resume이 호출되기 때문에 pause 상태에서 resume으로 전환되는 경우만 처리
+    // 상단바를 내릴떄: inactive
+    // 상단바를 올릴때: resumed
+    // 포그라운드 전환: hidden -> inactive -> resumed
+    // 백그라운드 전환: inactive -> hidden -> paused
+    if (_lastLifecycleState == AppLifecycleState.paused &&
+        state == AppLifecycleState.resumed) {
       _handleAppResumed();
+
+      _lastLifecycleState = state;
+    } else if (state == AppLifecycleState.paused) {
+      _handleAppPaused();
+
+      _lastLifecycleState = state;
     }
   }
 

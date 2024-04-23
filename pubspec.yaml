@@ -63,6 +63,10 @@ dependencies:
   get_it: ^7.7.0
   package_info_plus: ^7.0.0
   firebase_core: ^2.30.0
+  firebase_remote_config: ^4.4.3
+  firebase_analytics: ^10.10.3
+  pub_semver: ^2.1.4
+  store_redirect: ^2.0.2
 
 dev_dependencies:
   flutter_test:

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pomodak/di.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
@@ -36,11 +35,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  String appVersion = packageInfo.version;
-
-  print("### App Version : $appVersion");
 
   // 디바이스 오리엔테이션 설정(세로모드 고정)
   SystemChrome.setPreferredOrientations(

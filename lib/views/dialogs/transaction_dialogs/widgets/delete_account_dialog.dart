@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -48,6 +49,7 @@ Widget _buildActionButtons(BuildContext context) {
         (mounted) {
           Navigator.of(context).pop(); // 현재 대화상자를 닫음
         };
+        MessageUtil.showSuccessToast("계정이 성공적으로 삭제되었습니다.");
       }
 
       return Row(

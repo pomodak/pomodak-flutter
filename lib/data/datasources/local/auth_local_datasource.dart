@@ -68,8 +68,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> deleteTokens() async {
-    await storage.delete(key: accessTokenKey);
-    await storage.delete(key: refreshTokenKey);
+    await storage.delete(
+      key: accessTokenKey,
+      aOptions: _androidOptions,
+    );
+    await storage.delete(
+      key: refreshTokenKey,
+      aOptions: _androidOptions,
+    );
   }
 
   @override
@@ -99,6 +105,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> deleteAccount() async {
-    await storage.delete(key: accountKey);
+    await storage.delete(
+      key: accountKey,
+      aOptions: _androidOptions,
+    );
   }
 }

@@ -44,6 +44,12 @@ Future<void> main() async {
     ],
   );
 
+  // 디바이스 상태바 색상 설정
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.white, // 하단 바
+    statusBarColor: Colors.white, // 상단 바
+  ));
+
   // 카카오 SDK 초기화
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_KEY']!,

@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
-        android:label="pomodak"
+        android:label="뽀모닭"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <!-- 푸시알림 화면 출력 -->

@@ -20,6 +20,6 @@
 - [ ] feature: character collection
 - [x] enhancement: improve heatmap tip
 - [ ] feature: allow users to change system settings, such as vibration, on timer-page
-- [ ] feature: character inventory sorting
+- [x] feature: character inventory sorting (grade, name, id)
 - [ ] feature: check for app updates available in market & display alert dialog
 - [ ] feature: add Google AdMob

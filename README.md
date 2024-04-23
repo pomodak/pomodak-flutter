@@ -5,7 +5,7 @@
 
 ### 플러터로 마이그레이션 진행중
 
-#### Task
+#### Task 1.1.0
 
 - [x] 내정보 수정
 - [x] timer-options modal
@@ -17,9 +17,12 @@
 - [x] together timer
 
 - [x] feature: 계정 삭제
-- [ ] feature: character collection
 - [x] enhancement: improve heatmap tip
 - [x] feature: allow users to change system settings, such as vibration, on timer-page
 - [x] feature: character inventory sorting (grade, name, id)
 - [ ] feature: check for app updates available in market & display alert dialog
+
+## Next Versions
+
+- [ ] feature: character collection
 - [ ] feature: add Google AdMob

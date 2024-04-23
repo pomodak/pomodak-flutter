@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/character_card.dart';
-import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/show_collection_modal.dart';
 import 'package:provider/provider.dart';
 
 enum SortOrder { ascending, descending }
@@ -38,26 +37,26 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
+        const Padding(
+          padding: EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "캐릭터",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              InkWell(
-                onTap: () => showCollectionModal(context),
-                borderRadius: BorderRadius.circular(8),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: Text("📚 도감 보기",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-              ),
+              // 다음 버전에서 추가 예정
+              // InkWell(
+              //   onTap: () => showCollectionModal(context),
+              //   borderRadius: BorderRadius.circular(8),
+              //   child: const Padding(
+              //     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              //     child: Text("📚 도감 보기",
+              //         style:
+              //             TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              //   ),
+              // ),
             ],
           ),
         ),

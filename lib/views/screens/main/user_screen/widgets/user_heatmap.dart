@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/color_util.dart';
 import 'package:pomodak/utils/format_util.dart';
+import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/heatmap/heatmap.dart';
@@ -52,9 +53,9 @@ class UserHeatMap extends StatelessWidget {
             String dateStr = value.toString().split(" ")[0];
             String totalSeconds =
                 FormatUtil.formatSeconds(datasets[value] ?? 0);
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$dateStr - $totalSeconds')));
+
+            MessageUtil.showSuccessToast(
+                'Date: $dateStr\nFocus: $totalSeconds');
           },
         ),
       ],

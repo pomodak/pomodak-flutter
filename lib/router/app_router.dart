@@ -13,6 +13,8 @@ import 'package:pomodak/views/screens/timer/timer_page.dart';
 import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
 import 'package:pomodak/views/screens/welcome_page.dart';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class AppRouter {
   final AppViewModel appViewModel;
   final AuthViewModel authViewModel;
@@ -32,6 +34,7 @@ class AppRouter {
       errorBuilder: (context, state) =>
           ErrorPage(error: state.error.toString()),
       redirect: _redirectLogic,
+      navigatorKey: navigatorKey,
     );
   }
 

@@ -97,6 +97,15 @@ class MyApp extends StatelessWidget {
               title: "뽀모닭",
               theme: AppTheme.lightTheme,
               routerConfig: goRouter,
+              builder: (context, child) => Overlay(
+                initialEntries: [
+                  if (child != null) ...[
+                    OverlayEntry(
+                      builder: (context) => child,
+                    ),
+                  ],
+                ],
+              ),
             ),
           );
         },

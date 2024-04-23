@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/config/constants/app_info.dart';
 import 'package:store_redirect/store_redirect.dart';
 
 class AppUpdateDialog extends StatelessWidget {
@@ -25,7 +26,7 @@ class AppUpdateDialog extends StatelessWidget {
           onPressed: () async {
             // 앱 업데이트
             StoreRedirect.redirect(
-                androidAppId: 'com.pomodak.twa', iOSAppId: 'none');
+                androidAppId: AppInfo.androidAppId, iOSAppId: AppInfo.iOSAppId);
           },
           child: const Text(
             "업데이트",

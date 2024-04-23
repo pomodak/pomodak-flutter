@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodak/config/constants/app_info.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
@@ -133,7 +134,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 trailing: Text(
-                  "1.1.0",
+                  AppInfo.version,
                   style: TextStyle(fontSize: 14, letterSpacing: 1.2),
                 ),
               ),
@@ -183,7 +184,8 @@ class MoreScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   StoreRedirect.redirect(
-                      androidAppId: 'com.pomodak.twa', iOSAppId: 'none');
+                      androidAppId: AppInfo.androidAppId,
+                      iOSAppId: AppInfo.iOSAppId);
                 },
               ),
             ],

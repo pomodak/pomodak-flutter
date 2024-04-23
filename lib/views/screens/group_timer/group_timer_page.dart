@@ -6,6 +6,7 @@ import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
 import 'package:pomodak/views/screens/group_timer/widgets/members_grid_view.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
+import 'package:pomodak/views/screens/timer/widgets/timer_setting_toggle.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -27,7 +28,6 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
     // 위젯이 완전히 빌드된 뒤 실행함
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startTimer();
-      _maybeEnableWakeLock();
       _connectToSocket();
     });
   }
@@ -36,13 +36,6 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
     final timerStateViewModel =
         Provider.of<TimerStateViewModel>(context, listen: false);
     timerStateViewModel.timerStart();
-  }
-
-  void _maybeEnableWakeLock() {
-    final appViewModel = Provider.of<AppViewModel>(context, listen: false);
-    if (appViewModel.keepScreenOn) {
-      WakelockPlus.enable();
-    }
   }
 
   @override
@@ -63,28 +56,54 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    var appViewModel = Provider.of<AppViewModel>(context);
+    return Scaffold(
       body: Column(
         children: [
-          Expanded(
-            flex: 3,
+          const Expanded(
+            flex: 5,
             child: MembersGridView(),
           ),
           Expanded(
-            flex: 2,
+            flex: 4,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   children: [
                     Expanded(
-                      child: TimerDisplay(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const TimerDisplay(),
+                          Row(
+                            children: [
+                              SettingToggle(
+                                isActive: appViewModel.vibration,
+                                icon: Icons.vibration,
+                                label: "진동",
+                                onTap: () => appViewModel.vibration =
+                                    !appViewModel.vibration,
+                              ),
+                              const SizedBox(width: 16),
+                              SettingToggle(
+                                isActive: appViewModel.keepScreenOn,
+                                icon: Icons.remove_red_eye_outlined,
+                                label: "화면",
+                                onTap: () => appViewModel.keepScreenOn =
+                                    !appViewModel.keepScreenOn,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         children: [
                           Row(
                             children: [
+                              SizedBox(height: 80),
                               TimerStopButton(),
                             ],
                           ),

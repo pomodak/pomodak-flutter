@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pomodak/data/repositories/app_options_repository.dart';
+import 'package:pomodak/utils/message_util.dart';
+import 'package:vibration/vibration.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 // 앱 설정 & 앱 초기화 여부 확인
 class AppViewModel with ChangeNotifier {
@@ -20,6 +23,7 @@ class AppViewModel with ChangeNotifier {
       vibration: _vibration,
       keepScreenOn: _keepScreenOn,
     );
+    _toggleVibration();
     notifyListeners();
   }
 
@@ -29,7 +33,27 @@ class AppViewModel with ChangeNotifier {
       vibration: _vibration,
       keepScreenOn: _keepScreenOn,
     );
+    _toggleWakeLock();
     notifyListeners();
+  }
+
+  void _toggleWakeLock() {
+    if (_keepScreenOn) {
+      WakelockPlus.enable();
+      MessageUtil.showSuccessToast("화면꺼짐 방지 on");
+    } else {
+      WakelockPlus.disable();
+      MessageUtil.showSuccessToast("화면꺼짐 방지 off");
+    }
+  }
+
+  Future<void> _toggleVibration() async {
+    if (_vibration) {
+      MessageUtil.showSuccessToast("휴대폰 진동이 켜져있나 확인해주세요!");
+      if (await Vibration.hasVibrator() == true) {
+        Vibration.vibrate(duration: 400);
+      }
+    }
   }
 
   // 초기화 여부 반영 후 알림
@@ -43,5 +67,13 @@ class AppViewModel with ChangeNotifier {
     _initialized = true;
     _vibration = await repository.getVibration();
     _keepScreenOn = await repository.getKeepScreenOn();
+
+    if (_keepScreenOn) {
+      WakelockPlus.enable();
+    } else {
+      WakelockPlus.disable();
+    }
+
+    notifyListeners();
   }
 }

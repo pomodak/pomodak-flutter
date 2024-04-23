@@ -4,9 +4,9 @@ import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_mode
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
+import 'package:pomodak/views/screens/timer/widgets/timer_setting_toggle.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -22,7 +22,6 @@ class _TimerPageState extends State<TimerPage> {
     // 위젯이 완전히 빌드된 뒤 실행함
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startTimer();
-      _maybeEnableWakeLock();
     });
   }
 
@@ -32,25 +31,18 @@ class _TimerPageState extends State<TimerPage> {
     timerStateViewModel.timerStart();
   }
 
-  void _maybeEnableWakeLock() {
-    final appViewModel = Provider.of<AppViewModel>(context, listen: false);
-    if (appViewModel.keepScreenOn) {
-      WakelockPlus.enable();
-    }
-  }
-
   @override
   void dispose() {
-    WakelockPlus.disable();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    var appViewModel = Provider.of<AppViewModel>(context);
+    return Scaffold(
       body: Column(
         children: [
-          Expanded(
+          const Expanded(
             child: TimerImage(),
           ),
           Expanded(
@@ -60,9 +52,30 @@ class _TimerPageState extends State<TimerPage> {
                 Column(
                   children: [
                     Expanded(
-                      child: TimerDisplay(),
+                      child: Column(children: [
+                        const TimerDisplay(),
+                        Row(
+                          children: [
+                            SettingToggle(
+                              isActive: appViewModel.vibration,
+                              icon: Icons.vibration,
+                              label: "진동",
+                              onTap: () => appViewModel.vibration =
+                                  !appViewModel.vibration,
+                            ),
+                            const SizedBox(width: 16),
+                            SettingToggle(
+                              isActive: appViewModel.keepScreenOn,
+                              icon: Icons.remove_red_eye_outlined,
+                              label: "화면",
+                              onTap: () => appViewModel.keepScreenOn =
+                                  !appViewModel.keepScreenOn,
+                            ),
+                          ],
+                        ),
+                      ]),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         children: [
                           Row(

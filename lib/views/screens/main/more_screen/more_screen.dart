@@ -6,6 +6,7 @@ import 'package:pomodak/views/widgets/privacy_policy_modal.dart';
 import 'package:pomodak/views/widgets/terms_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:store_redirect/store_redirect.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -186,6 +187,24 @@ class MoreScreen extends StatelessWidget {
                   StoreRedirect.redirect(
                       androidAppId: AppInfo.androidAppId,
                       iOSAppId: AppInfo.iOSAppId);
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: const Icon(
+                  Icons.question_answer_outlined,
+                  size: 20,
+                ),
+                title: const Text(
+                  '자주 묻는 질문(QnA)',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(AppInfo.qnaURL),
+                  );
                 },
               ),
             ],

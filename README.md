@@ -20,7 +20,7 @@
 - [x] enhancement: improve heatmap tip
 - [x] feature: allow users to change system settings, such as vibration, on timer-page
 - [x] feature: character inventory sorting (grade, name, id)
-- [ ] feature: check for app updates available in market & display alert dialog
+- [x] feature: check for app updates available in market & display alert dialog
 
 ## Next Versions
 

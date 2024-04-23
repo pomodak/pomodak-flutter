@@ -26,10 +26,11 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
   List<CharacterInventoryModel> _sortedInventory = [];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _sortedInventory =
-        List.from(Provider.of<MemberViewModel>(context).characterInventory);
+  void initState() {
+    super.initState();
+    final memberViewModel =
+        Provider.of<MemberViewModel>(context, listen: false);
+    _sortedInventory = memberViewModel.characterInventory;
     _sortByGrade();
   }
 

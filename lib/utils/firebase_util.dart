@@ -6,13 +6,14 @@ import 'package:pomodak/views/dialogs/alert_dialogs/alert_dialog_manager.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 class FirebaseUtil {
-  static Future<void> checkAppVersion(BuildContext context) async {
+  // 최신버전이 아니면 false을 반환하여 splash screen에서 앱 업데이트 다이얼로그를 띄우도록 함
+  static Future<bool> checkAppVersion(BuildContext context) async {
     final remoteConfig = FirebaseRemoteConfig.instance;
 
     /* ##### 파이어베이스 매개변수 값 호출 ##### */
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 12),
+      minimumFetchInterval: const Duration(hours: 2),
     ));
     await remoteConfig.fetchAndActivate();
 
@@ -37,6 +38,9 @@ class FirebaseUtil {
 
     if (latestVersion > currentVersion && context.mounted) {
       AlertDialogManager.showUpdateDialog(context);
+      return false;
     }
+
+    return true;
   }
 }

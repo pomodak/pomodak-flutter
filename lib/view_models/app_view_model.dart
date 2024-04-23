@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pomodak/data/repositories/app_options_repository.dart';
+import 'package:pomodak/utils/firebase_util.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -63,7 +64,13 @@ class AppViewModel with ChangeNotifier {
   }
 
   // 앱 시작 시 실행하는 로직
-  void onAppStart() async {
+  void onAppStart(BuildContext context) async {
+    var isLatestVesrion = await FirebaseUtil.checkAppVersion(context);
+
+    // 최신버전이 아니라면 _initialized를 false로 설정하여 splash 페이지를 벗어나지 않도록 함
+    if (!isLatestVesrion) {
+      return;
+    }
     _initialized = true;
     _vibration = await repository.getVibration();
     _keepScreenOn = await repository.getKeepScreenOn();

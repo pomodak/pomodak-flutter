@@ -30,6 +30,11 @@ if (applicationName == null) {
     applicationName = 'applicationName'
 }
 
+def kakaoAppKey = localProperties.getProperty('kakaoAppKey')
+if (kakaoAppKey == null) {
+    kakaoAppKey = 'kakaoAppKey'
+}
+
 android {
     namespace applicationName
     compileSdk 34
@@ -58,6 +63,8 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders += [kakaoAppKey: kakaoAppKey]
     }
     signingConfigs {
         release {

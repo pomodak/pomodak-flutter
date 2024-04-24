@@ -25,11 +25,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def kakaoAppKey = localProperties.getProperty('kakaoAppKey')
-if (kakaoAppKey == null) {
-    kakaoAppKey = 'kakaoAppKey'
-}
-
 def applicationName = localProperties.getProperty('flutter.applicationName')
 if (applicationName == null) {
     applicationName = 'applicationName'
@@ -63,8 +58,6 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
- 
-        manifestPlaceholders += [kakaoAppKey: kakaoAppKey]
     }
     signingConfigs {
         release {

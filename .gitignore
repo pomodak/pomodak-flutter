@@ -46,3 +46,4 @@ app.*.map.json
 signing.keystore
 GoogleService-Info.plist
 firebase.json
+firebase_options.dart

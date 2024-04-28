@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
 import 'package:pomodak/data/repositories/transaction_repository.dart';
+import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -99,7 +99,7 @@ class TransactionViewModel with ChangeNotifier {
   }
 
   // ConsumableItemAcquisition, CharacterAcquisition, PaletteAcuisition, PointAcquisition
-  // 위 타입으로 캐스팅 해야함
+  // 위 타입체킹 필요
   Future<dynamic> consumeItem(
       {required String inventoryId, bool isFood = false}) async {
     if (_isLoadingConsumeItem) return;
@@ -108,20 +108,21 @@ class TransactionViewModel with ChangeNotifier {
       _setError('consumeItem');
       var result = await repository.consumeItem(inventoryId);
 
-      if (result.result == acquisitionResults['consumableItem']) {
+      if (result is ConsumableItemAcquisition) {
         memberViewModel.loadConsumableInventory();
-      } else if (result.result == acquisitionResults['character']) {
+      } else if (result is CharacterAcquisition) {
         memberViewModel.loadCharacterInventory();
-      } else if (result.result == acquisitionResults['palette']) {
+      } else if (result is PaletteAcquisition) {
         memberViewModel.loadPalette();
-      } else if (result.result == acquisitionResults['point']) {
+      } else if (result is PointAcquisition) {
         memberViewModel.loadMember(forceUpdate: true);
       }
 
+      // 음식 아이템으로 사용한 경우와 사용아이템으로 사용한 경우의 수량 갱신
       if (isFood) {
         memberViewModel.loadFoodInventory();
       } else {
-        if (result.result != acquisitionResults['consumableItem']) {
+        if (result is ConsumableItemAcquisition) {
           memberViewModel.loadConsumableInventory();
         }
       }

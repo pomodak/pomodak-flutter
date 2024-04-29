@@ -26,6 +26,7 @@
 
 ## Next Versions
 
+- [x] fix: item_inventory data synchronization bug
 - [ ] feature: character collection
 - [ ] feature: add Google AdMob
 - [ ] feature: user guide

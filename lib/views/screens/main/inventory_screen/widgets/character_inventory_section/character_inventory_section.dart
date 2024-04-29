@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
-import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/views/screens/main/inventory_screen/widgets/character_inventory_section/character_card.dart';
-import 'package:provider/provider.dart';
 
 enum SortOrder { ascending, descending }
 
 enum SortType { name, grade, id }
 
 class CharacterInventorySection extends StatefulWidget {
-  const CharacterInventorySection({super.key});
+  final List<CharacterInventoryModel> inventory;
+  const CharacterInventorySection({super.key, required this.inventory});
 
   @override
   State<CharacterInventorySection> createState() =>
@@ -23,15 +22,39 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
 
   SortType _selectedSort = SortType.grade;
 
-  List<CharacterInventoryModel> _sortedInventory = [];
+  List<CharacterInventoryModel> _sortedinventory = [];
 
   @override
   void initState() {
     super.initState();
-    final memberViewModel =
-        Provider.of<MemberViewModel>(context, listen: false);
-    _sortedInventory = memberViewModel.characterInventory;
+    _sortedinventory = widget.inventory;
     _sortByGrade();
+  }
+
+  @override
+  void didUpdateWidget(covariant CharacterInventorySection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.inventory != widget.inventory) {
+      _sortedinventory = widget.inventory;
+
+      // 기존 정렬 상태 유지
+      if (_selectedSort == SortType.grade) {
+        _gradeSortOrder = _gradeSortOrder == SortOrder.ascending
+            ? SortOrder.descending
+            : SortOrder.ascending;
+        _sortByGrade();
+      } else if (_selectedSort == SortType.name) {
+        _nameSortOrder = _nameSortOrder == SortOrder.ascending
+            ? SortOrder.descending
+            : SortOrder.ascending;
+        _sortByName();
+      } else {
+        _idSortOrder = _idSortOrder == SortOrder.ascending
+            ? SortOrder.descending
+            : SortOrder.ascending;
+        _sortByInventoryId();
+      }
+    }
   }
 
   @override
@@ -74,7 +97,7 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
             ],
           ),
         ),
-        _sortedInventory.isEmpty
+        _sortedinventory.isEmpty
             ? const Padding(
                 padding: EdgeInsets.all(40.0),
                 child: Text('캐릭터 인벤토리가 비어있습니다.'),
@@ -88,10 +111,10 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
                   mainAxisSpacing: 10,
                   childAspectRatio: 0.7,
                 ),
-                itemCount: _sortedInventory.length,
+                itemCount: _sortedinventory.length,
                 itemBuilder: (context, index) {
                   return CharacterCard(
-                      characterInventory: _sortedInventory[index]);
+                      characterInventory: _sortedinventory[index]);
                 },
               ),
       ],
@@ -107,11 +130,11 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
   void _sortByName() {
     if (_nameSortOrder == SortOrder.ascending) {
       _resetSortOrder();
-      _sortedInventory
+      _sortedinventory
           .sort((a, b) => a.character.name.compareTo(b.character.name));
       _nameSortOrder = SortOrder.descending;
     } else {
-      _sortedInventory
+      _sortedinventory
           .sort((a, b) => b.character.name.compareTo(a.character.name));
       _nameSortOrder = SortOrder.ascending;
     }
@@ -121,11 +144,11 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
   void _sortByGrade() {
     if (_gradeSortOrder == SortOrder.ascending) {
       _resetSortOrder();
-      _sortedInventory.sort(
+      _sortedinventory.sort(
           (a, b) => a.character.grade.index.compareTo(b.character.grade.index));
       _gradeSortOrder = SortOrder.descending;
     } else {
-      _sortedInventory.sort(
+      _sortedinventory.sort(
           (a, b) => b.character.grade.index.compareTo(a.character.grade.index));
       _gradeSortOrder = SortOrder.ascending;
     }
@@ -135,11 +158,11 @@ class _CharacterInventorySectionState extends State<CharacterInventorySection> {
   void _sortByInventoryId() {
     if (_idSortOrder == SortOrder.ascending) {
       _resetSortOrder();
-      _sortedInventory.sort(
+      _sortedinventory.sort(
           (a, b) => a.characterInventoryId.compareTo(b.characterInventoryId));
       _idSortOrder = SortOrder.descending;
     } else {
-      _sortedInventory.sort(
+      _sortedinventory.sort(
           (a, b) => b.characterInventoryId.compareTo(a.characterInventoryId));
       _idSortOrder = SortOrder.ascending;
     }

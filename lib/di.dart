@@ -192,10 +192,7 @@ void registerViewModels() {
 
   // Transaction(상점 구매/판매, 아이템 사용, 알 시간 적용 등)
   getIt.registerLazySingleton<TransactionViewModel>(
-    () => TransactionViewModel(
-      repository: getIt<TransactionRepository>(),
-      memberViewModel: getIt<MemberViewModel>(),
-    ),
+    () => TransactionViewModel(repository: getIt<TransactionRepository>()),
   );
 
   // Timer 관련

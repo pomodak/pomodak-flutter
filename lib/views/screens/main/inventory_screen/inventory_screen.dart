@@ -21,12 +21,14 @@ class InventoryScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Consumer<MemberViewModel>(
             builder: (context, memberViewModel, child) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
               children: [
-                ItemInventorySection(),
-                CharacterInventorySection(),
+                ItemInventorySection(
+                    inventory: memberViewModel.consumableInventory),
+                CharacterInventorySection(
+                    inventory: memberViewModel.characterInventory),
               ],
             ),
           );

@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/data/repositories/auth_repository.dart';
+import 'package:pomodak/di.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/models/domain/account_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -13,7 +14,6 @@ import 'package:pomodak/view_models/member_view_model.dart';
 class AuthViewModel with ChangeNotifier {
   // DI
   late final AuthRepository repository;
-  final MemberViewModel memberViewModel;
 
   // Data
   AccountModel? _account;
@@ -40,7 +40,7 @@ class AuthViewModel with ChangeNotifier {
   String? get registerError => _registerError;
   String? get checkEmailError => _checkEmailError;
 
-  AuthViewModel({required this.repository, required this.memberViewModel});
+  AuthViewModel({required this.repository});
 
   Future<void> loadAccount() async {
     _account = await repository.getAccount(); // secureStorage에서 계정 정보 가져오기
@@ -150,7 +150,7 @@ class AuthViewModel with ChangeNotifier {
     _isLoggedIn = false;
     _account = null;
 
-    await memberViewModel.clearMemberData();
+    await getIt<MemberViewModel>().clearMemberData();
     notifyListeners();
   }
 
@@ -159,7 +159,7 @@ class AuthViewModel with ChangeNotifier {
     _isLoggedIn = false;
     _account = null;
 
-    await memberViewModel.clearMemberData();
+    await getIt<MemberViewModel>().clearMemberData();
     notifyListeners();
   }
 
@@ -208,7 +208,8 @@ class AuthViewModel with ChangeNotifier {
 
   Future<void> _loginSuccess() async {
     await loadAccount(); // 계정 정보 갱신
-    await memberViewModel.loadMemberRelatedData(forceUpdate: true); // 회원 정보 갱신
+    await getIt<MemberViewModel>()
+        .loadMemberRelatedData(forceUpdate: true); // 회원 정보 갱신
     MessageUtil.showSuccessToast("로그인 성공");
     notifyListeners();
   }

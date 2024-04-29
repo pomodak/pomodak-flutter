@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
+import 'package:pomodak/di.dart';
 import 'package:pomodak/models/domain/character_inventory_model.dart';
 import 'package:pomodak/models/domain/item_inventory_model.dart';
 import 'package:pomodak/models/domain/member_model.dart';
 import 'package:pomodak/data/repositories/member_repository.dart';
 import 'package:pomodak/models/domain/palette_model.dart';
 import 'package:pomodak/utils/message_util.dart';
+import 'package:pomodak/view_models/timer_record_view_model.dart';
 
 class MemberViewModel with ChangeNotifier {
   // DI
@@ -120,6 +122,7 @@ class MemberViewModel with ChangeNotifier {
     try {
       _characterInventory = await repository
           .getMemberCharacterInventory(member?.memberId as String);
+
       _setError('characterInventory');
     } catch (e) {
       _handleError("characterInventory", e);
@@ -160,6 +163,7 @@ class MemberViewModel with ChangeNotifier {
       loadFoodInventory();
       loadConsumableInventory();
       loadCharacterInventory();
+      getIt<TimerRecordViewModel>().initRecords();
     }
     notifyListeners();
   }
@@ -171,6 +175,7 @@ class MemberViewModel with ChangeNotifier {
     _consumableInventory = [];
     _characterInventory = [];
     await repository.clearMemberData();
+    getIt<TimerRecordViewModel>().clearRecords();
     notifyListeners();
   }
 

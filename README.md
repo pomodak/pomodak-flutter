@@ -27,6 +27,9 @@
 ## Next Versions
 
 - [x] fix: item_inventory data synchronization bug
+- [ ] enhance: free_egg rewards logic (to change ad rewards)
 - [ ] feature: character collection
 - [ ] feature: add Google AdMob
 - [ ] feature: user guide
+
+

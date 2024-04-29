@@ -171,10 +171,7 @@ void registerViewModels() {
 
   // Auth
   getIt.registerLazySingleton<AuthViewModel>(
-    () => AuthViewModel(
-      repository: getIt<AuthRepository>(),
-      memberViewModel: getIt<MemberViewModel>(),
-    ),
+    () => AuthViewModel(repository: getIt<AuthRepository>()),
   );
 
   // Member
@@ -184,10 +181,7 @@ void registerViewModels() {
 
   // Shop
   getIt.registerLazySingleton<ShopViewModel>(
-    () => ShopViewModel(
-      repository: getIt<ShopRepository>(),
-      memberViewModel: getIt<MemberViewModel>(),
-    ),
+    () => ShopViewModel(repository: getIt<ShopRepository>()),
   );
 
   // Transaction(상점 구매/판매, 아이템 사용, 알 시간 적용 등)
@@ -200,11 +194,7 @@ void registerViewModels() {
     () => TimerOptionsViewModel(repository: getIt<TimerOptionsRepository>()),
   );
   getIt.registerLazySingleton<TimerRecordViewModel>(
-    () => TimerRecordViewModel(
-      repository: getIt<TimerRecordRepository>(),
-      memberViewModel: getIt<MemberViewModel>(),
-      transactionViewModel: getIt<TransactionViewModel>(),
-    ),
+    () => TimerRecordViewModel(repository: getIt<TimerRecordRepository>()),
   );
   getIt.registerLazySingleton<TimerStateViewModel>(
     () => TimerStateViewModel(

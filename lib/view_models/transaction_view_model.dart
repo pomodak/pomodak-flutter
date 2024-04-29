@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/transaction_repository.dart';
+import 'package:pomodak/di.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 import 'package:pomodak/utils/message_util.dart';
@@ -8,7 +9,6 @@ import 'package:pomodak/view_models/member_view_model.dart';
 class TransactionViewModel with ChangeNotifier {
   // DI
   late final TransactionRepository repository;
-  late final MemberViewModel memberViewModel;
 
   // 로딩 상태
   bool _isLoadingBuyItem = false;
@@ -34,7 +34,6 @@ class TransactionViewModel with ChangeNotifier {
 
   TransactionViewModel({
     required this.repository,
-    required this.memberViewModel,
   });
 
   Future<TransactionRecordModel?> buyItem(int itemId, int count) async {
@@ -44,9 +43,9 @@ class TransactionViewModel with ChangeNotifier {
       _setError("buyItem");
       var result = await repository.buyItem(itemId, count);
 
-      memberViewModel.loadFoodInventory();
-      memberViewModel.loadConsumableInventory();
-      memberViewModel.loadMember(forceUpdate: true);
+      getIt<MemberViewModel>().loadFoodInventory();
+      getIt<MemberViewModel>().loadConsumableInventory();
+      getIt<MemberViewModel>().loadMember(forceUpdate: true);
 
       MessageUtil.showSuccessToast(result.notes);
       return result;
@@ -66,8 +65,8 @@ class TransactionViewModel with ChangeNotifier {
       _setError("sellCharacter");
       var result = await repository.sellCharacter(characterInventoryId, count);
 
-      memberViewModel.loadCharacterInventory();
-      memberViewModel.loadMember(forceUpdate: true);
+      getIt<MemberViewModel>().loadCharacterInventory();
+      getIt<MemberViewModel>().loadMember(forceUpdate: true);
 
       MessageUtil.showSuccessToast(result.notes);
       return result;
@@ -80,13 +79,13 @@ class TransactionViewModel with ChangeNotifier {
   }
 
   Future<void> applyTimeToItemInventory(int seconds) async {
-    if (memberViewModel.member == null) return;
+    if (getIt<MemberViewModel>().member == null) return;
     _setLoadingState('applyTime', isLoading: true);
     try {
       await repository.applyTimeToItemInventory(seconds);
-      await memberViewModel.loadFoodInventory();
+      await getIt<MemberViewModel>().loadFoodInventory();
 
-      for (var item in memberViewModel.foodInventory) {
+      for (var item in getIt<MemberViewModel>().foodInventory) {
         if (item.progress == 0) {
           MessageUtil.showSuccessToast("부화 가능한 알이 존재합니다.");
         }
@@ -109,22 +108,20 @@ class TransactionViewModel with ChangeNotifier {
       var result = await repository.consumeItem(inventoryId);
 
       if (result is ConsumableItemAcquisition) {
-        memberViewModel.loadConsumableInventory();
+        getIt<MemberViewModel>().loadConsumableInventory();
       } else if (result is CharacterAcquisition) {
-        memberViewModel.loadCharacterInventory();
+        getIt<MemberViewModel>().loadCharacterInventory();
       } else if (result is PaletteAcquisition) {
-        memberViewModel.loadPalette();
+        getIt<MemberViewModel>().loadPalette();
       } else if (result is PointAcquisition) {
-        memberViewModel.loadMember(forceUpdate: true);
+        getIt<MemberViewModel>().loadMember(forceUpdate: true);
       }
 
       // 음식 아이템으로 사용한 경우와 사용아이템으로 사용한 경우의 수량 갱신
       if (isFood) {
-        memberViewModel.loadFoodInventory();
+        getIt<MemberViewModel>().loadFoodInventory();
       } else {
-        if (result is ConsumableItemAcquisition) {
-          memberViewModel.loadConsumableInventory();
-        }
+        getIt<MemberViewModel>().loadConsumableInventory();
       }
 
       return result;

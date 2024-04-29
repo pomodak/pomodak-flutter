@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/shop_repository.dart';
 import 'package:pomodak/models/domain/item_model.dart';
 import 'package:pomodak/utils/message_util.dart';
-import 'package:pomodak/view_models/member_view_model.dart';
 
 class ShopViewModel with ChangeNotifier {
   // DI
   late final ShopRepository repository;
-  late final MemberViewModel memberViewModel;
 
   // Data
   List<ItemModel>? _foodItems;
@@ -16,29 +14,21 @@ class ShopViewModel with ChangeNotifier {
   // 로딩 상태
   bool _isLoadingFoodItems = false;
   bool _isLoadingConsumableItems = false;
-  bool _isLoadingbuyItem = false;
-  bool _isLoadingsellCharacter = false;
 
   // 에러 메시지
   String? _foodItemsError;
   String? _consumableItemsError;
-  String? _buyItemError;
-  String? _sellCharacterError;
 
   List<ItemModel> get foodItems => _foodItems ?? [];
   List<ItemModel> get consumableItems => _consumableItems ?? [];
 
   bool get isLoadingFoodItems => _isLoadingFoodItems;
   bool get isLoadingConsumableItems => _isLoadingConsumableItems;
-  bool get isLoadingbuyItem => _isLoadingbuyItem;
-  bool get isLoadingsellCharacter => _isLoadingsellCharacter;
 
   String? get foodItemsError => _foodItemsError;
   String? get consumableItemsError => _consumableItemsError;
-  String? get buyItemError => _buyItemError;
-  String? get sellCharacterError => _sellCharacterError;
 
-  ShopViewModel({required this.repository, required this.memberViewModel});
+  ShopViewModel({required this.repository});
 
   Future<void> loadFoodItems() async {
     if (_isLoadingFoodItems) return;
@@ -100,12 +90,6 @@ class ShopViewModel with ChangeNotifier {
       case 'consumableItems':
         _isLoadingConsumableItems = isLoading;
         break;
-      case 'buyItem':
-        _isLoadingbuyItem = isLoading;
-        break;
-      case 'sellCharacter':
-        _isLoadingsellCharacter = isLoading;
-        break;
     }
     notifyListeners();
   }
@@ -117,12 +101,6 @@ class ShopViewModel with ChangeNotifier {
         break;
       case 'consumableItems':
         _consumableItemsError = errorMessage;
-        break;
-      case 'buyItem':
-        _buyItemError = errorMessage;
-        break;
-      case 'sellCharacter':
-        _sellCharacterError = errorMessage;
         break;
     }
     notifyListeners();

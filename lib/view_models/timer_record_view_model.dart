@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/timer_record_repository.dart';
+import 'package:pomodak/di.dart';
 import 'package:pomodak/models/domain/timer_record_model.dart';
+import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
 
 class TimerRecordViewModel extends ChangeNotifier {
   final TimerRecordRepository repository;
-  late final MemberViewModel memberViewModel;
-  late final TransactionViewModel transactionViewModel;
   // 캐시로 사용될 타이머 기록 리스트
   List<TimerRecordModel> records = [];
 
@@ -19,33 +19,20 @@ class TimerRecordViewModel extends ChangeNotifier {
 
   TimerRecordViewModel({
     required this.repository,
-    required this.memberViewModel,
-    required this.transactionViewModel,
-  }) {
-    memberViewModel.addListener(_updateOnMemberChange);
-    _initRecords();
-  }
-
-  // member 변화 감지
-  void _updateOnMemberChange() {
-    if (memberViewModel.member != null) {
-      _initRecords();
-    }
-  }
+  });
 
   // 초기데이터 로드
-  Future<void> _initRecords() async {
-    var memberId = memberViewModel.member?.memberId ?? '';
+  void initRecords() {
+    var memberId = _getMemberId();
     if (memberId.isNotEmpty) {
       records = repository.getRecordsByMemberId(memberId);
       notifyListeners();
     }
   }
 
-  @override
-  void dispose() {
-    memberViewModel.removeListener(_updateOnMemberChange);
-    super.dispose();
+  void clearRecords() {
+    records.clear();
+    notifyListeners();
   }
 
   Future<void> saveRecord({
@@ -54,8 +41,12 @@ class TimerRecordViewModel extends ChangeNotifier {
     required bool isCompleted,
     String category = 'default',
   }) async {
-    String? memberId = memberViewModel.member?.memberId;
-    if (memberId == null) return;
+    String? memberId = _getMemberId();
+
+    if (memberId.isEmpty) {
+      MessageUtil.showErrorToast("로그인이 필요합니다.");
+      return;
+    }
 
     final newOrUpdatedRecord = await repository.saveOrUpdateRecord(
       memberId: memberId,
@@ -64,14 +55,14 @@ class TimerRecordViewModel extends ChangeNotifier {
       isCompleted: isCompleted,
       category: category,
     );
-    transactionViewModel.applyTimeToItemInventory(seconds);
+    getIt<TransactionViewModel>().applyTimeToItemInventory(seconds);
 
     // 새로 저장되거나 업데이트된 기록을 캐시에 반영
-    _updateCacheWithRecord(newOrUpdatedRecord);
+    updateCacheWithRecord(newOrUpdatedRecord);
   }
 
   // 캐시에 새로운 기록을 추가하거나 기존 기록을 업데이트하는 메소드
-  void _updateCacheWithRecord(TimerRecordModel record) {
+  void updateCacheWithRecord(TimerRecordModel record) {
     final index = records.indexWhere((r) => r.date == record.date);
     if (index != -1) {
       // 기존 기록 업데이트
@@ -117,10 +108,19 @@ class TimerRecordViewModel extends ChangeNotifier {
   }
 
   TimerRecordModel? getTimerRecordByDate(int year, int month, int day) {
+    String memberId = _getMemberId();
+    if (memberId.isEmpty) {
+      MessageUtil.showErrorToast("로그인이 필요합니다.");
+      return null;
+    }
     return repository.getRecordByMemberIdAndDate(
-      memberViewModel.member?.memberId ?? "",
+      getIt<MemberViewModel>().member?.memberId ?? "",
       DateTime(year, month, day),
     );
+  }
+
+  String _getMemberId() {
+    return getIt<MemberViewModel>().member?.memberId ?? "";
   }
 }
 

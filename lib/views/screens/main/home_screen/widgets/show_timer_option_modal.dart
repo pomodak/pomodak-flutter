@@ -58,7 +58,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               availableOptions: availableFocusOptions,
               isEnabled: timerOptionsViewModel.tempIsPomodoroMode,
               onAdjust: (newValue) =>
-                  setState(() => timerOptionsViewModel.workTime = newValue),
+                  setState(() => timerOptionsViewModel.tempWorkTime = newValue),
             ),
             const SizedBox(height: 2),
             TimerOptionAdjuster(
@@ -67,7 +67,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               availableOptions: availableRestOptions,
               isEnabled: timerOptionsViewModel.tempIsPomodoroMode,
               onAdjust: (newValue) =>
-                  setState(() => timerOptionsViewModel.restTime = newValue),
+                  setState(() => timerOptionsViewModel.tempRestTime = newValue),
             ),
             const SizedBox(height: 2),
             TimerOptionAdjuster(
@@ -77,21 +77,21 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               availableOptions: availableSectionOptions,
               isEnabled: timerOptionsViewModel.tempIsPomodoroMode,
               onAdjust: (newValue) =>
-                  setState(() => timerOptionsViewModel.sections = newValue),
+                  setState(() => timerOptionsViewModel.tempSections = newValue),
             ),
             const SizedBox(height: 2),
             _buildToggleSwitch(
               "뽀모도로 모드",
               timerOptionsViewModel.tempIsPomodoroMode,
               (newValue) => setState(
-                  () => timerOptionsViewModel.isPomodoroMode = newValue),
+                  () => timerOptionsViewModel.tempIsPomodoroMode = newValue),
             ),
             const SizedBox(height: 2),
             _buildToggleSwitch(
               "함께 집중하기 모드",
               timerOptionsViewModel.tempIsFocusTogetherMode,
-              (newValue) => setState(
-                  () => timerOptionsViewModel.isFocusTogetherMode = newValue),
+              (newValue) => setState(() =>
+                  timerOptionsViewModel.tempIsFocusTogetherMode = newValue),
             ),
             const SizedBox(height: 12),
             _buildActionButtons(context),

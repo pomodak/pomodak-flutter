@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
-import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
+import 'package:pomodak/view_models/timer_alarm_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TimerDisplay extends StatelessWidget {
@@ -11,23 +12,26 @@ class TimerDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timerState = Provider.of<TimerStateViewModel>(context);
+    final timerAlarmViewModel = Provider.of<TimerAlarmViewModel>(context);
+    final timerStateViewModel = Provider.of<TimerViewModel>(context);
     final timerOptions =
         Provider.of<TimerOptionsViewModel>(context, listen: false);
 
-    String displayTime = _formatDisplayTime(timerState, timerOptions);
-    if (timerState.timerEndState.isTimerEnded) {
+    AlarmInfo? alarmInfo = timerAlarmViewModel.lastAlarmInfo;
+
+    String displayTime = _formatDisplayTime(timerStateViewModel, timerOptions);
+    if (alarmInfo != null) {
       Future.delayed(Duration.zero, () {
         context.go(
           "/timer-alarm",
           extra: AlarmInfo(
-            alarmType: timerState.timerEndState.lastAlarmType!, // 마지막 알람 타입
-            time: timerState.timerEndState.lastElapsedSeconds ?? 0, // 경과 시간
-            isEndedInBackground: timerState
-                .timerEndState.isEndedInBackground, // 백그라운드에서 종료됐는지 여부
+            alarmType: alarmInfo.alarmType, // 마지막 알람 타입
+            time: alarmInfo.time, // 경과 시간
+            isEndedInBackground:
+                alarmInfo.isEndedInBackground, // 백그라운드에서 종료됐는지 여부
           ),
         );
-        timerState.resetTimerEndStatus(); // 타이머 종료 상태 리셋
+        timerAlarmViewModel.reset(); // 알림 상태 리셋
       });
     }
 
@@ -42,7 +46,7 @@ class TimerDisplay extends StatelessWidget {
   }
 
   String _formatDisplayTime(
-      TimerStateViewModel timerState, TimerOptionsViewModel timerOptions) {
+      TimerViewModel timerState, TimerOptionsViewModel timerOptions) {
     if (timerOptions.isPomodoroMode) {
       int targetSeconds = (timerState.pomodoroMode == PomodoroMode.focus)
           ? timerOptions.workTime * 60

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/group_timer/widgets/member_card.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +19,7 @@ class _MembersGridViewState extends State<MembersGridView> {
   Widget build(BuildContext context) {
     DateTime curDateTime = DateTime.now();
 
-    return Consumer2<GroupTimerViewModel, TimerStateViewModel>(
+    return Consumer2<GroupTimerViewModel, TimerViewModel>(
       builder: (context, groupTimerVM, timerStateVM, child) {
         if (groupTimerVM.members.isEmpty) {
           return const Center(child: Text("No members connected."));

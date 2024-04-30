@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
@@ -27,7 +27,7 @@ class _TimerPageState extends State<TimerPage> {
 
   void _startTimer() {
     final timerStateViewModel =
-        Provider.of<TimerStateViewModel>(context, listen: false);
+        Provider.of<TimerViewModel>(context, listen: false);
     timerStateViewModel.timerStart();
   }
 

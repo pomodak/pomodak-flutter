@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
 final List<String> commonMessages = [
@@ -65,7 +65,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   void _handleMessageDisplay() {
     final timerOptions =
         Provider.of<TimerOptionsViewModel>(context, listen: false);
-    final timerState = Provider.of<TimerStateViewModel>(context, listen: false);
+    final timerState = Provider.of<TimerViewModel>(context, listen: false);
 
     List<String> messages = timerOptions.isPomodoroMode
         ? (timerState.pomodoroMode == PomodoroMode.focus
@@ -96,7 +96,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final timerState = Provider.of<TimerStateViewModel>(context);
+    final timerState = Provider.of<TimerViewModel>(context);
     final imageUrl = timerState.pomodoroMode == PomodoroMode.focus
         ? CDNImages.mascot["normal"]!
         : CDNImages.mascot["exhausted"]!;

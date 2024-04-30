@@ -1,5 +1,5 @@
 import 'package:pomodak/data/datasources/local/timer_state_local_datasource.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 
 class TimerStateRepository {
   final TimerStateLocalDataSource localDataSource;

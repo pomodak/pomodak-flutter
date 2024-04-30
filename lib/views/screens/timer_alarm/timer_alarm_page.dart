@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
+import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
@@ -105,18 +106,4 @@ class TimerAlarmPage extends StatelessWidget {
       ),
     );
   }
-}
-
-enum AlarmType { work, rest, finish, normal, giveup }
-
-class AlarmInfo {
-  final AlarmType alarmType;
-  final int time;
-  final bool isEndedInBackground;
-
-  AlarmInfo({
-    required this.alarmType,
-    required this.time,
-    required this.isEndedInBackground,
-  });
 }

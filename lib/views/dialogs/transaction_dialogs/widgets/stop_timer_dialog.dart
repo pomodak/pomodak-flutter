@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
 enum StopTimerDialogType {
@@ -19,7 +19,7 @@ class StopTimerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timerState = Provider.of<TimerStateViewModel>(context, listen: false);
+    final timerState = Provider.of<TimerViewModel>(context, listen: false);
     return AlertDialog(
       title: const Text(
         "정말 멈추시겠습니까?",

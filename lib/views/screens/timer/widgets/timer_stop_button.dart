@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/dialogs/transaction_dialogs/transaction_dialog_manager.dart';
 import 'package:pomodak/views/dialogs/transaction_dialogs/widgets/stop_timer_dialog.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ class TimerStopButton extends StatelessWidget {
   Widget build(BuildContext context) {
     String text;
     final timerOptions = Provider.of<TimerOptionsViewModel>(context);
-    final timerState = Provider.of<TimerStateViewModel>(context, listen: false);
+    final timerState = Provider.of<TimerViewModel>(context, listen: false);
 
     final StopTimerDialogType dialogType;
     if (!timerOptions.isPomodoroMode) {

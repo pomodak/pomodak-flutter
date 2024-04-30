@@ -54,31 +54,31 @@ class TimerOptionsViewModel with ChangeNotifier {
   }
 
   // 옵션값 Setter
-  set isPomodoroMode(bool value) {
+  set tempIsPomodoroMode(bool value) {
     _tempIsPomodoroMode = value;
     _lastEvent = null; // temp 값의 변화로인해 timerState가 리셋되지 않도록 함
     notifyListeners();
   }
 
-  set workTime(int value) {
+  set tempWorkTime(int value) {
     _tempWorkTime = value;
     _lastEvent = null;
     notifyListeners();
   }
 
-  set restTime(int value) {
+  set tempRestTime(int value) {
     _tempRestTime = value;
     _lastEvent = null;
     notifyListeners();
   }
 
-  set sections(int value) {
+  set tempSections(int value) {
     _tempSections = value;
     _lastEvent = null;
     notifyListeners();
   }
 
-  set isFocusTogetherMode(bool value) {
+  set tempIsFocusTogetherMode(bool value) {
     _tempIsFocusTogetherMode = value;
     _lastEvent = null;
     notifyListeners();

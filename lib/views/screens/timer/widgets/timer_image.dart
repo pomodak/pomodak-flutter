@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TimerImage extends StatelessWidget {
@@ -13,7 +13,7 @@ class TimerImage extends StatelessWidget {
 
     // 초마다 변경되는 timerState의 elapsedSeconds 값에
     // 이미지 렌더링이 반복되지 않도록 최적화
-    return Selector<TimerStateViewModel, TimerStateInfo>(
+    return Selector<TimerViewModel, TimerStateInfo>(
       selector: (_, timerState) =>
           TimerStateInfo(timerState.isRunning, timerState.pomodoroMode),
       builder: (_, timerStateInfo, __) {

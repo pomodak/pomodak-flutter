@@ -1,6 +1,6 @@
 import 'package:pomodak/data/repositories/timer_state_repository.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 
 // 뽀모도로 모드를 관리하는 클래스
 class PomodoroManager {

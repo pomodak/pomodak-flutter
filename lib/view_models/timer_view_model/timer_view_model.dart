@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/timer_state_repository.dart';
+import 'package:pomodak/di.dart';
+import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/pomodoro_manager.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_end_state.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_difference_handler.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_manager.dart';
-import 'package:pomodak/views/screens/timer_alarm/timer_alarm_page.dart';
+import 'package:pomodak/view_models/timer_view_model/pomodoro_manager.dart';
+import 'package:pomodak/view_models/timer_alarm_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_difference_handler.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_manager.dart';
 
 enum PomodoroMode { focus, rest }
 
-class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
+class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
   // DI
   final TimerStateRepository repository;
   final TimerRecordViewModel timerRecordViewModel;
@@ -22,7 +23,6 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerManager _timerManager = TimerManager();
   final TimerDifferenceHandler _timerDifferenceHandler =
       TimerDifferenceHandler.instance;
-  final TimerEndState _timerEndState = TimerEndState();
   bool _isBackgroundRunning = false; // 앱이 백그라운드에서 실행중인지 여부
   AppLifecycleState?
       _lastLifecycleState; // 직전 lifecycle 상태 (상단바를 내리고 다시 올릴 때 resume이 호출되는 문제 해결용)
@@ -32,10 +32,8 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
   bool get isRunning => _timerManager.isRunning;
   int get sectionCounts => pomodoroManager.sectionCounts;
   PomodoroMode get pomodoroMode => pomodoroManager.pomodoroMode;
-  // 아래 값이 true면 timerPage/timer_diaplay.dart에서 감지 후 알람 페이지로 이동
-  TimerEndState get timerEndState => _timerEndState;
 
-  TimerStateViewModel({
+  TimerViewModel({
     required this.repository,
     required this.timerRecordViewModel,
     required this.timerOptionsViewModel,
@@ -144,7 +142,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   // 일반 타이머 종료
   void normalEnd() {
-    _timerEndState.setTimerEndState(
+    getIt<TimerAlarmViewModel>().setAlarm(
       AlarmType.normal,
       _timerManager.elapsedSeconds,
       false,
@@ -156,7 +154,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   // 뽀모도로 타이머 종료
   void pomodoroEnd({required bool isEndedInBackground}) {
-    _timerEndState.setTimerEndState(
+    getIt<TimerAlarmViewModel>().setAlarm(
       pomodoroMode == PomodoroMode.focus
           ? pomodoroManager.sectionCounts + 1 == timerOptionsViewModel.sections
               ? AlarmType.finish
@@ -184,7 +182,7 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
 
   // 뽀모도로 타이머 포기(집중 모드)
   void pomodoroGiveUp() async {
-    _timerEndState.setTimerEndState(
+    getIt<TimerAlarmViewModel>().setAlarm(
       AlarmType.giveup,
       _timerManager.elapsedSeconds,
       false,
@@ -207,12 +205,6 @@ class TimerStateViewModel with ChangeNotifier, WidgetsBindingObserver {
     } else {
       timerStart();
     }
-    notifyListeners();
-  }
-
-  // 알람 표시 후 타이머 종료 상태를 리셋하는 메서드
-  void resetTimerEndStatus() {
-    _timerEndState.reset();
     notifyListeners();
   }
 

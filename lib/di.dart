@@ -27,7 +27,8 @@ import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
-import 'package:pomodak/view_models/timer_state_view_model/timer_state_view_model.dart';
+import 'package:pomodak/view_models/timer_alarm_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/view_models/transaction_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -196,8 +197,11 @@ void registerViewModels() {
   getIt.registerLazySingleton<TimerRecordViewModel>(
     () => TimerRecordViewModel(repository: getIt<TimerRecordRepository>()),
   );
-  getIt.registerLazySingleton<TimerStateViewModel>(
-    () => TimerStateViewModel(
+  getIt.registerLazySingleton<TimerAlarmViewModel>(
+    () => TimerAlarmViewModel(),
+  );
+  getIt.registerLazySingleton<TimerViewModel>(
+    () => TimerViewModel(
       repository: getIt<TimerStateRepository>(),
       timerOptionsViewModel: getIt<TimerOptionsViewModel>(),
       timerRecordViewModel: getIt<TimerRecordViewModel>(),

@@ -26,7 +26,7 @@ class ItemInventorySection extends StatelessWidget {
                 child: Text('아이템 인벤토리가 비어있습니다.'),
               )
             : SizedBox(
-                height: 160,
+                height: 150,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: inventory.length,

@@ -29,7 +29,7 @@
 - [x] fix: item_inventory data synchronization bug
 - [x] fix: memberTimeDisplay Inconsistency Bug in GroupTimer When Restarted after being in Background for too long
 - [x] refactor: timer-related logic & views
-- [ ] feature: Replace consumable_item_inventory ListView to GridView such as characterInventory
+- [x] fix: fix height in item_inventory_section so items beyond 3 are alightly visible
 
 ## Next Versions
 

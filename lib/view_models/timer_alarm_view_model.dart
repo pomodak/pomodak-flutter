@@ -8,7 +8,11 @@ class TimerAlarmViewModel with ChangeNotifier {
 
   AlarmInfo? get lastAlarmInfo => _lastAlarmInfo;
 
-  void setAlarm(AlarmType type, int elapsedSeconds, bool endedInBackground) {
+  void setAlarm({
+    required AlarmType type,
+    required int elapsedSeconds,
+    required bool endedInBackground,
+  }) {
     _lastAlarmInfo = AlarmInfo(
       alarmType: type,
       time: elapsedSeconds,

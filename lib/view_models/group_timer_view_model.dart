@@ -5,67 +5,75 @@ import 'package:pomodak/utils/message_util.dart';
 import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 class GroupTimerViewModel with ChangeNotifier {
+  // State
   final String _nestSocketEndpoint = dotenv.env['NEST_SOCKET_ENDPOINT']!;
-  late socket_io.Socket socket;
-  List<GroupTimerMemberModel> members = [];
+  late socket_io.Socket _socket;
+  List<GroupTimerMemberModel> _members = [];
+  DateTime? _connectedAt;
+
+  // Getter
+  List<GroupTimerMemberModel> get members => _members;
+  DateTime? get connectedAt => _connectedAt;
 
   void connectAndListen({required String accessToken}) {
-    socket = socket_io.io('$_nestSocketEndpoint/study-group', <String, dynamic>{
+    _socket =
+        socket_io.io('$_nestSocketEndpoint/study-group', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
       'auth': {'token': accessToken}
     });
+    _socket.connect();
 
-    socket.connect();
-
-    socket.onConnect((_) {
+    _socket.onConnect((_) {
       if (kDebugMode) {
         print('Connected to socket server');
       }
-      socket.emit('joinGroup', {'jwtToken': accessToken});
+      _socket.emit('joinGroup', {'jwtToken': accessToken});
+      _connectedAt = DateTime.now();
+      notifyListeners();
     });
 
-    socket.on('error', (data) {
+    _socket.on('error', (data) {
       MessageUtil.showErrorToast(data);
     });
 
-    socket.on('explodeGroup', (_) {
+    _socket.on('explodeGroup', (_) {
       MessageUtil.showErrorToast("문제가 생겨서 방이 폭파되었습니다 ㅜㅜ. 시간은 계속 기록됩니다!");
-      socket.disconnect();
+      _socket.disconnect();
     });
 
-    socket.on('groupInfo', (data) {
-      members = List<GroupTimerMemberModel>.from(
+    _socket.on('groupInfo', (data) {
+      _members = List<GroupTimerMemberModel>.from(
           data['members'].map((x) => GroupTimerMemberModel.fromJson(x)));
 
       if (kDebugMode) {
-        print("groupInfo: ${members.length} members");
+        print("groupInfo: ${_members.length} members");
       }
       notifyListeners();
-      socket.off('groupInfo');
+      _socket.off('groupInfo');
     });
 
-    socket.on('newMember', (data) {
+    _socket.on('newMember', (data) {
       var newMember = GroupTimerMemberModel.fromJson(data);
       if (kDebugMode) {
         print("newMember: ${newMember.memberId}");
       }
-      members = [
-        ...members.where((m) => m.memberId != newMember.memberId),
+      _members = [
+        ..._members.where((m) => m.memberId != newMember.memberId),
         newMember,
       ];
       notifyListeners();
     });
 
-    socket.on('memberLeft', (data) {
+    _socket.on('memberLeft', (data) {
       if (kDebugMode) {
         print("memberLeft: ${data['memberId']}");
       }
-      members = members.where((m) => m.memberId != data['memberId']).toList();
+      _members = _members.where((m) => m.memberId != data['memberId']).toList();
       notifyListeners();
     });
 
-    socket.onDisconnect((_) {
+    _socket.onDisconnect((_) {
       if (kDebugMode) {
         print('Disconnected from socket server');
       }
@@ -73,6 +81,6 @@ class GroupTimerViewModel with ChangeNotifier {
   }
 
   void disconnect() {
-    socket.disconnect();
+    _socket.disconnect();
   }
 }

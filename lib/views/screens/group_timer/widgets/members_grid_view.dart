@@ -17,8 +17,6 @@ class _MembersGridViewState extends State<MembersGridView> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime curDateTime = DateTime.now();
-
     return Consumer2<GroupTimerViewModel, TimerViewModel>(
       builder: (context, groupTimerVM, timerStateVM, child) {
         if (groupTimerVM.members.isEmpty) {
@@ -40,8 +38,9 @@ class _MembersGridViewState extends State<MembersGridView> {
             }
 
             final member = groupTimerVM.members[index];
+            final connectedAt = groupTimerVM.connectedAt ?? DateTime.now();
             final memberDurationSeconds = timerStateVM.elapsedSeconds +
-                curDateTime.difference(member.joinedAtUTC).inSeconds;
+                connectedAt.difference(member.joinedAtUTC).inSeconds;
 
             return GridTile(
               child: MemberCard(

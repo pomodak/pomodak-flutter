@@ -18,7 +18,7 @@ class TimerAlarmPage extends StatelessWidget {
     final alarmInfo = state.extra as AlarmInfo;
 
     void triggerVibration() async {
-      var appOptions = Provider.of<AppViewModel>(context, listen: false);
+      var appOptions = context.read<AppViewModel>();
       if (await Vibration.hasVibrator() == true && appOptions.vibration) {
         Vibration.vibrate(duration: 400);
       }

@@ -7,11 +7,9 @@ class TimerPauseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timerState = Provider.of<TimerViewModel>(context, listen: false);
-
     return ElevatedButton(
       onPressed: () {
-        timerState.togglePause();
+        context.read<TimerViewModel>().togglePause();
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(160, 48),

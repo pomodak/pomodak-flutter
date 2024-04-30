@@ -58,12 +58,10 @@ class EggCard extends StatelessWidget {
       return;
     }
 
-    final transactionViewModel =
-        Provider.of<TransactionViewModel>(context, listen: false);
-    var data = await transactionViewModel.consumeItem(
-      inventoryId: itemInventory.itemInventoryId,
-      isFood: true,
-    );
+    var data = await context.read<TransactionViewModel>().consumeItem(
+          inventoryId: itemInventory.itemInventoryId,
+          isFood: true,
+        );
 
     if (data.result != null) {
       if (context.mounted) _handleConsumeItemResult(context, data);

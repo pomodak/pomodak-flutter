@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodak/router/route_utils.dart';
-import 'package:pomodak/view_models/timer_options_view_model.dart';
-import 'package:provider/provider.dart';
 
 class TimerStartButton extends StatelessWidget {
+  final bool isFocusTogetherMode;
+
   const TimerStartButton({
     super.key,
+    required this.isFocusTogetherMode,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        var timerOptionsViewModel =
-            Provider.of<TimerOptionsViewModel>(context, listen: false);
-
-        if (timerOptionsViewModel.isFocusTogetherMode) {
+        if (isFocusTogetherMode) {
           context.go(AppPage.groupTimer.toPath);
         } else {
           context.go(AppPage.timer.toPath);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/pomodoro_timer.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -15,10 +16,9 @@ class TimerImage extends StatelessWidget {
     // 이미지 렌더링이 반복되지 않도록 최적화
     return Selector<TimerViewModel, TimerStateInfo>(
       selector: (_, timerState) =>
-          TimerStateInfo(timerState.isRunning, timerState.pomodoroMode),
+          TimerStateInfo(timerState.isRunning, timerState.pomodoroPhase),
       builder: (_, timerStateInfo, __) {
-        final timerOptions =
-            Provider.of<TimerOptionsViewModel>(context, listen: false);
+        final timerOptions = context.read<TimerOptionsViewModel>();
         String imageUrl;
         String message;
 
@@ -31,13 +31,13 @@ class TimerImage extends StatelessWidget {
         } else {
           // 뽀모도로 타이머 모드
           switch (timerStateInfo.pomodoroMode) {
-            case PomodoroMode.focus:
+            case PomodoroPhase.focus:
               imageUrl = timerStateInfo.isRunning
                   ? CDNImages.mascot["animation_work"]!
                   : CDNImages.mascot["freeze_work"]!;
               message = "목표가 얼마 안남았닭...!";
               break;
-            case PomodoroMode.rest:
+            case PomodoroPhase.rest:
               imageUrl = timerStateInfo.isRunning
                   ? CDNImages.mascot["animation_sleep"]!
                   : CDNImages.mascot["freeze_sleep"]!;
@@ -81,7 +81,7 @@ class TimerImage extends StatelessWidget {
 
 class TimerStateInfo {
   final bool isRunning;
-  final PomodoroMode pomodoroMode;
+  final PomodoroPhase pomodoroMode;
 
   TimerStateInfo(this.isRunning, this.pomodoroMode);
 

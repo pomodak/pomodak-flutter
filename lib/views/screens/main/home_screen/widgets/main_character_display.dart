@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/pomodoro_timer.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -47,36 +48,6 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   String _currentMessage = '';
   bool _showMessage = false;
 
-  void _showRandomMessage(List<String> messages) {
-    if (!mounted) return;
-    setState(() {
-      _currentMessage = messages[Random().nextInt(messages.length)];
-      _showMessage = true;
-    });
-  }
-
-  void _hideMessageAfterDelay() {
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
-      setState(() => _showMessage = false);
-    });
-  }
-
-  void _handleMessageDisplay() {
-    final timerOptions =
-        Provider.of<TimerOptionsViewModel>(context, listen: false);
-    final timerState = Provider.of<TimerViewModel>(context, listen: false);
-
-    List<String> messages = timerOptions.isPomodoroMode
-        ? (timerState.pomodoroMode == PomodoroMode.focus
-            ? focusMessages
-            : restMessages)
-        : normalMessages;
-
-    _showRandomMessage(messages);
-    _hideMessageAfterDelay();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -97,7 +68,7 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final timerState = Provider.of<TimerViewModel>(context);
-    final imageUrl = timerState.pomodoroMode == PomodoroMode.focus
+    final imageUrl = timerState.pomodoroPhase == PomodoroPhase.focus
         ? CDNImages.mascot["normal"]!
         : CDNImages.mascot["exhausted"]!;
 
@@ -137,5 +108,32 @@ class _MainCharacterDisplayState extends State<MainCharacterDisplay> {
         ],
       ),
     );
+  }
+
+  void _showRandomMessage(List<String> messages) {
+    if (!mounted) return;
+    setState(() {
+      _currentMessage = messages[Random().nextInt(messages.length)];
+      _showMessage = true;
+    });
+  }
+
+  void _hideMessageAfterDelay() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      setState(() => _showMessage = false);
+    });
+  }
+
+  void _handleMessageDisplay() {
+    final isPomodoroMode = context.read<TimerOptionsViewModel>().isPomodoroMode;
+    final pomodoroPhase = context.read<TimerViewModel>().pomodoroPhase;
+
+    List<String> messages = isPomodoroMode
+        ? (pomodoroPhase == PomodoroPhase.focus ? focusMessages : restMessages)
+        : normalMessages;
+
+    _showRandomMessage(messages);
+    _hideMessageAfterDelay();
   }
 }

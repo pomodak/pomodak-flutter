@@ -32,8 +32,8 @@ class BaseTimer {
   /// reset()을 통해 상태 초기화
   void stop() {
     _timer?.cancel();
-    if (isRunning) interuptSession();
     isRunning = false;
+    interuptSession();
     reset();
   }
 

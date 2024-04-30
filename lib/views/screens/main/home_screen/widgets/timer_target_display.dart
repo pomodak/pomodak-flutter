@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/pomodoro_timer.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/main/home_screen/widgets/show_timer_option_modal.dart';
 import 'package:provider/provider.dart';
@@ -10,18 +11,18 @@ class TimerTargetDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String displayTime;
-    final timerState = Provider.of<TimerViewModel>(context);
-    final timerOptions = Provider.of<TimerOptionsViewModel>(context);
-    if (timerOptions.isPomodoroMode) {
-      int targetSeconds = (timerState.pomodoroMode == PomodoroMode.focus)
-          ? timerOptions.workTime * 60
-          : timerOptions.restTime * 60;
+    final pomodoroPhase =
+        context.select((TimerViewModel vm) => vm.pomodoroPhase);
+    final timerOptions = context.watch<TimerOptionsViewModel>();
 
-      displayTime = FormatUtil.formatSeconds(targetSeconds);
-    } else {
-      displayTime = FormatUtil.formatSeconds(0);
-    }
+    final targetSeconds = timerOptions.isPomodoroMode
+        ? (pomodoroPhase == PomodoroPhase.focus
+                ? timerOptions.workTime
+                : timerOptions.restTime) *
+            60
+        : 0;
+
+    final displayTime = FormatUtil.formatSeconds(targetSeconds);
 
     return InkWell(
       onTap: () {

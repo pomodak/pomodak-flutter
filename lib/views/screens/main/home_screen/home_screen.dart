@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timerOptionsViewModel = Provider.of<TimerOptionsViewModel>(context);
+    final timerOptionsViewModel = context.watch<TimerOptionsViewModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +54,10 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(
                           width: 10,
                         ),
-                        const TimerStartButton(),
+                        TimerStartButton(
+                          isFocusTogetherMode:
+                              timerOptionsViewModel.isFocusTogetherMode,
+                        ),
                       ],
                     ),
                   ),

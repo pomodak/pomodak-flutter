@@ -204,7 +204,6 @@ void registerViewModels() {
     () => TimerViewModel(
       repository: getIt<TimerStateRepository>(),
       timerOptionsViewModel: getIt<TimerOptionsViewModel>(),
-      timerRecordViewModel: getIt<TimerRecordViewModel>(),
     ),
   );
   getIt.registerLazySingleton<GroupTimerViewModel>(() => GroupTimerViewModel());

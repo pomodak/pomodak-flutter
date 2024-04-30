@@ -37,7 +37,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
 
   @override
   Widget build(BuildContext context) {
-    final timerOptionsViewModel = Provider.of<TimerOptionsViewModel>(context);
+    final timerOptionsViewModel = context.watch<TimerOptionsViewModel>();
 
     return Dialog(
       surfaceTintColor: Colors.white,
@@ -121,9 +121,6 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    final timerOptionsViewModel =
-        Provider.of<TimerOptionsViewModel>(context, listen: false);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -136,7 +133,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               ),
             ),
             onPressed: () {
-              timerOptionsViewModel.cancelChanges();
+              context.read<TimerOptionsViewModel>().cancelChanges();
               Navigator.of(context).pop();
             },
             child: const Text("취소"),
@@ -152,7 +149,7 @@ class _TimerOptionsModalState extends State<TimerOptionsModal> {
               ),
             ),
             onPressed: () {
-              timerOptionsViewModel.saveOptions();
+              context.read<TimerOptionsViewModel>().saveOptions();
               Navigator.of(context).pop();
             },
             child: const Text(

@@ -9,8 +9,10 @@ class TimerSectionCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sectionCompleted = Provider.of<TimerViewModel>(context).sectionCounts;
-    final sectionCount = Provider.of<TimerOptionsViewModel>(context).sections;
+    final sectionCompleted =
+        context.select((TimerViewModel vm) => vm.sectionCounts);
+    final sectionCount =
+        context.select((TimerOptionsViewModel vm) => vm.sections);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -20,13 +22,10 @@ class TimerSectionCounter extends StatelessWidget {
           child: index < sectionCompleted
               ? Image.network(CDNImages.mascot["finish"]!,
                   width: 24, height: 24) // 스탬프 이미지
-              : Container(
-                  width: 20,
-                  height: 20,
-                  decoration: const BoxDecoration(
-                    color: Colors.black12,
-                    shape: BoxShape.circle,
-                  ),
+              : const Icon(
+                  Icons.lens_outlined,
+                  size: 20,
+                  color: Colors.black12,
                 ),
         );
       }),

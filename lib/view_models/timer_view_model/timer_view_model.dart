@@ -79,6 +79,7 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   /// 백그라운드 전환 시 타이머 일시정지 & 전환된 시간 저장
+  ///
   /// 뽀모도로 모드면 남은 시간을 계산하여 로컬 알람 스케줄링
   void _handleAppPaused() {
     _isBackgroundRunning = _curTimer.isRunning;
@@ -104,14 +105,16 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   /// 포그라운드 전환 시 타이머 재개 & 스케줄링된 뽀모도로 알람 취소
+  ///
   /// 백그라운드에서 실행중이었던 경우 타이머에 백그라운드에서 경과한 시간 추가
+  ///
   /// 뽀모도로 모드 & 타이머 종료 시 재시작 하지 않고 endSession(true) 호출
   void _handleAppResumed() {
-    LocalNotificationUtil.canclePomodoroNotification();
-    if (kDebugMode) {
-      print('알림예약 취소');
-    }
     if (_isBackgroundRunning) {
+      LocalNotificationUtil.canclePomodoroNotification();
+      if (kDebugMode) {
+        print('알림예약 취소');
+      }
       _curTimer.addTime(_timerDifferenceHandler.getTimerGapSeconds());
       notifyListeners();
       // 뽀모도로 모드면 종료된지 체크 후 종료 처리
@@ -125,7 +128,7 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     }
   }
 
-  // 타이머 시작
+  /// 타이머 시작
   void timerStart() {
     _curTimer.start(onUpdate: () {
       notifyListeners();
@@ -133,31 +136,21 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // 일반 타이머 종료
-  void normalEnd() {
+  /// 타이머 중지
+  ///
+  /// 현재 타이머 모드에 따라 다르게 동작
+  ///
+  /// 일반모드: 타이머 기록 & 일반 알람
+  ///
+  /// 뽀모도로 집중: 타이머 기록 & 집중 포기 알람
+  ///
+  /// 뽀모도로 휴식: 다음 단계로 전환(집중) & 휴식 끝 알람 or 섹션 끝 알람
+  void timerStop() {
     _curTimer.stop();
     notifyListeners();
   }
 
-  // 뽀모도로 타이머 종료
-  void pomodoroEnd({required bool isEndedInBackground}) {
-    _curTimer.stop();
-    notifyListeners();
-  }
-
-  // 뽀모도로 타이머 생략(휴식 모드)
-  void pomodoroPass() {
-    _curTimer.stop();
-    notifyListeners();
-  }
-
-  // 뽀모도로 타이머 포기(집중 모드)
-  void pomodoroGiveUp() {
-    _curTimer.stop();
-    notifyListeners();
-  }
-
-  // 타이머 일시정지
+  /// 타이머 일시정지 / 재개
   void togglePause() {
     if (_curTimer.isRunning) {
       _curTimer.pause();
@@ -167,7 +160,7 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // 뽀모도로 모드로 전환
+  /// 뽀모도로 모드로 전환
   void switchPomodoroMode() {
     _curTimer = PomodoroTimer(
       saveRecord: _recordTimerSession,
@@ -177,7 +170,7 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // 일반 모드로 전환
+  /// 일반 모드로 전환
   void switchNormalMode() {
     _curTimer = NormalTimer(
       saveRecord: _recordTimerSession,
@@ -186,7 +179,7 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // 타이머 세션을 기록
+  /// 타이머 세션을 기록
   Future<void> _recordTimerSession(
       {required int time, required bool isCompleted}) async {
     getIt<TimerRecordViewModel>().saveRecord(

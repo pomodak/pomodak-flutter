@@ -6,6 +6,10 @@ class BaseTimer {
   bool isRunning = false;
   int elapsedSeconds = 0;
 
+  void dispose() {
+    _timer?.cancel();
+  }
+
   /// 타이머 시작 (onUpdate: UI 업데이트 콜백)
   /// 타이머가 이미 실행 중일 경우 무시됨
   void start({required VoidCallback onUpdate}) {
@@ -14,6 +18,8 @@ class BaseTimer {
         tick();
         onUpdate(); // UI 업데이트를 위한 콜백 호출
         if (shouldEnd()) {
+          _timer?.cancel();
+          isRunning = false;
           endSession();
           onUpdate(); // 세션 종료 후 UI 업데이트를 위한 콜백 호출
         }
@@ -22,12 +28,12 @@ class BaseTimer {
     }
   }
 
-  /// 타이머 중지 (interuptSession() 호출)
-  /// interuptSession가 수행된 후 reset()을 통해 상태 초기화
+  /// 타이머 중지
+  /// reset()을 통해 상태 초기화
   void stop() {
     _timer?.cancel();
+    if (isRunning) interuptSession();
     isRunning = false;
-    interuptSession();
     reset();
   }
 
@@ -47,6 +53,11 @@ class BaseTimer {
   /// elapsedSeconds 초기화
   void reset() {
     elapsedSeconds = 0;
+  }
+
+  // 타이머 시간 추가 (백그라운드 -> 포그라운드 전환 시 호출)
+  void addTime(int seconds) {
+    elapsedSeconds += seconds;
   }
 
   /// 타이머가 끝나야 하는지 확인

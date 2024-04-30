@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/timer_options_repository.dart';
+import 'package:pomodak/di.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 
 class TimerOptionsViewModel with ChangeNotifier {
   TimerOptionsRepository repository;
@@ -34,10 +36,6 @@ class TimerOptionsViewModel with ChangeNotifier {
   int get tempSections => _tempSections;
   bool get tempIsFocusTogetherMode => _tempIsFocusTogetherMode;
 
-  // 최근 변경 된 옵션(타이머 초기화 여부 확인용)
-  TimerOptionsChangedEvent? _lastEvent;
-  TimerOptionsChangedEvent? get lastEvent => _lastEvent;
-
   TimerOptionsViewModel({required this.repository}) {
     loadOptions();
   }
@@ -56,44 +54,38 @@ class TimerOptionsViewModel with ChangeNotifier {
   // 옵션값 Setter
   set tempIsPomodoroMode(bool value) {
     _tempIsPomodoroMode = value;
-    _lastEvent = null; // temp 값의 변화로인해 timerState가 리셋되지 않도록 함
     notifyListeners();
   }
 
   set tempWorkTime(int value) {
     _tempWorkTime = value;
-    _lastEvent = null;
     notifyListeners();
   }
 
   set tempRestTime(int value) {
     _tempRestTime = value;
-    _lastEvent = null;
     notifyListeners();
   }
 
   set tempSections(int value) {
     _tempSections = value;
-    _lastEvent = null;
     notifyListeners();
   }
 
   set tempIsFocusTogetherMode(bool value) {
     _tempIsFocusTogetherMode = value;
-    _lastEvent = null;
     notifyListeners();
   }
 
   void saveOptions() async {
-    // 변경사항 검사
-    _lastEvent = TimerOptionsChangedEvent(
-      isPomodoroModeChanged: _tempIsPomodoroMode != _isPomodoroMode,
-      workTimeChanged: _tempWorkTime != _workTime,
-      restTimeChanged: _tempRestTime != _restTime,
-      sectionsChanged: _tempSections != _sections,
-      isFocusTogetherModeChanged:
-          _tempIsFocusTogetherMode != _isFocusTogetherMode,
-    );
+    // 타이머 초기화 여부 검사 (isFocusTogetherMode를 제외한 나머지 옵션 변경 시 타이머 초기화)
+    bool shouldInitTimer = false;
+    if (_tempIsPomodoroMode != _isPomodoroMode ||
+        _tempWorkTime != _workTime ||
+        _tempRestTime != _restTime ||
+        _tempSections != _sections) {
+      shouldInitTimer = true;
+    }
 
     // 실제 옵션 변경 적용
     _isPomodoroMode = _tempIsPomodoroMode;
@@ -112,6 +104,14 @@ class TimerOptionsViewModel with ChangeNotifier {
 
     // 리스너들에게 변경 이벤트 전달
     notifyListeners();
+    // notifyListeners()를 통해 timerOptionsViewModel의 변경사항을 적용 후 타이머 초기화
+    if (shouldInitTimer) {
+      if (isPomodoroMode) {
+        getIt<TimerViewModel>().switchPomodoroMode();
+      } else {
+        getIt<TimerViewModel>().switchNormalMode();
+      }
+    }
   }
 
   void cancelChanges() {
@@ -123,20 +123,4 @@ class TimerOptionsViewModel with ChangeNotifier {
     _tempIsFocusTogetherMode = _isFocusTogetherMode;
     notifyListeners();
   }
-}
-
-class TimerOptionsChangedEvent {
-  final bool isPomodoroModeChanged;
-  final bool workTimeChanged;
-  final bool restTimeChanged;
-  final bool sectionsChanged;
-  final bool isFocusTogetherModeChanged;
-
-  TimerOptionsChangedEvent({
-    this.isPomodoroModeChanged = false,
-    this.workTimeChanged = false,
-    this.restTimeChanged = false,
-    this.sectionsChanged = false,
-    this.isFocusTogetherModeChanged = false,
-  });
 }

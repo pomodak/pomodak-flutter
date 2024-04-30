@@ -1,5 +1,9 @@
-/// setPausedAt() 을 호출하면 현재 시간을 pausedAt 에 저장하고
-/// getTimerGapSeconds() 를 호출하면 pausedAt 에 저장된 시간과 현재 시간의 차이를 초 단위로 반환
+/// pausedAt : 백그라운드로 전환된 시간
+///
+/// setPausedAt() : 현재 시간을 pausedAt에 저장
+///
+/// getTimerGapSeconds() : pausedAt와 현재 시간의 차이를 초 단위로 반환
+///
 /// (백그라운드 / 포그라운드 전환 시 사용)
 class TimerDifferenceHandler {
   static late DateTime pausedAt;

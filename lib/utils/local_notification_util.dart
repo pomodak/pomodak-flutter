@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
+import 'package:pomodak/view_models/timer_view_model/pomodoro_timer.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -31,16 +31,16 @@ class LocalNotificationUtil {
   }
 
   static void schedulePomodoroNotification({
-    PomodoroMode? pomodoroMode, // null이면 모든 섹션 완료
+    PomodoroPhase? pomodoroPhase, // null이면 모든 섹션 완료
     required int seconds,
   }) async {
     final String title;
     final String message;
 
-    if (pomodoroMode == PomodoroMode.focus) {
+    if (pomodoroPhase == PomodoroPhase.focus) {
       title = "닭이 지쳤어요!";
       message = "잠시 휴식을 취해주세요.";
-    } else if (pomodoroMode == PomodoroMode.rest) {
+    } else if (pomodoroPhase == PomodoroPhase.rest) {
       title = "닭이 잠에서 깨어났어요!";
       message = "다시 집중해주세요.";
     } else {

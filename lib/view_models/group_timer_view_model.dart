@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:pomodak/di.dart';
 import 'package:pomodak/models/domain/group_timer_member_model.dart';
 import 'package:pomodak/utils/message_util.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 class GroupTimerViewModel with ChangeNotifier {
@@ -29,8 +31,6 @@ class GroupTimerViewModel with ChangeNotifier {
         print('Connected to socket server');
       }
       _socket.emit('joinGroup', {'jwtToken': accessToken});
-      _connectedAt = DateTime.now();
-      notifyListeners();
     });
 
     _socket.on('error', (data) {
@@ -46,6 +46,10 @@ class GroupTimerViewModel with ChangeNotifier {
       _members = List<GroupTimerMemberModel>.from(
           data['members'].map((x) => GroupTimerMemberModel.fromJson(x)));
 
+      // 내 연결시간 저장
+      String? myId = getIt<MemberViewModel>().member?.memberId;
+      _connectedAt = _members.firstWhere((m) => m.memberId == myId).joinedAtUTC;
+      notifyListeners();
       if (kDebugMode) {
         print("groupInfo: ${_members.length} members");
       }

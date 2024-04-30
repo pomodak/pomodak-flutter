@@ -24,12 +24,16 @@
 - [x] feature: character inventory sorting (grade, name, id)
 - [x] feature: check for app updates available in market & display alert dialog
 
-## Next Versions
+#### Task 1.1.1
 
 - [x] fix: item_inventory data synchronization bug
+- [x] fix: memberTimeDisplay Inconsistency Bug in GroupTimer When Restarted after being in Background for too long
+- [x] refactor: timer-related logic & views
+- [ ] feature: Replace consumable_item_inventory ListView to GridView such as characterInventory
+
+## Next Versions
+
 - [ ] enhance: free_egg rewards logic (to change ad rewards)
 - [ ] feature: character collection
 - [ ] feature: add Google AdMob
 - [ ] feature: user guide
-
-

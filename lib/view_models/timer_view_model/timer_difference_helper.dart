@@ -5,12 +5,8 @@
 /// getTimerGapSeconds() : pausedAt와 현재 시간의 차이를 초 단위로 반환
 ///
 /// (백그라운드 / 포그라운드 전환 시 사용)
-class TimerDifferenceHandler {
+class TimerDifferenceHelper {
   static late DateTime pausedAt;
-
-  static final TimerDifferenceHandler _instance = TimerDifferenceHandler();
-
-  static TimerDifferenceHandler get instance => _instance;
 
   int getTimerGapSeconds() {
     final DateTime dateTimeNow = DateTime.now();

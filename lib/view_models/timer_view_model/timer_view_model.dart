@@ -9,7 +9,7 @@ import 'package:pomodak/view_models/timer_view_model/base_timer.dart';
 import 'package:pomodak/view_models/timer_view_model/normal_timer.dart';
 import 'package:pomodak/view_models/timer_alarm_view_model.dart';
 import 'package:pomodak/view_models/timer_view_model/pomodoro_timer.dart';
-import 'package:pomodak/view_models/timer_view_model/timer_difference_handler.dart';
+import 'package:pomodak/view_models/timer_view_model/timer_difference_helper.dart';
 
 enum PomodoroMode { focus, rest }
 
@@ -19,12 +19,11 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
   final TimerOptionsViewModel timerOptionsViewModel;
 
   // State
-  BaseTimer _curTimer = BaseTimer();
-  final TimerDifferenceHandler _timerDifferenceHandler =
-      TimerDifferenceHandler.instance;
+  BaseTimer _curTimer = BaseTimer(); // 타이머 종류에 따라 다른 타이머 객체를 사용
+  final TimerDifferenceHelper _timerDifferenceHelper = TimerDifferenceHelper();
   bool _isBackgroundRunning = false; // 앱이 백그라운드에서 실행중인지 여부
-  AppLifecycleState?
-      _lastLifecycleState; // 직전 lifecycle 상태 (상단바를 내리고 다시 올릴 때 resume이 호출되는 문제 해결용)
+  // 직전 lifecycle 상태 (상단바를 내리고 다시 올릴 때 resume이 호출되는 문제 해결용)
+  AppLifecycleState? _lastLifecycleState;
 
   // Getter
   int get elapsedSeconds => _curTimer.elapsedSeconds;
@@ -85,13 +84,15 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
     _isBackgroundRunning = _curTimer.isRunning;
     if (_curTimer.isRunning) {
       _curTimer.pause();
+      _timerDifferenceHelper.setPuasedAt();
 
       if (timerOptionsViewModel.isPomodoroMode && _curTimer is PomodoroTimer) {
-        int remainingTime = (_curTimer as PomodoroTimer).getTargetSeconds() -
-            _curTimer.elapsedSeconds;
+        PomodoroTimer pomodoroTimer = _curTimer as PomodoroTimer;
+        int remainingTime =
+            pomodoroTimer.getTargetSeconds() - _curTimer.elapsedSeconds;
         LocalNotificationUtil.schedulePomodoroNotification(
           seconds: remainingTime,
-          pomodoroPhase: (_curTimer as PomodoroTimer).pomodoroPhase,
+          pomodoroPhase: pomodoroTimer.pomodoroPhase,
         );
 
         if (kDebugMode) {
@@ -99,7 +100,6 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
         }
       }
 
-      _timerDifferenceHandler.setPuasedAt();
       notifyListeners();
     }
   }
@@ -115,12 +115,13 @@ class TimerViewModel with ChangeNotifier, WidgetsBindingObserver {
       if (kDebugMode) {
         print('알림예약 취소');
       }
-      _curTimer.addTime(_timerDifferenceHandler.getTimerGapSeconds());
+      _curTimer.addTime(_timerDifferenceHelper.getTimerGapSeconds());
       notifyListeners();
       // 뽀모도로 모드면 종료된지 체크 후 종료 처리
       if (timerOptionsViewModel.isPomodoroMode && _curTimer is PomodoroTimer) {
+        PomodoroTimer pomodoroTimer = _curTimer as PomodoroTimer;
         if (_curTimer.shouldEnd()) {
-          (_curTimer as PomodoroTimer).endSession(isEndedInBackground: true);
+          pomodoroTimer.endSession(isEndedInBackground: true);
           return;
         }
       }

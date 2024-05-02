@@ -31,9 +31,13 @@
 - [x] refactor: timer-related logic & views
 - [x] fix: fix height in item_inventory_section so items beyond 3 are alightly visible
 
+#### Task 1.1.2
+
+- [ ] fix: socket connection for background app
+- [ ] feature: add Google AdMob
+- [ ] enhance: free_egg rewards -> point reward that can be upgraded with admob
+
 ## Next Versions
 
-- [ ] enhance: free_egg rewards logic (to change ad rewards)
 - [ ] feature: character collection
-- [ ] feature: add Google AdMob
 - [ ] feature: user guide

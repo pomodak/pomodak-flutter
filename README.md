@@ -33,7 +33,7 @@
 
 #### Task 1.1.2
 
-- [ ] fix: socket connection for background app
+- [x] fix: fix time_display of socket connection for logged_in user for background app
 - [ ] feature: add Google AdMob
 - [ ] enhance: free_egg rewards -> point reward that can be upgraded with admob
 

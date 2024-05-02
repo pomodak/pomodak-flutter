@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
+import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/group_timer/widgets/member_card.dart';
 import 'package:provider/provider.dart';
@@ -14,9 +15,9 @@ class MembersGridView extends StatefulWidget {
 
 class _MembersGridViewState extends State<MembersGridView> {
   static const int gridCount = 9; // 최대 그리드 칸 수
-
   @override
   Widget build(BuildContext context) {
+    String myId = context.read<MemberViewModel>().member?.memberId ?? "";
     return Consumer2<GroupTimerViewModel, TimerViewModel>(
       builder: (context, groupTimerVM, timerStateVM, child) {
         if (groupTimerVM.members.isEmpty) {
@@ -46,7 +47,11 @@ class _MembersGridViewState extends State<MembersGridView> {
               child: MemberCard(
                 nickname: member.nickname,
                 imageUrl: member.imageUrl,
-                timeStr: FormatUtil.formatSeconds(memberDurationSeconds),
+                timeStr: FormatUtil.formatSeconds(
+                  myId == member.memberId
+                      ? timerStateVM.elapsedSeconds
+                      : memberDurationSeconds,
+                ),
               ),
             );
           },

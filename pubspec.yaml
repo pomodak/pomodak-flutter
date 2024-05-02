@@ -66,6 +66,7 @@ dependencies:
   firebase_analytics: ^10.10.3
   pub_semver: ^2.1.4
   store_redirect: ^2.0.2
+  google_mobile_ads: ^5.0.0
 
 dev_dependencies:
   flutter_test:

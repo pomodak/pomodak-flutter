@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pomodak/di.dart';
@@ -36,6 +37,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Google Admob 초기화
+  MobileAds.instance.initialize();
 
   // 디바이스 오리엔테이션 설정(세로모드 고정)
   SystemChrome.setPreferredOrientations(

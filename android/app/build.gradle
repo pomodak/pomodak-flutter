@@ -35,6 +35,11 @@ if (kakaoAppKey == null) {
     kakaoAppKey = 'kakaoAppKey'
 }
 
+def googleAdmobAppId = localProperties.getProperty('googleAdmobAppId')
+if (kakaoAppKey == null) {
+    googleAdmobAppId = 'googleAdmobAppId'
+}
+
 android {
     namespace applicationName
     compileSdk 34
@@ -64,7 +69,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
-        manifestPlaceholders += [kakaoAppKey: kakaoAppKey]
+        manifestPlaceholders += [kakaoAppKey: kakaoAppKey, googleAdmobAppId: googleAdmobAppId]
     }
     signingConfigs {
         release {

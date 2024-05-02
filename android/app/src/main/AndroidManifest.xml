@@ -65,6 +65,11 @@
                 <data android:scheme="kakao${kakaoAppKey}" android:host="oauth"/>
             </intent-filter>
         </activity>
+
+        <!-- 구글 Admob 설정 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${googleAdmobAppId}"/>
         
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

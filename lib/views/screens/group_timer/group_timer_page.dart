@@ -10,6 +10,7 @@ import 'package:pomodak/views/screens/timer/widgets/alarm_handler.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_display.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_settings_row.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
+import 'package:pomodak/views/widgets/ads/ad_banner.dart';
 import 'package:provider/provider.dart';
 
 class GroupTimerPage extends StatefulWidget {
@@ -88,6 +89,7 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
             ),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
                     children: [
@@ -95,6 +97,7 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
                       TimerStopButton(),
                     ],
                   ),
+                  AdBanner(),
                 ],
               ),
             ),

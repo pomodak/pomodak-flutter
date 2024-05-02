@@ -4,6 +4,7 @@ import 'package:pomodak/views/screens/main/user_screen/widgets/user_edit_modal.d
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_heatmap.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_profile.dart';
 import 'package:pomodak/views/screens/main/user_screen/widgets/user_focus_summary.dart';
+import 'package:pomodak/views/widgets/ads/ad_banner.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -59,8 +60,12 @@ class _UserScreenState extends State<UserScreen>
                     children: [
                       UserProfile(),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 28),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         child: UserFocusSummary(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: AdBanner(),
                       ),
                     ],
                   ),

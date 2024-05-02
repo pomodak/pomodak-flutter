@@ -8,6 +8,7 @@ import 'package:pomodak/views/screens/timer/widgets/timer_image.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_puase_button.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_settings_row.dart';
 import 'package:pomodak/views/screens/timer/widgets/timer_stop_button.dart';
+import 'package:pomodak/views/widgets/ads/ad_banner.dart';
 import 'package:provider/provider.dart';
 
 class TimerPage extends StatefulWidget {
@@ -67,6 +68,7 @@ class _TimerPageState extends State<TimerPage> {
             ),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
                     children: [
@@ -74,6 +76,7 @@ class _TimerPageState extends State<TimerPage> {
                       TimerStopButton(),
                     ],
                   ),
+                  AdBanner(),
                 ],
               ),
             ),

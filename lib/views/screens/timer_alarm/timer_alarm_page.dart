@@ -4,6 +4,7 @@ import 'package:pomodak/config/constants/cdn_images.dart';
 import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/utils/format_util.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
+import 'package:pomodak/views/widgets/ads/ad_banner.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
@@ -51,7 +52,7 @@ class TimerAlarmPage extends StatelessWidget {
         message = "이야~~ ${alarmInfo.time}초나 집중하다니 정말 대단해!!";
       } else {
         message =
-            "이야~~ ${FormatUtil.formatSeconds(alarmInfo.time)}만큼 집중하다니 정말 대단해!!";
+            "${FormatUtil.formatSeconds(alarmInfo.time)} 만큼 집중하셨습니다!\n 충분한 휴식을 취해주세요!";
       }
     }
 
@@ -59,6 +60,7 @@ class TimerAlarmPage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -87,10 +89,11 @@ class TimerAlarmPage extends StatelessWidget {
             ),
           ),
           Expanded(
+            flex: 4,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   CustomButton(
                     onTap: () {
@@ -98,6 +101,7 @@ class TimerAlarmPage extends StatelessWidget {
                     },
                     text: "확인",
                   ),
+                  const AdBanner(),
                 ],
               ),
             ),

@@ -1,11 +1,14 @@
+import 'package:pomodak/di.dart';
 import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_view_model/base_timer.dart';
+import 'package:pomodak/view_models/transaction_view_model.dart';
 
 enum PomodoroPhase { focus, rest }
 
 class PomodoroTimer extends BaseTimer {
   final TimerOptionsViewModel timerOptionsViewModel;
+
   PomodoroPhase pomodoroPhase = PomodoroPhase.focus;
   int curSections = 0;
 
@@ -18,6 +21,7 @@ class PomodoroTimer extends BaseTimer {
     required AlarmType type,
     required int elapsedSeconds,
     required bool endedInBackground,
+    int? earnedPoints,
   }) setAlarm;
 
   PomodoroTimer({
@@ -36,30 +40,42 @@ class PomodoroTimer extends BaseTimer {
   ///
   /// isEndedInBackground: 백그라운드에서 종료되었을때 (true: 알람페이지에서 진동을 울리지 않음)
   @override
-  void endSession({bool isEndedInBackground = false}) {
+  Future<void> endSession({bool isEndedInBackground = false}) async {
+    int focusSeconds = getTargetSeconds();
+    int earnedPoints =
+        getIt<TransactionViewModel>().calcPointsFromFocusSeconds(focusSeconds);
+    if (pomodoroPhase == PomodoroPhase.focus) {
+      saveRecord(time: focusSeconds, isCompleted: true);
+      getIt<TransactionViewModel>().rewardPoints(earnedPoints);
+    }
     setAlarm(
       type: pomodoroPhase == PomodoroPhase.focus
           ? AlarmType.work
           : curSections == timerOptionsViewModel.sections
               ? AlarmType.finish
               : AlarmType.rest,
-      elapsedSeconds: getTargetSeconds(),
+      elapsedSeconds: focusSeconds,
       endedInBackground: isEndedInBackground,
+      earnedPoints: pomodoroPhase == PomodoroPhase.focus ? earnedPoints : null,
     );
-    saveRecord(time: elapsedSeconds, isCompleted: true);
     _nextPhase();
   }
 
   @override
-  void interuptSession() {
+  void interuptSession() async {
+    int earnedPoints = getIt<TransactionViewModel>()
+        .calcPointsFromFocusSeconds(elapsedSeconds);
+
     if (pomodoroPhase == PomodoroPhase.focus) {
       // 집중 모드 중단 시 시간 기록 후 단계 유지
       setAlarm(
         type: AlarmType.giveup,
         elapsedSeconds: elapsedSeconds,
         endedInBackground: false,
+        earnedPoints: earnedPoints,
       );
       saveRecord(time: elapsedSeconds, isCompleted: false);
+      getIt<TransactionViewModel>().rewardPoints(earnedPoints);
     } else {
       // 휴식 모드 중단 시 다음 세션으로 이동
       setAlarm(

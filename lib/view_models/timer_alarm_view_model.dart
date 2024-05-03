@@ -12,11 +12,13 @@ class TimerAlarmViewModel with ChangeNotifier {
     required AlarmType type,
     required int elapsedSeconds,
     required bool endedInBackground,
+    int? earnedPoints,
   }) {
     _lastAlarmInfo = AlarmInfo(
       alarmType: type,
       time: elapsedSeconds,
       isEndedInBackground: endedInBackground,
+      earnedPoints: earnedPoints,
     );
     notifyListeners();
   }

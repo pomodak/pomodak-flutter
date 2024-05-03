@@ -36,8 +36,8 @@
 - [x] fix: fix time_display of socket connection for logged_in user for background app
 - feature: add Google AdMob
   - [x] banner
-  - [ ] rewarded
-- [ ] enhance: free_egg rewards -> point reward that can be upgraded with admob
+  - [x] rewarded
+- [x] enhance: free_egg rewards -> point reward that can be upgraded with admob
 
 ## Next Versions
 

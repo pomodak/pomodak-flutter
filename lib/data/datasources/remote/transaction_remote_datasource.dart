@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pomodak/data/network/base_api_services.dart';
 import 'package:pomodak/models/api/base_api_response.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
+import 'package:pomodak/models/api/shop/reward_points_response.dart';
 import 'package:pomodak/models/api/shop/transaction_response.dart';
 
 const String consumableItemAcquisition = "Consumable Item Acquisition";
@@ -31,6 +32,9 @@ abstract class TransactionRemoteDataSource {
   Future<void> applyTimeToItemInventoryApi(int seconds);
   // 아이템 사용
   Future<dynamic> consumeItemApi(String inventoryId);
+
+  // 포인트 지급
+  Future<RewardPointsResponse> rewardPointsApi(int points);
 }
 
 class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
@@ -81,7 +85,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       );
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to buy item');
+        throw Exception('Failed to sell character');
       }
       return data;
     } catch (e) {
@@ -145,6 +149,29 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       }
 
       var data = response.data;
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RewardPointsResponse> rewardPointsApi(int points) async {
+    try {
+      Map<String, dynamic> responseJson = await apiService.getPostApiResponse(
+        '$_springApiEndpoint/transaction/reward',
+        {
+          'point': points,
+        },
+      );
+      BaseApiResponse<RewardPointsResponse> response = BaseApiResponse.fromJson(
+        responseJson,
+        (json) => RewardPointsResponse.fromJson(json as Map<String, dynamic>),
+      );
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Failed to reward points');
+      }
       return data;
     } catch (e) {
       rethrow;

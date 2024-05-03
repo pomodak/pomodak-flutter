@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:pomodak/data/datasources/remote/transaction_remote_datasource.dart';
+import 'package:pomodak/models/api/shop/reward_points_response.dart';
 import 'package:pomodak/models/api/shop/transaction_response.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 
@@ -46,6 +47,17 @@ class TransactionRepository {
   Future<dynamic> consumeItem(String inventoryId) async {
     try {
       return await remoteDataSource.consumeItemApi(inventoryId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<RewardPointsResponse> rewardPoints(int points) async {
+    try {
+      RewardPointsResponse data =
+          await remoteDataSource.rewardPointsApi(points);
+
+      return data;
     } catch (e) {
       rethrow;
     }

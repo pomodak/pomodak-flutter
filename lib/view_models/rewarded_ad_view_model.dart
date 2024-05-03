@@ -65,7 +65,7 @@ class RewardedAdViewModel extends ChangeNotifier {
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
         debugPrint('보상 획득: ${reward.type}, 수량 ${reward.amount}');
 
-        if (reward.type == 'coins') {
+        if (reward.type == 'double_points') {
           // 포인트 한번 더 적립
           getIt<TransactionViewModel>().rewardPoints(points);
           _rewardEarned = true; // 앱으로 돌아가 보상 획득 여부를 알리기 위한 플래그
@@ -76,7 +76,7 @@ class RewardedAdViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _rewardedAd?.dispose(); 
+    _rewardedAd?.dispose();
     super.dispose();
   }
 }

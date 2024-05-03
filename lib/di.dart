@@ -24,6 +24,7 @@ import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
+import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
 import 'package:pomodak/view_models/shop_view_model.dart';
 import 'package:pomodak/view_models/timer_options_view_model.dart';
 import 'package:pomodak/view_models/timer_record_view_model.dart';
@@ -207,4 +208,7 @@ void registerViewModels() {
     ),
   );
   getIt.registerLazySingleton<GroupTimerViewModel>(() => GroupTimerViewModel());
+
+  // AdMob
+  getIt.registerLazySingleton<RewardedAdViewModel>(() => RewardedAdViewModel());
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pomodak/data/repositories/transaction_repository.dart';
 import 'package:pomodak/di.dart';
 import 'package:pomodak/models/api/members/consume_item_response.dart';
+import 'package:pomodak/models/api/shop/reward_points_response.dart';
 import 'package:pomodak/models/api/shop/transaction_record_model.dart';
 import 'package:pomodak/utils/message_util.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
@@ -15,22 +16,26 @@ class TransactionViewModel with ChangeNotifier {
   bool _isLoadingSellCharacter = false;
   bool _isLoadingApplyTime = false;
   bool _isLoadingConsumeItem = false;
+  bool _isLoadingRewardPoints = false;
 
   // 에러 메시지
   String? _buyItemError;
   String? _sellCharacterError;
   String? _consumeItemError;
   String? _applyTimeError;
+  String? _rewardPointsError;
 
   bool get isLoadingBuyItem => _isLoadingBuyItem;
   bool get isLoadingSellCharacter => _isLoadingSellCharacter;
   bool get isLoadingConsumeItem => _isLoadingConsumeItem;
   bool get isLoadingApplyTime => _isLoadingApplyTime;
+  bool get isLoadingRewardPoints => _isLoadingRewardPoints;
 
   String? get buyItemError => _buyItemError;
   String? get sellCharacterError => _sellCharacterError;
   String? get consumeItemError => _consumeItemError;
   String? get applyTimeError => _applyTimeError;
+  String? get rewardPointsError => _rewardPointsError;
 
   TransactionViewModel({
     required this.repository,
@@ -132,6 +137,31 @@ class TransactionViewModel with ChangeNotifier {
     }
   }
 
+  // 집중시간에 따른 포인트 계산
+  int calcPointsFromFocusSeconds(int seconds) {
+    /// 시간당 9포인트
+    return (seconds ~/ 60) * 9;
+  }
+
+  // 포인트 적립
+  Future<RewardPointsResponse?> rewardPoints(int points) async {
+    if (_isLoadingSellCharacter) return null;
+    _setLoadingState('rewardPoints', isLoading: true);
+    try {
+      _setError("rewardPoints");
+      var result = await repository.rewardPoints(points);
+
+      getIt<MemberViewModel>().loadMember(forceUpdate: true);
+
+      return result;
+    } catch (e) {
+      _handleError('rewardPoints', e);
+    } finally {
+      _setLoadingState('rewardPoints', isLoading: false);
+    }
+    return null;
+  }
+
   void _handleError(String field, Object e) {
     final errorMessage = e.toString();
     _setError(field, errorMessage);
@@ -152,6 +182,9 @@ class TransactionViewModel with ChangeNotifier {
       case 'applyTime':
         _isLoadingApplyTime = isLoading;
         break;
+      case 'rewardPoints':
+        _isLoadingRewardPoints = isLoading;
+        break;
     }
     notifyListeners();
   }
@@ -169,6 +202,9 @@ class TransactionViewModel with ChangeNotifier {
         break;
       case 'applyTime':
         _applyTimeError = errorMessage;
+        break;
+      case 'rewardPoints':
+        _rewardPointsError = errorMessage;
         break;
     }
     notifyListeners();

@@ -12,6 +12,7 @@ void checkForAlarm(BuildContext context, TimerAlarmViewModel viewModel) {
         alarmType: alarmInfo.alarmType, // 마지막 알람 타입
         time: alarmInfo.time, // 경과 시간
         isEndedInBackground: alarmInfo.isEndedInBackground, // 백그라운드에서 종료됐는지 여부
+        earnedPoints: alarmInfo.earnedPoints, // 획득한 포인트
       ),
     );
     viewModel.reset();

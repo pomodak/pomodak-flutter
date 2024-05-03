@@ -3,6 +3,7 @@ import 'package:pomodak/data/datasources/local/auth_local_datasource.dart';
 import 'package:pomodak/di.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
+import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
 import 'package:pomodak/view_models/timer_alarm_view_model.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/group_timer/widgets/members_grid_view.dart';
@@ -29,6 +30,8 @@ class _GroupTimerPageState extends State<GroupTimerPage> {
       getIt<TimerViewModel>().timerStart();
       _connectToSocket();
     });
+    // 타이머 페이지에서 보상형 광고 미리 로드
+    getIt<RewardedAdViewModel>().loadRewardedAd();
   }
 
   @override

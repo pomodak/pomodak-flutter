@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodak/di.dart';
+import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
 import 'package:pomodak/view_models/timer_alarm_view_model.dart';
 import 'package:pomodak/view_models/timer_view_model/timer_view_model.dart';
 import 'package:pomodak/views/screens/timer/widgets/alarm_handler.dart';
@@ -26,6 +27,8 @@ class _TimerPageState extends State<TimerPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getIt<TimerViewModel>().timerStart();
     });
+    // 타이머 페이지에서 보상형 광고 미리 로드
+    getIt<RewardedAdViewModel>().loadRewardedAd();
   }
 
   @override

@@ -37,9 +37,13 @@
 - feature: add Google AdMob
   - [x] banner
   - [x] rewarded
-- [x] enhance: free_egg rewards -> point reward that can be upgraded with admob
+- [x] enhancement: free_egg rewards -> point reward that can be upgraded with admob
+
+#### Task 1.1.3
+
+- [ ] feature: character collection
+- [ ] enhancement: add default_image_sources to app bundle for eliminating network lazy loading
 
 ## Next Versions
 
-- [ ] feature: character collection
 - [ ] feature: user guide

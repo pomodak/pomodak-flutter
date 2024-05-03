@@ -60,7 +60,7 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
                   if (alarmInfo.earnedPoints != null &&
                       alarmInfo.earnedPoints! > 0)
                     Text(
-                      "${alarmInfo.earnedPoints} 포인트를 획득했습니다!",
+                      "${alarmInfo.earnedPoints} 포인트를 획득했습니다.",
                       style: const TextStyle(fontSize: 16),
                     ),
                   Column(
@@ -78,7 +78,7 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
                           textColor: Colors.white,
                           text: rewardedAdViewModel.isAdReady
                               ? "광고보고 두배로 받기 !!"
-                              : "광고 로딩중...",
+                              : "광고 준비중...",
                         ),
                       const SizedBox(height: 12),
                       CustomButton(

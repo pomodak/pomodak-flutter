@@ -63,7 +63,7 @@ class AlarmImageAndMessage extends StatelessWidget {
         message = "이야~~ ${alarmInfo.time}초나 집중하다니 정말 대단해!!";
       } else {
         message =
-            "${FormatUtil.formatSeconds(alarmInfo.time)} 만큼 집중하셨습니다!\n 충분한 휴식을 취해주세요!";
+            "${FormatUtil.formatSeconds(alarmInfo.time)} 만큼 집중하셨습니다.\n 충분한 휴식을 취해주세요!";
       }
     }
     return _MessageData(imageUrl, message);

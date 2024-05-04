@@ -5,7 +5,7 @@
 
 ### 플러터로 마이그레이션
 
-구글 플레이 스토어 버전: 1.1.0
+구글 플레이 스토어 버전: 1.1.2
 
 #### Task 1.1.0
 
@@ -43,6 +43,7 @@
 
 - [ ] feature: character collection
 - [ ] enhancement: add default_image_sources to app bundle for eliminating network lazy loading
+- [ ] fix: prevent repeated_banner_ad request
 
 ## Next Versions
 

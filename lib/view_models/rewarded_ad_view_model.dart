@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:pomodak/di.dart';
@@ -9,9 +11,20 @@ class RewardedAdViewModel extends ChangeNotifier {
   RewardedAd? _rewardedAd; // 보상형 광고 객체
   bool _rewardEarned = false; // 보상 획득 상태
   bool isAdReady = false; // 광고가 준비되었는지의 여부
+  DateTime? _lastAdWatchTime; // 마지막 광고 시청 시간
+  static const Duration cooldownDuration = Duration(minutes: 15); // 15분 쿨다운
+  static const Duration autoReloadDelay = Duration(seconds: 10); // 15분 쿨다운
+  Timer? _cooldownTimer; // 광고 로드 예약
 
   // 보상형 광고를 로드 (타이머 페이지에서 미리 호출)
   void loadRewardedAd() {
+    if (_lastAdWatchTime != null &&
+        DateTime.now().difference(_lastAdWatchTime!) < cooldownDuration) {
+      if (_cooldownTimer != null) return; // 이미 로드 예약
+      _startCooldownTimer();
+      return;
+    }
+
     RewardedAd.load(
       adUnitId: AdMobHelper.rewardedAdUnitId,
       request: const AdRequest(),
@@ -20,11 +33,13 @@ class RewardedAdViewModel extends ChangeNotifier {
           debugPrint('보상형 광고 로드 완료');
           _rewardedAd = ad;
           isAdReady = true;
+          _cooldownTimer = null;
           notifyListeners();
         },
         onAdFailedToLoad: (LoadAdError error) {
           debugPrint('보상형 광고 로드 실패: ${error.message}');
           isAdReady = false;
+          _cooldownTimer = null;
           notifyListeners();
         },
       ),
@@ -49,6 +64,7 @@ class RewardedAdViewModel extends ChangeNotifier {
         _rewardEarned = false;
         isAdReady = false;
         _rewardedAd = null;
+        _lastAdWatchTime = DateTime.now(); // 광고 시청 시간 갱신
         notifyListeners();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
@@ -72,6 +88,16 @@ class RewardedAdViewModel extends ChangeNotifier {
         }
       },
     );
+  }
+
+// 쿨다운 타이머 시작
+  void _startCooldownTimer() {
+    _cooldownTimer?.cancel();
+    final timeRemaining =
+        cooldownDuration - DateTime.now().difference(_lastAdWatchTime!);
+    debugPrint(
+        "${timeRemaining.inSeconds + autoReloadDelay.inSeconds}초 후 광고가 로드됩니다.");
+    _cooldownTimer = Timer(timeRemaining + autoReloadDelay, loadRewardedAd);
   }
 
   @override

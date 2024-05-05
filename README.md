@@ -41,10 +41,11 @@
 
 #### Task 1.1.3
 
-- [ ] feature: character collection
-- [ ] enhancement: add default_image_sources to app bundle for eliminating network lazy loading
 - [x] fix: prevent repeated_banner_ad request
+- [x] fix: fix rewarded_ad request to only load once every 15m
 
 ## Next Versions
 
 - [ ] feature: user guide
+- [ ] feature: character collection
+- [ ] enhancement: add default_image_sources to app bundle for eliminating network lazy loading

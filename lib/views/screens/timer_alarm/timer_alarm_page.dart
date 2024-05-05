@@ -63,12 +63,11 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
                     ),
                   Column(
                     children: <Widget>[
-                      if (alarmInfo.earnedPoints != null &&
-                          alarmInfo.earnedPoints! > 0)
+                      if (alarmInfo.earnedPoints != null)
                         Column(
                           children: [
                             const Text(
-                              "30분에 한번만 시청가능합니다.",
+                              "15분에 한번만 시청가능합니다.",
                               style: TextStyle(color: Colors.black54),
                             ),
                             const SizedBox(height: 8),

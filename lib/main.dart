@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:pomodak/config/constants/app_info.dart';
 import 'package:pomodak/di.dart';
 import 'package:pomodak/router/app_router.dart';
 import 'package:pomodak/config/app_theme.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:pomodak/utils/local_notification_util.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/view_models/banner_ad_view_model.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
@@ -92,6 +94,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<TimerViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<GroupTimerViewModel>()),
         ChangeNotifierProvider(create: (_) => getIt<RewardedAdViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<BannerAdViewModel>()),
       ],
       child: Builder(
         builder: (context) {
@@ -108,7 +111,7 @@ class MyApp extends StatelessWidget {
               );
             },
             child: MaterialApp.router(
-              title: "뽀모닭",
+              title: AppInfo.appName,
               theme: AppTheme.lightTheme,
               routerConfig: goRouter,
               builder: (context, child) => Overlay(

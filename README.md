@@ -43,7 +43,7 @@
 
 - [ ] feature: character collection
 - [ ] enhancement: add default_image_sources to app bundle for eliminating network lazy loading
-- [ ] fix: prevent repeated_banner_ad request
+- [x] fix: prevent repeated_banner_ad request
 
 ## Next Versions
 

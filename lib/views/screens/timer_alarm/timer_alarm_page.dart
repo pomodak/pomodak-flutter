@@ -4,7 +4,6 @@ import 'package:pomodak/models/timer/alarm_info.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
 import 'package:pomodak/views/screens/timer_alarm/alarm_image_and_message.dart';
-import 'package:pomodak/views/widgets/ads/ad_banner.dart';
 import 'package:pomodak/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
@@ -57,8 +56,7 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  if (alarmInfo.earnedPoints != null &&
-                      alarmInfo.earnedPoints! > 0)
+                  if (alarmInfo.earnedPoints != null)
                     Text(
                       "${alarmInfo.earnedPoints} 포인트를 획득했습니다.",
                       style: const TextStyle(fontSize: 16),
@@ -67,18 +65,28 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
                     children: <Widget>[
                       if (alarmInfo.earnedPoints != null &&
                           alarmInfo.earnedPoints! > 0)
-                        CustomButton(
-                          icon: const Icon(Icons.ad_units, color: Colors.white),
-                          onTap: () {
-                            rewardedAdViewModel.showRewardedAd(
-                                points: alarmInfo.earnedPoints!);
-                          },
-                          disabled: !rewardedAdViewModel.isAdReady,
-                          backgroundColor: Colors.blue,
-                          textColor: Colors.white,
-                          text: rewardedAdViewModel.isAdReady
-                              ? "광고보고 두배로 받기 !!"
-                              : "광고 준비중...",
+                        Column(
+                          children: [
+                            const Text(
+                              "30분에 한번만 시청가능합니다.",
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            const SizedBox(height: 8),
+                            CustomButton(
+                              icon: const Icon(Icons.ad_units,
+                                  color: Colors.white),
+                              onTap: () {
+                                rewardedAdViewModel.showRewardedAd(
+                                    points: alarmInfo.earnedPoints!);
+                              },
+                              disabled: !rewardedAdViewModel.isAdReady,
+                              backgroundColor: Colors.blue,
+                              textColor: Colors.white,
+                              text: rewardedAdViewModel.isAdReady
+                                  ? "광고보고 두배로 받기 !!"
+                                  : "광고 준비중...",
+                            )
+                          ],
                         ),
                       const SizedBox(height: 12),
                       CustomButton(
@@ -89,7 +97,6 @@ class _TimerAlarmPageState extends State<TimerAlarmPage> {
                       ),
                     ],
                   ),
-                  const AdBanner(),
                 ],
               ),
             ),

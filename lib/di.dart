@@ -22,6 +22,7 @@ import 'package:pomodak/data/repositories/transaction_repository.dart';
 import 'package:pomodak/models/domain/timer_record_model.dart';
 import 'package:pomodak/view_models/app_view_model.dart';
 import 'package:pomodak/view_models/auth_view_model.dart';
+import 'package:pomodak/view_models/banner_ad_view_model.dart';
 import 'package:pomodak/view_models/group_timer_view_model.dart';
 import 'package:pomodak/view_models/member_view_model.dart';
 import 'package:pomodak/view_models/rewarded_ad_view_model.dart';
@@ -211,4 +212,5 @@ void registerViewModels() {
 
   // AdMob
   getIt.registerLazySingleton<RewardedAdViewModel>(() => RewardedAdViewModel());
+  getIt.registerLazySingleton<BannerAdViewModel>(() => BannerAdViewModel());
 }

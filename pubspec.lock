@@ -495,10 +495,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_vertical_heatmap
-      sha256: fe61e95f30a639e19929a0566a83c819c2f6df19237a52e736721e3ad6446b1b
+      sha256: f2807eefa61177fbf6e5f2af97db4d6890db128be1f8af1e1582dac2a23fd397
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

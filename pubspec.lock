@@ -491,6 +491,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_vertical_heatmap:
+    dependency: "direct main"
+    description:
+      name: flutter_vertical_heatmap
+      sha256: fe61e95f30a639e19929a0566a83c819c2f6df19237a52e736721e3ad6446b1b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -1454,5 +1462,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.3.2 <4.0.0"
+  dart: ">=3.3.4 <4.0.0"
   flutter: ">=3.19.2"

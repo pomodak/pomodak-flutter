@@ -29,6 +29,7 @@ CharacterAcquisition _$CharacterAcquisitionFromJson(
       character:
           CharacterModel.fromJson(json['character'] as Map<String, dynamic>),
       characterInventoryId: json['character_inventory_id'] as int,
+      isNewCharacter: json['is_new_character'] as bool,
     );
 
 Map<String, dynamic> _$CharacterAcquisitionToJson(
@@ -37,6 +38,7 @@ Map<String, dynamic> _$CharacterAcquisitionToJson(
       'result': instance.result,
       'character': instance.character,
       'character_inventory_id': instance.characterInventoryId,
+      'is_new_character': instance.isNewCharacter,
     };
 
 PaletteAcquisition _$PaletteAcquisitionFromJson(Map<String, dynamic> json) =>

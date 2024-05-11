@@ -25,11 +25,14 @@ class CharacterAcquisition {
   final CharacterModel character;
   @JsonKey(name: 'character_inventory_id')
   final int characterInventoryId;
+  @JsonKey(name: 'is_new_character')
+  final bool isNewCharacter;
 
   CharacterAcquisition({
     required this.result,
     required this.character,
     required this.characterInventoryId,
+    required this.isNewCharacter,
   });
 
   factory CharacterAcquisition.fromJson(Map<String, dynamic> json) =>
